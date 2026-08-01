@@ -143,7 +143,7 @@ function AboutPage() {
                 </li>
               ))}
             </ul>
-          )
+          )}
         </div>
         <div>
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
