@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Portfolio of Srinivas M, Python and full stack developer in Pondicherry. NLP research, React web apps and Flutter mobile projects.",
+          "Portfolio of Srinivas M, Python and full stack developer. NLP research, React web apps and Flutter mobile projects.",
       },
       { name: "author", content: "Srinivas M" },
       { property: "og:type", content: "website" },

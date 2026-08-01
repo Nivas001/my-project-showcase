@@ -4,7 +4,7 @@ export const site = {
   name: "Srinivas M",
   role: "Python Developer | Full Stack & Flutter Developer",
   shortRole: "Python · Full Stack · Flutter",
-  location: "Pondicherry – 605007, India",
+  location: "India",
   email: "nivassri183@gmail.com",
   phone: "+91 7448724920",
   github: "https://github.com/Nivas001",
