@@ -1,7 +1,7 @@
 import resumeAsset from "@/assets/resume.pdf.asset.json";
 
 export const site = {
-  name: "Srinivas M",
+  name: "Srinivas",
   role: "Python Developer | Full Stack & Flutter Developer",
   shortRole: "Python · Full Stack · Flutter",
   location: "India",
