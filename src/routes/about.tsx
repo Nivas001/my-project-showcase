@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths } from "@/lib/site";
+import { certificatesQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -22,6 +24,9 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const { data: certificates } = useQuery(certificatesQuery);
+  const hasStored = (certificates ?? []).length > 0;
+
   return (
     <div className="mx-auto max-w-4xl px-5 py-16">
       <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
@@ -90,14 +95,55 @@ function AboutPage() {
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             // certifications
           </h2>
-          <ul className="mt-5 space-y-2 text-sm text-foreground/85">
-            {certifications.map((item) => (
-              <li key={item} className="flex gap-2">
-                <span className="font-mono text-accent">▹</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+          {hasStored ? (
+            <div className="mt-5 space-y-3">
+              {(certificates ?? []).map((certificate) => (
+                <div key={certificate.id} className="rounded-md border border-border bg-card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold">{certificate.title}</h3>
+                      <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                        {[certificate.issuer, certificate.issued_on].filter(Boolean).join(" · ")}
+                      </p>
+                    </div>
+                    {certificate.credential_url ? (
+                      <a
+                        href={certificate.credential_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-muted-foreground hover:text-primary"
+                        aria-label={`Open credential for ${certificate.title}`}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    ) : null}
+                  </div>
+                  {certificate.images.length > 0 ? (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {certificate.images.map((src) => (
+                        <img
+                          key={src}
+                          src={src}
+                          alt={`${certificate.title} certificate`}
+                          loading="lazy"
+                          className="rounded-sm border border-border"
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ul className="mt-5 space-y-2 text-sm text-foreground/85">
+              {certifications.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="font-mono text-accent">▹</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div>
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">

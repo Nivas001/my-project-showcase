@@ -5,7 +5,16 @@ import { toast } from "sonner";
 import { LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
-import { projectsQuery } from "@/lib/queries";
+import {
+  saveCertificate,
+  deleteCertificate,
+} from "@/lib/certificates.functions";
+import {
+  emptyCertificate,
+  type Certificate,
+  type CertificateInput,
+} from "@/lib/certificates";
+import { projectsQuery, certificatesQuery } from "@/lib/queries";
 import {
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
@@ -50,6 +59,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: projects, isLoading } = useQuery(projectsQuery);
+  const { data: certificates } = useQuery(certificatesQuery);
   const { data: adminInfo, isLoading: checkingRole } = useQuery({
     queryKey: ["is-admin"],
     queryFn: () => checkIsAdmin(),
@@ -58,6 +68,63 @@ function AdminPage() {
   const [draft, setDraft] = useState<ProjectInput | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
+  const [certSaving, setCertSaving] = useState(false);
+  const [certUploading, setCertUploading] = useState(false);
+
+  async function handleCertUpload(files: FileList | null) {
+    if (!files || !certDraft) return;
+    setCertUploading(true);
+    const uploaded: string[] = [];
+    for (const file of Array.from(files)) {
+      const path = `certificates/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const { error } = await supabase.storage
+        .from(SCREENSHOT_BUCKET)
+        .upload(path, file, { upsert: true });
+      if (error) {
+        toast.error(`Upload failed: ${error.message}`);
+        continue;
+      }
+      uploaded.push(path);
+    }
+    setCertUploading(false);
+    if (uploaded.length > 0) {
+      setCertDraft((current) =>
+        current ? { ...current, images: [...current.images, ...uploaded] } : current,
+      );
+      toast.success(`${uploaded.length} image(s) uploaded`);
+    }
+  }
+
+  async function handleCertSave() {
+    if (!certDraft) return;
+    if (!certDraft.title) {
+      toast.error("Certificate title is required");
+      return;
+    }
+    setCertSaving(true);
+    try {
+      await saveCertificate({ data: { certificate: certDraft as Certificate } });
+      await queryClient.invalidateQueries({ queryKey: ["certificates"] });
+      toast.success("Certificate saved");
+      setCertDraft(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save certificate");
+    } finally {
+      setCertSaving(false);
+    }
+  }
+
+  async function handleCertDelete(id: string, title: string) {
+    if (!window.confirm(`Delete “${title}”?`)) return;
+    try {
+      await deleteCertificate({ data: { id } });
+      await queryClient.invalidateQueries({ queryKey: ["certificates"] });
+      toast.success("Certificate deleted");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete certificate");
+    }
+  }
 
   useEffect(() => {
     if (draft && !draft.id && !draft.slug && draft.title) {
@@ -404,6 +471,171 @@ function AdminPage() {
             </div>
           ))
         )}
+      </section>
+
+      <section className="mt-16">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // certificates
+          </h2>
+          <button
+            onClick={() =>
+              setCertDraft({
+                ...emptyCertificate,
+                sort_order: (certificates?.length ?? 0) + 1,
+              })
+            }
+            className="inline-flex items-center gap-2 rounded-sm border border-border px-3 py-1.5 text-sm hover:border-primary"
+          >
+            <Plus className="h-4 w-4" /> New certificate
+          </button>
+        </div>
+
+        {certDraft ? (
+          <div className="mt-5 rounded-md border border-primary/40 bg-card p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-sm text-accent">
+                {certDraft.id ? "edit certificate" : "new certificate"}
+              </h3>
+              <button onClick={() => setCertDraft(null)} aria-label="Close certificate editor">
+                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <Field label="title">
+                <input
+                  className={inputClass}
+                  value={certDraft.title}
+                  onChange={(e) => setCertDraft({ ...certDraft, title: e.target.value })}
+                />
+              </Field>
+              <Field label="issuer (e.g. NPTEL, Udemy)">
+                <input
+                  className={inputClass}
+                  value={certDraft.issuer}
+                  onChange={(e) => setCertDraft({ ...certDraft, issuer: e.target.value })}
+                />
+              </Field>
+              <Field label="issued on (e.g. Mar 2025)">
+                <input
+                  className={inputClass}
+                  value={certDraft.issued_on}
+                  onChange={(e) => setCertDraft({ ...certDraft, issued_on: e.target.value })}
+                />
+              </Field>
+              <Field label="credential url (optional)">
+                <input
+                  className={inputClass}
+                  value={certDraft.credential_url ?? ""}
+                  onChange={(e) => setCertDraft({ ...certDraft, credential_url: e.target.value })}
+                />
+              </Field>
+              <Field label="sort order">
+                <input
+                  type="number"
+                  className={inputClass}
+                  value={certDraft.sort_order}
+                  onChange={(e) =>
+                    setCertDraft({ ...certDraft, sort_order: Number(e.target.value) })
+                  }
+                />
+              </Field>
+            </div>
+
+            <div className="mt-5">
+              <span className="font-mono text-xs text-muted-foreground">certificate images</span>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {certDraft.images.map((path) => (
+                  <span
+                    key={path}
+                    className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
+                  >
+                    {path.split("/").pop()}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCertDraft({
+                          ...certDraft,
+                          images: certDraft.images.filter((p) => p !== path),
+                        })
+                      }
+                      aria-label="Remove image"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
+                <Upload className="h-4 w-4" />
+                {certUploading ? "Uploading…" : "Upload images"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleCertUpload(e.target.files)}
+                />
+              </label>
+            </div>
+
+            <div className="mt-6 flex gap-2">
+              <button
+                onClick={handleCertSave}
+                disabled={certSaving}
+                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+              >
+                {certSaving ? "Saving…" : "Save certificate"}
+              </button>
+              <button
+                onClick={() => setCertDraft(null)}
+                className="rounded-sm border border-border px-4 py-2 text-sm hover:border-primary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-5 space-y-3">
+          {(certificates ?? []).map((certificate) => (
+            <div
+              key={certificate.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card p-4"
+            >
+              <div>
+                <h3 className="text-sm font-semibold">{certificate.title}</h3>
+                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                  {[certificate.issuer, certificate.issued_on].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() =>
+                    setCertDraft({
+                      ...certificate,
+                      images: certificate.image_paths,
+                    })
+                  }
+                  className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleCertDelete(certificate.id, certificate.title)}
+                  className="rounded-sm border border-destructive/50 px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10"
+                  aria-label={`Delete ${certificate.title}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {(certificates ?? []).length === 0 ? (
+            <p className="font-mono text-sm text-muted-foreground">No certificates added yet.</p>
+          ) : null}
+        </div>
       </section>
     </div>
   );
