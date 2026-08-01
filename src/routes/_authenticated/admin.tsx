@@ -59,6 +59,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: projects, isLoading } = useQuery(projectsQuery);
+  const { data: certificates } = useQuery(certificatesQuery);
   const { data: adminInfo, isLoading: checkingRole } = useQuery({
     queryKey: ["is-admin"],
     queryFn: () => checkIsAdmin(),
@@ -67,6 +68,63 @@ function AdminPage() {
   const [draft, setDraft] = useState<ProjectInput | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
+  const [certSaving, setCertSaving] = useState(false);
+  const [certUploading, setCertUploading] = useState(false);
+
+  async function handleCertUpload(files: FileList | null) {
+    if (!files || !certDraft) return;
+    setCertUploading(true);
+    const uploaded: string[] = [];
+    for (const file of Array.from(files)) {
+      const path = `certificates/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const { error } = await supabase.storage
+        .from(SCREENSHOT_BUCKET)
+        .upload(path, file, { upsert: true });
+      if (error) {
+        toast.error(`Upload failed: ${error.message}`);
+        continue;
+      }
+      uploaded.push(path);
+    }
+    setCertUploading(false);
+    if (uploaded.length > 0) {
+      setCertDraft((current) =>
+        current ? { ...current, images: [...current.images, ...uploaded] } : current,
+      );
+      toast.success(`${uploaded.length} image(s) uploaded`);
+    }
+  }
+
+  async function handleCertSave() {
+    if (!certDraft) return;
+    if (!certDraft.title) {
+      toast.error("Certificate title is required");
+      return;
+    }
+    setCertSaving(true);
+    try {
+      await saveCertificate({ data: { certificate: certDraft as Certificate } });
+      await queryClient.invalidateQueries({ queryKey: ["certificates"] });
+      toast.success("Certificate saved");
+      setCertDraft(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save certificate");
+    } finally {
+      setCertSaving(false);
+    }
+  }
+
+  async function handleCertDelete(id: string, title: string) {
+    if (!window.confirm(`Delete “${title}”?`)) return;
+    try {
+      await deleteCertificate({ data: { id } });
+      await queryClient.invalidateQueries({ queryKey: ["certificates"] });
+      toast.success("Certificate deleted");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete certificate");
+    }
+  }
 
   useEffect(() => {
     if (draft && !draft.id && !draft.slug && draft.title) {
