@@ -5,7 +5,16 @@ import { toast } from "sonner";
 import { LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
-import { projectsQuery } from "@/lib/queries";
+import {
+  saveCertificate,
+  deleteCertificate,
+} from "@/lib/certificates.functions";
+import {
+  emptyCertificate,
+  type Certificate,
+  type CertificateInput,
+} from "@/lib/certificates";
+import { projectsQuery, certificatesQuery } from "@/lib/queries";
 import {
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
