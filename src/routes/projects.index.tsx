@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
 
-export const Route = createFileRoute("/projects")({
+export const Route = createFileRoute("/projects/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(projectsQuery),
   head: () => ({
     meta: [
