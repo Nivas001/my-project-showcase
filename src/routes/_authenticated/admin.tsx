@@ -615,7 +615,7 @@ function AdminPage() {
                   onClick={() =>
                     setCertDraft({
                       ...certificate,
-                      images: certificate.images.filter((path) => !path.startsWith("http")),
+                      images: certificate.image_paths,
                     })
                   }
                   className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"

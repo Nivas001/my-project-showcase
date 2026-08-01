@@ -4,11 +4,11 @@ import type { Certificate } from "@/lib/certificates";
 /** Certificate images live in the private bucket — sign them for public pages. */
 export async function signCertificateImages<T extends Pick<Certificate, "images">>(
   rows: T[],
-): Promise<T[]> {
+): Promise<(T & { image_paths: string[] })[]> {
   const paths = [...new Set(rows.flatMap((row) => row.images ?? []))].filter(
     (path) => path && !path.startsWith("http"),
   );
-  if (paths.length === 0) return rows;
+  if (paths.length === 0) return rows.map((row) => ({ ...row, image_paths: row.images ?? [] }));
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin.storage
@@ -22,6 +22,7 @@ export async function signCertificateImages<T extends Pick<Certificate, "images"
 
   return rows.map((row) => ({
     ...row,
+    image_paths: row.images ?? [],
     images: (row.images ?? []).map((path) =>
       path.startsWith("http") ? path : (map.get(path) ?? path),
     ),
