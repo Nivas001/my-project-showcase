@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Download, ExternalLink } from "lucide-react";
-import { site, skills, education, certifications, strengths } from "@/lib/site";
+import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
 import { certificatesQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/about")({
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
   const { data: certificates } = useQuery(certificatesQuery);
+  const embed = toEmbedUrl(site.videoResumeUrl);
   const hasStored = (certificates ?? []).length > 0;
 
   return (
@@ -43,6 +44,33 @@ function AboutPage() {
       >
         <Download className="h-4 w-4" /> Download resume
       </a>
+
+      {embed ? (
+        <section className="mt-14">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // video resume
+          </h2>
+          <div className="mt-5 overflow-hidden rounded-md border border-border bg-card shadow-[var(--shadow-glow)]">
+            <div className="flex items-center gap-1.5 border-b border-border/70 px-4 py-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-primary/70" />
+              <span className="ml-3 font-mono text-[11px] text-muted-foreground">
+                srinivas — intro.mp4
+              </span>
+            </div>
+            <div className="aspect-video bg-background">
+              <iframe
+                src={embed}
+                title="Video resume of Srinivas M"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-14">
         <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">

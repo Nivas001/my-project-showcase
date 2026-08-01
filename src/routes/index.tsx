@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
-import { site, toEmbedUrl } from "@/lib/site";
+import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
 
@@ -76,7 +76,7 @@ function Home() {
   const { data: projects } = useSuspenseQuery(projectsQuery);
   const featured = projects.filter((p) => p.featured).slice(0, 3);
   const shown = featured.length > 0 ? featured : projects.slice(0, 3);
-  const embed = toEmbedUrl(site.videoResumeUrl);
+  
 
   return (
     <div className="mx-auto max-w-6xl px-5">
@@ -153,42 +153,6 @@ function Home() {
         ))}
       </section>
 
-      <section className="py-16">
-        <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          // video resume
-        </h2>
-        <div className="mt-5 overflow-hidden rounded-md border border-border bg-card shadow-[var(--shadow-glow)]">
-          <div className="flex items-center gap-1.5 border-b border-border/70 px-4 py-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-primary/70" />
-            <span className="ml-3 font-mono text-[11px] text-muted-foreground">
-              srinivas — intro.mp4
-            </span>
-          </div>
-          <div className={embed ? "aspect-video bg-background" : "bg-background py-20"}>
-            {embed ? (
-              <iframe
-                src={embed}
-                title="Video resume of Srinivas M"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowFullScreen
-                className="h-full w-full"
-              />
-            ) : (
-              <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center">
-                <p className="font-mono text-sm text-muted-foreground">
-                  Video resume not linked yet
-                </p>
-                <p className="max-w-sm text-xs text-muted-foreground/80">
-                  Paste your YouTube or Google Drive link into{" "}
-                  <code className="text-accent">videoResumeUrl</code> and it appears here.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       <section className="py-8">
         <div className="flex items-end justify-between gap-4">
