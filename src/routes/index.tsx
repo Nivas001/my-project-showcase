@@ -166,7 +166,7 @@ function Home() {
               srinivas — intro.mp4
             </span>
           </div>
-          <div className="aspect-video bg-background">
+          <div className={embed ? "aspect-video bg-background" : "bg-background py-20"}>
             {embed ? (
               <iframe
                 src={embed}
