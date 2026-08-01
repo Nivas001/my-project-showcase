@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
-import { site, toEmbedUrl } from "@/lib/site";
+import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
 
@@ -76,7 +76,7 @@ function Home() {
   const { data: projects } = useSuspenseQuery(projectsQuery);
   const featured = projects.filter((p) => p.featured).slice(0, 3);
   const shown = featured.length > 0 ? featured : projects.slice(0, 3);
-  const embed = toEmbedUrl(site.videoResumeUrl);
+  
 
   return (
     <div className="mx-auto max-w-6xl px-5">
