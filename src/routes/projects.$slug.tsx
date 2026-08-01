@@ -1,0 +1,211 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight, ExternalLink, Github } from "lucide-react";
+import { projectQuery } from "@/lib/queries";
+
+export const Route = createFileRoute("/projects/$slug")({
+  loader: async ({ context, params }) => {
+    const data = await context.queryClient.ensureQueryData(projectQuery(params.slug));
+    if (!data) throw notFound();
+    return data;
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [{ title: "Project not found — Srinivas M" }, { name: "robots", content: "noindex" }],
+      };
+    }
+    const { project } = loaderData;
+    const title = `${project.title} — Srinivas M`;
+    const image = project.screenshots.find((url) => url.startsWith("https://"));
+    return {
+      meta: [
+        { title },
+        { name: "description", content: project.summary },
+        { property: "og:title", content: title },
+        { property: "og:description", content: project.summary },
+        { property: "og:type", content: "article" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+    };
+  },
+  notFoundComponent: ProjectMissing,
+  errorComponent: ProjectMissing,
+  component: ProjectDetail,
+});
+
+function ProjectMissing() {
+  return (
+    <div className="mx-auto max-w-2xl px-5 py-24 text-center">
+      <h1 className="font-mono text-2xl font-bold">project not found</h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        This project may have been renamed or removed.
+      </p>
+      <Link to="/projects" className="mt-6 inline-block font-mono text-sm text-accent hover:underline">
+        ← back to all projects
+      </Link>
+    </div>
+  );
+}
+
+function ProjectDetail() {
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(projectQuery(slug));
+  if (!data) return <ProjectMissing />;
+  const { project, prev, next } = data;
+
+  return (
+    <article className="mx-auto max-w-4xl px-5 py-16">
+      <Link
+        to="/projects"
+        className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-accent"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" /> all projects
+      </Link>
+
+      <header className="mt-6">
+        <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+          <span className="rounded-sm border border-border px-2 py-0.5">{project.category}</span>
+          <span>{project.period}</span>
+          {project.role ? <span>· {project.role}</span> : null}
+        </div>
+        <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+          {project.title}
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+          {project.summary}
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          {project.live_url ? (
+            <a
+              href={project.live_url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <ExternalLink className="h-4 w-4" /> Visit live site
+            </a>
+          ) : null}
+          {project.github_url ? (
+            <a
+              href={project.github_url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
+            >
+              <Github className="h-4 w-4" /> Source code
+            </a>
+          ) : null}
+        </div>
+      </header>
+
+      <section className="mt-12 rounded-md border border-border bg-card p-5 font-mono text-sm">
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">// stack</p>
+        <div className="mt-3 space-y-1">
+          {project.tech.map((tech) => (
+            <div key={tech}>
+              <span className="text-primary">import</span>{" "}
+              <span className="text-foreground">{tech}</span>{" "}
+              <span className="text-muted-foreground">from</span>{" "}
+              <span className="text-accent">&apos;{project.slug}&apos;</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {project.description ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // overview
+          </h2>
+          <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+            {project.description.split(/\n{2,}/).map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {project.highlights.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // highlights
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {project.highlights.map((highlight) => (
+              <li key={highlight} className="flex gap-3 text-[15px] leading-relaxed">
+                <span className="mt-1 font-mono text-accent">▹</span>
+                <span className="text-foreground/85">{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {project.screenshots.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // screenshots
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {project.screenshots.map((src, index) => (
+              <a
+                key={src}
+                href={src}
+                target="_blank"
+                rel="noreferrer"
+                className="overflow-hidden rounded-md border border-border bg-surface-raised"
+              >
+                <img
+                  src={src}
+                  alt={`${project.title} screenshot ${index + 1}`}
+                  loading="lazy"
+                  className="w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <nav className="mt-16 grid gap-3 border-t border-border/70 pt-6 sm:grid-cols-2">
+        {prev ? (
+          <Link
+            to="/projects/$slug"
+            params={{ slug: prev.slug }}
+            className="group rounded-md border border-border p-4 transition-colors hover:border-primary"
+          >
+            <span className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+              <ArrowLeft className="h-3 w-3" /> previous
+            </span>
+            <span className="mt-1 block text-sm font-medium group-hover:text-accent">
+              {prev.title}
+            </span>
+          </Link>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <Link
+            to="/projects/$slug"
+            params={{ slug: next.slug }}
+            className="group rounded-md border border-border p-4 text-right transition-colors hover:border-primary"
+          >
+            <span className="flex items-center justify-end gap-1.5 font-mono text-[11px] text-muted-foreground">
+              next <ArrowRight className="h-3 w-3" />
+            </span>
+            <span className="mt-1 block text-sm font-medium group-hover:text-accent">
+              {next.title}
+            </span>
+          </Link>
+        ) : null}
+      </nav>
+    </article>
+  );
+}
