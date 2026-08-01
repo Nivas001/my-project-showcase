@@ -108,7 +108,7 @@
 
 @theme inline {
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-surface-raised: var(--surface-raised);
   --color-glow: var(--glow);
 }
