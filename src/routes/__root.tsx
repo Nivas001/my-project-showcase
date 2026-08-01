@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Srinivas M — Python & Full Stack Developer" },
+      { title: "Srinivas — Python & Full Stack Developer" },
       {
         name: "description",
         content:
-          "Portfolio of Srinivas M, Python and full stack developer. NLP research, React web apps and Flutter mobile projects.",
+          "Portfolio of Srinivas, Python and full stack developer. NLP research, React web apps and Flutter mobile projects.",
       },
-      { name: "author", content: "Srinivas M" },
+      { name: "author", content: "Srinivas" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -160,7 +160,7 @@ function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border/70">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <span>© {new Date().getFullYear()} Srinivas M — {site.location}</span>
+        <span>© {new Date().getFullYear()} Srinivas — {site.location}</span>
         <span className="flex gap-4">
           <a href={`mailto:${site.email}`} className="hover:text-accent">
             {site.email}
