@@ -133,7 +133,7 @@
   }
 
   ::selection {
-    background: oklch(0.52 0.28 305 / 45%);
+    background: oklch(0.51 0.23 277 / 45%);
   }
 }
 
@@ -169,6 +169,6 @@
 }
 
 @utility text-glow {
-  text-shadow: 0 0 24px oklch(0.75 0.22 325 / 45%);
+  text-shadow: 0 0 24px oklch(0.74 0.13 270 / 45%);
 }
 
