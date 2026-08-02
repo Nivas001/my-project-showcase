@@ -1,7 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, FileText, Github } from "lucide-react";
 import { projectQuery } from "@/lib/queries";
+import { VideoEmbed } from "@/components/VideoEmbed";
+import { DocViewer } from "@/components/DocViewer";
+import { DesignBoard } from "@/components/DesignBoard";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ context, params }) => {
