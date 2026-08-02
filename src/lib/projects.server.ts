@@ -1,6 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { SCREENSHOT_BUCKET, type Project, type SignedProject } from "@/lib/projects";
+import {
+  SCREENSHOT_BUCKET,
+  normaliseDownloads,
+  type Project,
+  type SignedProject,
+} from "@/lib/projects";
 
 function isOpaqueKey(value: string) {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -57,7 +62,9 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     design_paths: row.designs ?? [],
     screenshots: (row.screenshots ?? []).map(sign),
     designs: (row.designs ?? []).map(sign),
-    doc_signed_url: row.doc_path ? sign(row.doc_path) : null,
+    downloads: normaliseDownloads(row.downloads),
+    // Served through a proxy so the PDF renders inline instead of downloading.
+    doc_signed_url: row.doc_path ? `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}` : null,
   }));
 }
 
