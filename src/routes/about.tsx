@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
-import { certificatesQuery } from "@/lib/queries";
+import { certificatesQuery, skillGroupsQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
