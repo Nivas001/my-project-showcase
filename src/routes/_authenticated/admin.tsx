@@ -321,7 +321,22 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, github_url: e.target.value })}
               />
             </Field>
+            <Field label="video url (Drive / YouTube / mp4 — optional)">
+              <input
+                className={inputClass}
+                value={draft.video_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, video_url: e.target.value })}
+              />
+            </Field>
+            <Field label="documentation link (Drive PDF — optional)">
+              <input
+                className={inputClass}
+                value={draft.doc_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, doc_url: e.target.value })}
+              />
+            </Field>
           </div>
+
 
           <div className="mt-4 space-y-4">
             <Field label="summary (card text)">
