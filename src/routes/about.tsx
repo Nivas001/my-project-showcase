@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
-import { certificatesQuery } from "@/lib/queries";
+import { certificatesQuery, skillGroupsQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -25,6 +25,11 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
   const { data: certificates } = useQuery(certificatesQuery);
+  const { data: skillGroups } = useQuery(skillGroupsQuery);
+  const skillList =
+    skillGroups && skillGroups.length > 0
+      ? skillGroups.map((group) => ({ group: group.name, items: group.items }))
+      : skills;
   const embed = toEmbedUrl(site.videoResumeUrl);
   const hasStored = (certificates ?? []).length > 0;
 
@@ -77,7 +82,7 @@ function AboutPage() {
           // skills
         </h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          {skills.map((group) => (
+          {skillList.map((group) => (
             <div key={group.group} className="rounded-md border border-border bg-card p-4">
               <h3 className="font-mono text-xs text-accent">{group.group}</h3>
               <div className="mt-3 flex flex-wrap gap-1.5">

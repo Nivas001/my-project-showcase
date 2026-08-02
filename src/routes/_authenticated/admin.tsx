@@ -14,7 +14,9 @@ import {
   type Certificate,
   type CertificateInput,
 } from "@/lib/certificates";
-import { projectsQuery, certificatesQuery } from "@/lib/queries";
+import { projectsQuery, certificatesQuery, skillGroupsQuery } from "@/lib/queries";
+import { emptySkillGroup, type SkillGroup, type SkillGroupInput } from "@/lib/skills";
+import { saveSkillGroup, deleteSkillGroup } from "@/lib/skills.functions";
 import {
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
@@ -61,6 +63,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const { data: projects, isLoading } = useQuery(projectsQuery);
   const { data: certificates } = useQuery(certificatesQuery);
+  const { data: skillGroups } = useQuery(skillGroupsQuery);
   const { data: adminInfo, isLoading: checkingRole } = useQuery({
     queryKey: ["is-admin"],
     queryFn: () => checkIsAdmin(),
@@ -74,6 +77,48 @@ function AdminPage() {
   const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
   const [certSaving, setCertSaving] = useState(false);
   const [certUploading, setCertUploading] = useState(false);
+  const [skillDraft, setSkillDraft] = useState<SkillGroupInput | null>(null);
+  const [skillSaving, setSkillSaving] = useState(false);
+
+  async function handleSkillSave() {
+    if (!skillDraft) return;
+    if (!skillDraft.name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+    setSkillSaving(true);
+    try {
+      await saveSkillGroup({
+        data: {
+          group: {
+            ...skillDraft,
+            name: skillDraft.name.trim(),
+            items: skillDraft.items.map((i) => i.trim()).filter(Boolean),
+          } as SkillGroup,
+        },
+      });
+      await queryClient.invalidateQueries({ queryKey: ["skill-groups"] });
+      toast.success("Skill category saved");
+      setSkillDraft(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save skill category");
+    } finally {
+      setSkillSaving(false);
+    }
+  }
+
+  async function handleSkillDelete(id: string, name: string) {
+    if (!window.confirm(`Delete “${name}” and its tools?`)) return;
+    try {
+      await deleteSkillGroup({ data: { id } });
+      await queryClient.invalidateQueries({ queryKey: ["skill-groups"] });
+      toast.success("Skill category deleted");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete skill category");
+    }
+  }
+
+
 
   async function handleCertUpload(files: FileList | null) {
     if (!files || !certDraft) return;
@@ -754,6 +799,136 @@ function AdminPage() {
           ) : null}
         </div>
       </section>
+
+      <section className="mt-16">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // skills
+          </h2>
+          <button
+            onClick={() =>
+              setSkillDraft({
+                ...emptySkillGroup,
+                sort_order: (skillGroups?.length ?? 0) + 1,
+              })
+            }
+            className="inline-flex items-center gap-2 rounded-sm border border-border px-3 py-1.5 text-sm hover:border-primary"
+          >
+            <Plus className="h-4 w-4" /> New skill category
+          </button>
+        </div>
+
+        {skillDraft ? (
+          <div className="mt-5 rounded-md border border-primary/40 bg-card p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-sm text-accent">
+                {skillDraft.id ? "edit skill category" : "new skill category"}
+              </h3>
+              <button onClick={() => setSkillDraft(null)} aria-label="Close skill editor">
+                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <Field label="category name">
+                <input
+                  className={inputClass}
+                  value={skillDraft.name}
+                  onChange={(e) =>
+                    setSkillDraft({ ...skillDraft, name: e.target.value })
+                  }
+                  placeholder="Frameworks & Libraries"
+                />
+              </Field>
+              <Field label="sort order">
+                <input
+                  type="number"
+                  className={inputClass}
+                  value={skillDraft.sort_order}
+                  onChange={(e) =>
+                    setSkillDraft({ ...skillDraft, sort_order: Number(e.target.value) })
+                  }
+                />
+              </Field>
+            </div>
+
+            <div className="mt-4">
+              <Field label="tools / skills (one per line)">
+                <textarea
+                  rows={6}
+                  className={inputClass}
+                  value={skillDraft.items.join("\n")}
+                  onChange={(e) =>
+                    setSkillDraft({
+                      ...skillDraft,
+                      items: e.target.value.split("\n"),
+                    })
+                  }
+                  placeholder={"React\nFlutter\nTensorFlow"}
+                />
+              </Field>
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <button
+                onClick={handleSkillSave}
+                disabled={skillSaving}
+                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {skillSaving ? "Saving…" : "Save skill category"}
+              </button>
+              <button
+                onClick={() => setSkillDraft(null)}
+                className="rounded-sm border border-border px-4 py-2 text-sm hover:border-primary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-5 space-y-3">
+          {(skillGroups ?? []).map((group) => (
+            <div
+              key={group.id}
+              className="flex flex-wrap items-start justify-between gap-3 rounded-md border border-border bg-card p-4"
+            >
+              <div>
+                <h3 className="text-sm font-semibold">{group.name}</h3>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {group.items.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSkillDraft({ ...group })}
+                  className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleSkillDelete(group.id, group.name)}
+                  className="rounded-sm border border-destructive/50 px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10"
+                  aria-label={`Delete ${group.name}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {(skillGroups ?? []).length === 0 ? (
+            <p className="font-mono text-sm text-muted-foreground">No skill categories yet.</p>
+          ) : null}
+        </div>
+      </section>
     </div>
   );
 }
+
