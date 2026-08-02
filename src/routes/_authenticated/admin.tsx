@@ -61,6 +61,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const { data: projects, isLoading } = useQuery(projectsQuery);
   const { data: certificates } = useQuery(certificatesQuery);
+  const { data: skillGroups } = useQuery(skillGroupsQuery);
   const { data: adminInfo, isLoading: checkingRole } = useQuery({
     queryKey: ["is-admin"],
     queryFn: () => checkIsAdmin(),
