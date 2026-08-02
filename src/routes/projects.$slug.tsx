@@ -89,7 +89,7 @@ function ProjectDetail() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              <ExternalLink className="h-4 w-4" /> Visit live site
+              <ExternalLink className="h-4 w-4" /> Go to the site
             </a>
           ) : null}
           {project.github_url ? (
@@ -102,8 +102,30 @@ function ProjectDetail() {
               <Github className="h-4 w-4" /> Source code
             </a>
           ) : null}
+          {docUrl ? (
+            <a
+              href={docUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
+            >
+              <FileText className="h-4 w-4" /> Documentation
+            </a>
+          ) : null}
         </div>
       </header>
+
+      {project.video_url ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // demo
+          </h2>
+          <div className="mt-4">
+            <VideoEmbed url={project.video_url} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
 
       <section className="mt-12 rounded-md border border-border bg-card p-5 font-mono text-sm">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">// stack</p>
