@@ -77,6 +77,48 @@ function AdminPage() {
   const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
   const [certSaving, setCertSaving] = useState(false);
   const [certUploading, setCertUploading] = useState(false);
+  const [skillDraft, setSkillDraft] = useState<SkillGroupInput | null>(null);
+  const [skillSaving, setSkillSaving] = useState(false);
+
+  async function handleSkillSave() {
+    if (!skillDraft) return;
+    if (!skillDraft.name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+    setSkillSaving(true);
+    try {
+      await saveSkillGroup({
+        data: {
+          group: {
+            ...skillDraft,
+            name: skillDraft.name.trim(),
+            items: skillDraft.items.map((i) => i.trim()).filter(Boolean),
+          } as SkillGroup,
+        },
+      });
+      await queryClient.invalidateQueries({ queryKey: ["skill-groups"] });
+      toast.success("Skill category saved");
+      setSkillDraft(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save skill category");
+    } finally {
+      setSkillSaving(false);
+    }
+  }
+
+  async function handleSkillDelete(id: string, name: string) {
+    if (!window.confirm(`Delete “${name}” and its tools?`)) return;
+    try {
+      await deleteSkillGroup({ data: { id } });
+      await queryClient.invalidateQueries({ queryKey: ["skill-groups"] });
+      toast.success("Skill category deleted");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete skill category");
+    }
+  }
+
+
 
   async function handleCertUpload(files: FileList | null) {
     if (!files || !certDraft) return;
