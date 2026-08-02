@@ -202,6 +202,33 @@ function ProjectDetail() {
         </section>
       ) : null}
 
+      {project.designs.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // design pages
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Every page of the design on one canvas — zoom and pan to explore.
+          </p>
+          <div className="mt-4">
+            <DesignBoard images={project.designs} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
+      {docUrl ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // documentation
+          </h2>
+          <div className="mt-4">
+            <DocViewer url={docUrl} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
+
+
       <nav className="mt-16 grid gap-3 border-t border-border/70 pt-6 sm:grid-cols-2">
         {prev ? (
           <Link
