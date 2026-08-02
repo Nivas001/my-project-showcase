@@ -571,7 +571,7 @@ function AdminPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setDraft({ ...project })}
+                  onClick={() => setDraft(toProjectInput(project))}
                   className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"
                 >
                   Edit
