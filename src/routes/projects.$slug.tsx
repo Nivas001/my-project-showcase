@@ -5,6 +5,7 @@ import { projectQuery } from "@/lib/queries";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
 import { DesignBoard } from "@/components/DesignBoard";
+import { ScreenshotCarousel } from "@/components/ScreenshotCarousel";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ context, params }) => {
@@ -219,23 +220,8 @@ function ProjectDetail() {
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             // screenshots
           </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {project.screenshots.map((src, index) => (
-              <a
-                key={src}
-                href={src}
-                target="_blank"
-                rel="noreferrer"
-                className="overflow-hidden rounded-md border border-border bg-surface-raised"
-              >
-                <img
-                  src={src}
-                  alt={`${project.title} screenshot ${index + 1}`}
-                  loading="lazy"
-                  className="w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                />
-              </a>
-            ))}
+          <div className="mt-4">
+            <ScreenshotCarousel images={project.screenshots} title={project.title} />
           </div>
         </section>
       ) : null}
