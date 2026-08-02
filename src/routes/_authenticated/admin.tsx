@@ -20,6 +20,7 @@ import {
   SCREENSHOT_BUCKET,
   emptyProject,
   slugify,
+  toProjectInput,
   type Project,
   type ProjectInput,
 } from "@/lib/projects";
