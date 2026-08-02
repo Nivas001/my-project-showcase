@@ -206,3 +206,51 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-anim, .hero-anim * { animation: none !important; }
 }
+
+@keyframes smash-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-7px, 4px) rotate(-0.8deg); }
+  40% { transform: translate(6px, -5px) rotate(0.7deg); }
+  60% { transform: translate(-4px, 3px) rotate(-0.4deg); }
+  80% { transform: translate(3px, -2px) rotate(0.3deg); }
+}
+
+@keyframes smash-crack {
+  from { stroke-dasharray: 200; stroke-dashoffset: 200; opacity: 0; }
+  to { stroke-dasharray: 200; stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes smash-shard {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--sx), calc(var(--sy) + 420px)) rotate(var(--sr)); opacity: 0; }
+}
+
+@keyframes smash-spark {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--sx), var(--sy)) scale(0.2); opacity: 0; }
+}
+
+@keyframes smash-shock {
+  0% { transform: scale(0.2); opacity: 0.9; }
+  100% { transform: scale(9); opacity: 0; }
+}
+
+@keyframes smash-swing {
+  0% { transform: translate(-10%, -70%) rotate(-40deg); }
+  45% { transform: translate(-10%, -70%) rotate(35deg); }
+  100% { transform: translate(-10%, -70%) rotate(0deg); }
+}
+
+@keyframes smash-hold {
+  0%, 100% { transform: translate(-10%, -70%) rotate(-8deg); }
+  50% { transform: translate(-10%, -74%) rotate(4deg); }
+}
+
+@keyframes smash-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smash, .smash * { animation: none !important; transition: none !important; }
+}
