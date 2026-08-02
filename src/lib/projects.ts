@@ -1,4 +1,34 @@
+export type GithubVisibility = "none" | "public" | "private";
+
+export const GITHUB_VISIBILITIES: { value: GithubVisibility; label: string }[] = [
+  { value: "none", label: "No repository" },
+  { value: "public", label: "Public repository" },
+  { value: "private", label: "Private repository" },
+];
+
+export type ProjectDownload = {
+  platform: string;
+  label: string;
+  url: string;
+};
+
+export const DOWNLOAD_PLATFORMS = ["Android", "iOS", "Windows", "macOS", "Linux", "Other"] as const;
+
+export function normaliseDownloads(value: unknown): ProjectDownload[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
+    .map((item) => ({
+      platform: String(item["platform"] ?? "Other"),
+      label: String(item["label"] ?? ""),
+      url: String(item["url"] ?? ""),
+    }))
+    .filter((item) => item.url);
+}
+
 export type Project = {
+  github_visibility: GithubVisibility;
+  downloads: ProjectDownload[];
   id: string;
   slug: string;
   title: string;
