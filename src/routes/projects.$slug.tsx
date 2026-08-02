@@ -61,6 +61,9 @@ function ProjectDetail() {
   const { data } = useSuspenseQuery(projectQuery(slug));
   if (!data) return <ProjectMissing />;
   const { project, prev, next } = data;
+  const docUrl = project.doc_url || project.doc_signed_url || null;
+
+
 
   return (
     <article className="mx-auto max-w-4xl px-5 py-16">
