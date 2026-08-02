@@ -14,7 +14,9 @@ import {
   type Certificate,
   type CertificateInput,
 } from "@/lib/certificates";
-import { projectsQuery, certificatesQuery } from "@/lib/queries";
+import { projectsQuery, certificatesQuery, skillGroupsQuery } from "@/lib/queries";
+import { emptySkillGroup, type SkillGroup, type SkillGroupInput } from "@/lib/skills";
+import { saveSkillGroup, deleteSkillGroup } from "@/lib/skills.functions";
 import {
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
