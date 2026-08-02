@@ -80,8 +80,10 @@ function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-5">
-      <section className="scanlines relative py-20 sm:py-28">
+      <section className="scanlines relative grid items-center gap-10 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="order-2 lg:order-1">
         <TerminalIntro />
+
         <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
           Srinivas M
           <span className="text-accent">.</span>
