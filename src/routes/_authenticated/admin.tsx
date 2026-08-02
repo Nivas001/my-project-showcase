@@ -140,12 +140,11 @@ function AdminPage() {
     navigate({ to: "/auth", replace: true });
   }
 
-  async function handleUpload(files: FileList | null) {
-    if (!files || !draft) return;
-    setUploading(true);
+  async function uploadFiles(files: FileList, folder: string) {
     const uploaded: string[] = [];
     for (const file of Array.from(files)) {
-      const path = `${draft.slug || "draft"}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const base = draft?.slug || "draft";
+      const path = `${base}/${folder}${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
       const { error } = await supabase.storage.from(SCREENSHOT_BUCKET).upload(path, file, {
         upsert: true,
       });
@@ -155,6 +154,13 @@ function AdminPage() {
       }
       uploaded.push(path);
     }
+    return uploaded;
+  }
+
+  async function handleUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploading(true);
+    const uploaded = await uploadFiles(files, "");
     setUploading(false);
     if (uploaded.length > 0) {
       setDraft((current) =>
@@ -163,6 +169,31 @@ function AdminPage() {
       toast.success(`${uploaded.length} screenshot(s) uploaded`);
     }
   }
+
+  async function handleDesignUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingDesigns(true);
+    const uploaded = await uploadFiles(files, "designs/");
+    setUploadingDesigns(false);
+    if (uploaded.length > 0) {
+      setDraft((current) =>
+        current ? { ...current, designs: [...current.designs, ...uploaded] } : current,
+      );
+      toast.success(`${uploaded.length} design page(s) uploaded`);
+    }
+  }
+
+  async function handleDocUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingDoc(true);
+    const uploaded = await uploadFiles(files, "docs/");
+    setUploadingDoc(false);
+    if (uploaded[0]) {
+      setDraft((current) => (current ? { ...current, doc_path: uploaded[0]! } : current));
+      toast.success("Documentation uploaded");
+    }
+  }
+
 
   async function handleSave() {
     if (!draft) return;
