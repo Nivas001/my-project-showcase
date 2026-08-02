@@ -5,7 +5,7 @@ import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "luc
 import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
-import portraitAsset from "@/assets/portrait.png.asset.json";
+import { HeroPortrait } from "@/components/HeroPortrait";
 
 
 export const Route = createFileRoute("/")({
