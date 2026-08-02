@@ -82,7 +82,7 @@ function AboutPage() {
           // skills
         </h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          {skills.map((group) => (
+          {skillList.map((group) => (
             <div key={group.group} className="rounded-md border border-border bg-card p-4">
               <h3 className="font-mono text-xs text-accent">{group.group}</h3>
               <div className="mt-3 flex flex-wrap gap-1.5">
