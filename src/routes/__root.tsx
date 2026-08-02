@@ -79,15 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Srinivas — Python & Full Stack Developer" },
+      { title: "Srinivas M — Python, Full Stack & Flutter Developer" },
       {
         name: "description",
         content:
-          "Portfolio of Srinivas, Python and full stack developer. NLP research, React web apps and Flutter mobile projects.",
+          "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos.",
       },
       { name: "author", content: "Srinivas" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Srinivas M — Python, Full Stack & Flutter Developer" },
+      { name: "twitter:title", content: "Srinivas M — Python, Full Stack & Flutter Developer" },
+      { property: "og:description", content: "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos." },
+      { name: "twitter:description", content: "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

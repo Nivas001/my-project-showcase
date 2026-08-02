@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "MCA graduate building NLP research, React web apps and Flutter mobile products. Video resume, live projects and GitHub repos.",
+          "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos.",
       },
     ],
     scripts: [
