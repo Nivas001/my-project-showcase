@@ -40,12 +40,17 @@ export const getProjectBySlug = createServerFn({ method: "GET" })
 export const checkIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
+    // Read the caller's own role row (RLS-scoped) instead of calling the
+    // SECURITY DEFINER helper from the API surface.
+    const { data } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
     return { isAdmin: Boolean(data), userId: context.userId };
   });
+
 
 export const saveProject = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
