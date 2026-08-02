@@ -142,23 +142,8 @@ function Home() {
         </div>
         </div>
 
-        <div className="relative order-1 mx-auto w-full max-w-[280px] lg:order-2 lg:max-w-none">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 rounded-full blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 45%, var(--glow) 0%, transparent 65%)",
-              opacity: 0.28,
-            }}
-          />
-          <img
-            src={portraitAsset.url}
-            alt="Illustrated portrait of Srinivas, Python and full stack developer"
-            fetchPriority="high"
-            className="relative mx-auto h-[300px] w-full object-contain object-center sm:h-[380px] lg:h-[460px]"
-          />
-        </div>
+        <HeroPortrait />
+
       </section>
 
 
