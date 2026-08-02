@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Upload, X } from "lucide-react";
+import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
 import {
@@ -18,14 +18,27 @@ import { projectsQuery, certificatesQuery, skillGroupsQuery } from "@/lib/querie
 import { emptySkillGroup, type SkillGroup, type SkillGroupInput } from "@/lib/skills";
 import { saveSkillGroup, deleteSkillGroup } from "@/lib/skills.functions";
 import {
+  DOWNLOAD_PLATFORMS,
+  GITHUB_VISIBILITIES,
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
   emptyProject,
   slugify,
   toProjectInput,
+  type GithubVisibility,
   type Project,
   type ProjectInput,
 } from "@/lib/projects";
+
+/** Move an item within a list so the admin controls display order. */
+function move<T>(list: T[], index: number, direction: -1 | 1): T[] {
+  const target = index + direction;
+  if (target < 0 || target >= list.length) return list;
+  const next = [...list];
+  const [item] = next.splice(index, 1);
+  next.splice(target, 0, item as T);
+  return next;
+}
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -195,6 +208,7 @@ function AdminPage() {
       const path = `${base}/${folder}${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
       const { error } = await supabase.storage.from(SCREENSHOT_BUCKET).upload(path, file, {
         upsert: true,
+        contentType: file.type || "application/octet-stream",
       });
       if (error) {
         toast.error(`Upload failed: ${error.message}`);
@@ -393,13 +407,34 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, live_url: e.target.value })}
               />
             </Field>
-            <Field label="github url">
-              <input
+            <Field label="github repository">
+              <select
                 className={inputClass}
-                value={draft.github_url ?? ""}
-                onChange={(e) => setDraft({ ...draft, github_url: e.target.value })}
-              />
+                value={draft.github_visibility}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    github_visibility: e.target.value as GithubVisibility,
+                    github_url: e.target.value === "public" ? draft.github_url : null,
+                  })
+                }
+              >
+                {GITHUB_VISIBILITIES.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </Field>
+            {draft.github_visibility === "public" ? (
+              <Field label="github url">
+                <input
+                  className={inputClass}
+                  value={draft.github_url ?? ""}
+                  onChange={(e) => setDraft({ ...draft, github_url: e.target.value })}
+                />
+              </Field>
+            ) : null}
             <Field label="video url (Drive / YouTube / mp4 — optional)">
               <input
                 className={inputClass}
@@ -463,13 +498,35 @@ function AdminPage() {
 
           <div className="mt-5">
             <span className="font-mono text-xs text-muted-foreground">screenshots</span>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {draft.screenshots.map((path) => (
-                <span
+            <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+              order below is the order shown on the project page
+            </p>
+            <div className="mt-2 space-y-1.5">
+              {draft.screenshots.map((path, index) => (
+                <div
                   key={path}
                   className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
                 >
-                  {path.split("/").pop()}
+                  <span className="text-muted-foreground">{index + 1}.</span>
+                  <span className="flex-1 truncate">{path.split("/").pop()}</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft({ ...draft, screenshots: move(draft.screenshots, index, -1) })
+                    }
+                    aria-label="Move screenshot up"
+                  >
+                    <ArrowUp className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft({ ...draft, screenshots: move(draft.screenshots, index, 1) })
+                    }
+                    aria-label="Move screenshot down"
+                  >
+                    <ArrowDown className="h-3 w-3" />
+                  </button>
                   <button
                     type="button"
                     onClick={() =>
@@ -482,7 +539,7 @@ function AdminPage() {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </span>
+                </div>
               ))}
             </div>
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
@@ -502,13 +559,31 @@ function AdminPage() {
             <span className="font-mono text-xs text-muted-foreground">
               design pages (shown as a zoomable board)
             </span>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {draft.designs.map((path) => (
-                <span
+            <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+              order below is the left-to-right order on the design board
+            </p>
+            <div className="mt-2 space-y-1.5">
+              {draft.designs.map((path, index) => (
+                <div
                   key={path}
                   className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
                 >
-                  {path.split("/").pop()}
+                  <span className="text-muted-foreground">{index + 1}.</span>
+                  <span className="flex-1 truncate">{path.split("/").pop()}</span>
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, designs: move(draft.designs, index, -1) })}
+                    aria-label="Move design page up"
+                  >
+                    <ArrowUp className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, designs: move(draft.designs, index, 1) })}
+                    aria-label="Move design page down"
+                  >
+                    <ArrowDown className="h-3 w-3" />
+                  </button>
                   <button
                     type="button"
                     onClick={() =>
@@ -518,7 +593,7 @@ function AdminPage() {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </span>
+                </div>
               ))}
             </div>
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
@@ -565,6 +640,78 @@ function AdminPage() {
           </div>
 
 
+
+          <div className="mt-5">
+            <span className="font-mono text-xs text-muted-foreground">
+              app download links (optional — shown on the project page)
+            </span>
+            <div className="mt-2 space-y-2">
+              {draft.downloads.map((item, index) => (
+                <div key={index} className="grid gap-2 sm:grid-cols-[130px_1fr_1fr_auto]">
+                  <select
+                    className="rounded-sm border border-border bg-card px-2 py-2 text-sm outline-none focus:border-primary"
+                    value={item.platform}
+                    onChange={(e) => {
+                      const next = [...draft.downloads];
+                      next[index] = { ...item, platform: e.target.value };
+                      setDraft({ ...draft, downloads: next });
+                    }}
+                  >
+                    {DOWNLOAD_PLATFORMS.map((platform) => (
+                      <option key={platform} value={platform}>
+                        {platform}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className="rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                    placeholder="button label (e.g. Download APK)"
+                    value={item.label}
+                    onChange={(e) => {
+                      const next = [...draft.downloads];
+                      next[index] = { ...item, label: e.target.value };
+                      setDraft({ ...draft, downloads: next });
+                    }}
+                  />
+                  <input
+                    className="rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                    placeholder="https://…"
+                    value={item.url}
+                    onChange={(e) => {
+                      const next = [...draft.downloads];
+                      next[index] = { ...item, url: e.target.value };
+                      setDraft({ ...draft, downloads: next });
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="rounded-sm border border-border px-3 text-sm hover:border-destructive"
+                    onClick={() =>
+                      setDraft({
+                        ...draft,
+                        downloads: draft.downloads.filter((_, i) => i !== index),
+                      })
+                    }
+                    aria-label="Remove download link"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setDraft({
+                  ...draft,
+                  downloads: [...draft.downloads, { platform: "Android", label: "", url: "" }],
+                })
+              }
+              className="mt-3 inline-flex items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary"
+            >
+              <Plus className="h-4 w-4" /> Add download link
+            </button>
+          </div>
 
           <label className="mt-5 flex items-center gap-2 text-sm">
             <input
