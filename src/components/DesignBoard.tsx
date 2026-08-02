@@ -98,9 +98,10 @@ export function DesignBoard({ images, title }: { images: string[]; title: string
         onPointerLeave={() => setDragging(false)}
         style={{
           backgroundImage:
-            "linear-gradient(to right, hsl(var(--border) / 0.35) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.35) 1px, transparent 1px)",
+            "linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px)",
           backgroundSize: "28px 28px",
         }}
+
         className={`relative flex-1 touch-none overflow-hidden ${
           dragging ? "cursor-grabbing" : "cursor-grab"
         } ${fullscreen ? "rounded-md border border-border" : "h-[62vh] max-h-[720px] min-h-[360px]"}`}
