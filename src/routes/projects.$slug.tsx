@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, ExternalLink, FileText, Github } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, ExternalLink, FileText, Github, Lock } from "lucide-react";
 import { projectQuery } from "@/lib/queries";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
