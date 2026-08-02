@@ -5,7 +5,6 @@ import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "luc
 import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
-import { HeroPortrait } from "@/components/HeroPortrait";
 
 
 export const Route = createFileRoute("/")({
@@ -141,8 +140,6 @@ function Home() {
           </a>
         </div>
         </div>
-
-        <HeroPortrait />
 
       </section>
 
