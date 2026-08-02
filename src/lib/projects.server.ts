@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { SCREENSHOT_BUCKET, type Project } from "@/lib/projects";
+import { SCREENSHOT_BUCKET, type Project, type SignedProject } from "@/lib/projects";
 
 function isOpaqueKey(value: string) {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
