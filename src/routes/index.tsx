@@ -5,6 +5,8 @@ import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "luc
 import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
+import portraitAsset from "@/assets/portrait.png.asset.json";
+
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(projectsQuery),
@@ -80,8 +82,10 @@ function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-5">
-      <section className="scanlines relative py-20 sm:py-28">
+      <section className="scanlines relative grid items-center gap-10 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="order-2 lg:order-1">
         <TerminalIntro />
+
         <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
           Srinivas M
           <span className="text-accent">.</span>
@@ -136,7 +140,41 @@ function Home() {
             <Linkedin className="h-3.5 w-3.5" /> LinkedIn
           </a>
         </div>
+        </div>
+
+        <div className="relative order-1 mx-auto w-full max-w-[280px] lg:order-2 lg:max-w-none">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 rounded-full blur-3xl"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 45%, var(--glow) 0%, transparent 65%)",
+              opacity: 0.28,
+            }}
+          />
+          <div className="relative overflow-hidden rounded-md border border-border bg-surface-raised/40">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)",
+                backgroundSize: "28px 28px",
+              }}
+            />
+            <img
+              src={portraitAsset.url}
+              alt="Srinivas M, Python and full stack developer, waving"
+              fetchPriority="high"
+              className="relative mx-auto h-[300px] w-full object-contain object-bottom sm:h-[380px] lg:h-[440px] [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
+            />
+            <span className="absolute bottom-2 left-3 font-mono text-[10px] tracking-widest text-muted-foreground">
+              ./srinivas.png
+            </span>
+          </div>
+        </div>
       </section>
+
 
       <section className="grid gap-4 border-y border-border/70 py-8 sm:grid-cols-3">
         {[
