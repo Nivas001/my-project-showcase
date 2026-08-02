@@ -176,7 +176,7 @@ export function SmashFrame() {
         {/* cover */}
         {!shattered && (
           <div
-            className="absolute inset-0 grid-lines"
+            className="scanlines absolute inset-0"
             style={{
               background:
                 "linear-gradient(150deg, oklch(0.16 0.04 285) 0%, oklch(0.11 0.03 285) 100%)",
