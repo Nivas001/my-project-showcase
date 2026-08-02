@@ -1,7 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, FileText, Github } from "lucide-react";
 import { projectQuery } from "@/lib/queries";
+import { VideoEmbed } from "@/components/VideoEmbed";
+import { DocViewer } from "@/components/DocViewer";
+import { DesignBoard } from "@/components/DesignBoard";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ context, params }) => {
@@ -58,6 +61,9 @@ function ProjectDetail() {
   const { data } = useSuspenseQuery(projectQuery(slug));
   if (!data) return <ProjectMissing />;
   const { project, prev, next } = data;
+  const docUrl = project.doc_url || project.doc_signed_url || null;
+
+
 
   return (
     <article className="mx-auto max-w-4xl px-5 py-16">
@@ -89,7 +95,7 @@ function ProjectDetail() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              <ExternalLink className="h-4 w-4" /> Visit live site
+              <ExternalLink className="h-4 w-4" /> Go to the site
             </a>
           ) : null}
           {project.github_url ? (
@@ -102,8 +108,30 @@ function ProjectDetail() {
               <Github className="h-4 w-4" /> Source code
             </a>
           ) : null}
+          {docUrl ? (
+            <a
+              href={docUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
+            >
+              <FileText className="h-4 w-4" /> Documentation
+            </a>
+          ) : null}
         </div>
       </header>
+
+      {project.video_url ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // demo
+          </h2>
+          <div className="mt-4">
+            <VideoEmbed url={project.video_url} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
 
       <section className="mt-12 rounded-md border border-border bg-card p-5 font-mono text-sm">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">// stack</p>
@@ -173,6 +201,33 @@ function ProjectDetail() {
           </div>
         </section>
       ) : null}
+
+      {project.designs.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // design pages
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Every page of the design on one canvas — zoom and pan to explore.
+          </p>
+          <div className="mt-4">
+            <DesignBoard images={project.designs} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
+      {docUrl ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // documentation
+          </h2>
+          <div className="mt-4">
+            <DocViewer url={docUrl} title={project.title} />
+          </div>
+        </section>
+      ) : null}
+
+
 
       <nav className="mt-16 grid gap-3 border-t border-border/70 pt-6 sm:grid-cols-2">
         {prev ? (

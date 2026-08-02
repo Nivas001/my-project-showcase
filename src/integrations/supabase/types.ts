@@ -55,6 +55,9 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          designs: string[]
+          doc_path: string | null
+          doc_url: string | null
           featured: boolean
           github_url: string | null
           highlights: string[]
@@ -69,11 +72,15 @@ export type Database = {
           tech: string[]
           title: string
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           category?: string
           created_at?: string
           description?: string
+          designs?: string[]
+          doc_path?: string | null
+          doc_url?: string | null
           featured?: boolean
           github_url?: string | null
           highlights?: string[]
@@ -88,11 +95,15 @@ export type Database = {
           tech?: string[]
           title: string
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           category?: string
           created_at?: string
           description?: string
+          designs?: string[]
+          doc_path?: string | null
+          doc_url?: string | null
           featured?: boolean
           github_url?: string | null
           highlights?: string[]
@@ -107,6 +118,7 @@ export type Database = {
           tech?: string[]
           title?: string
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }

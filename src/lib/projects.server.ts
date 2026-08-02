@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { SCREENSHOT_BUCKET, type Project } from "@/lib/projects";
+import { SCREENSHOT_BUCKET, type Project, type SignedProject } from "@/lib/projects";
 
 function isOpaqueKey(value: string) {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -25,31 +25,39 @@ export function createPublicServerClient() {
 }
 
 /**
- * Screenshots are stored as object paths in a private bucket. Turn them into
- * temporary readable URLs so public pages can display them.
+ * Screenshots, design pages and documentation files are stored as object paths
+ * in a private bucket. Turn them into temporary readable URLs so public pages
+ * can display them, while keeping the raw paths for the admin editor.
  */
-export async function signScreenshots<T extends Pick<Project, "screenshots">>(
-  rows: T[],
-): Promise<T[]> {
-  const paths = [...new Set(rows.flatMap((row) => row.screenshots ?? []))].filter(
-    (path) => path && !path.startsWith("http"),
-  );
-  if (paths.length === 0) return rows;
-
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await supabaseAdmin.storage
-    .from(SCREENSHOT_BUCKET)
-    .createSignedUrls(paths, 60 * 60 * 6);
+export async function signScreenshots(rows: Project[]): Promise<SignedProject[]> {
+  const paths = [
+    ...new Set([
+      ...rows.flatMap((row) => row.screenshots ?? []),
+      ...rows.flatMap((row) => row.designs ?? []),
+      ...rows.map((row) => row.doc_path ?? ""),
+    ]),
+  ].filter((path) => path && !path.startsWith("http"));
 
   const map = new Map<string, string>();
-  for (const item of data ?? []) {
-    if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
+  if (paths.length > 0) {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin.storage
+      .from(SCREENSHOT_BUCKET)
+      .createSignedUrls(paths, 60 * 60 * 6);
+    for (const item of data ?? []) {
+      if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
+    }
   }
+
+  const sign = (path: string) => (path.startsWith("http") ? path : (map.get(path) ?? path));
 
   return rows.map((row) => ({
     ...row,
-    screenshots: (row.screenshots ?? []).map((path) =>
-      path.startsWith("http") ? path : (map.get(path) ?? path),
-    ),
+    screenshot_paths: row.screenshots ?? [],
+    design_paths: row.designs ?? [],
+    screenshots: (row.screenshots ?? []).map(sign),
+    designs: (row.designs ?? []).map(sign),
+    doc_signed_url: row.doc_path ? sign(row.doc_path) : null,
   }));
 }
+

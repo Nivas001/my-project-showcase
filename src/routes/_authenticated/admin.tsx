@@ -20,6 +20,7 @@ import {
   SCREENSHOT_BUCKET,
   emptyProject,
   slugify,
+  toProjectInput,
   type Project,
   type ProjectInput,
 } from "@/lib/projects";
@@ -68,6 +69,8 @@ function AdminPage() {
   const [draft, setDraft] = useState<ProjectInput | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingDesigns, setUploadingDesigns] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
   const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
   const [certSaving, setCertSaving] = useState(false);
   const [certUploading, setCertUploading] = useState(false);
@@ -140,12 +143,11 @@ function AdminPage() {
     navigate({ to: "/auth", replace: true });
   }
 
-  async function handleUpload(files: FileList | null) {
-    if (!files || !draft) return;
-    setUploading(true);
+  async function uploadFiles(files: FileList, folder: string) {
     const uploaded: string[] = [];
     for (const file of Array.from(files)) {
-      const path = `${draft.slug || "draft"}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const base = draft?.slug || "draft";
+      const path = `${base}/${folder}${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
       const { error } = await supabase.storage.from(SCREENSHOT_BUCKET).upload(path, file, {
         upsert: true,
       });
@@ -155,6 +157,13 @@ function AdminPage() {
       }
       uploaded.push(path);
     }
+    return uploaded;
+  }
+
+  async function handleUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploading(true);
+    const uploaded = await uploadFiles(files, "");
     setUploading(false);
     if (uploaded.length > 0) {
       setDraft((current) =>
@@ -163,6 +172,31 @@ function AdminPage() {
       toast.success(`${uploaded.length} screenshot(s) uploaded`);
     }
   }
+
+  async function handleDesignUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingDesigns(true);
+    const uploaded = await uploadFiles(files, "designs/");
+    setUploadingDesigns(false);
+    if (uploaded.length > 0) {
+      setDraft((current) =>
+        current ? { ...current, designs: [...current.designs, ...uploaded] } : current,
+      );
+      toast.success(`${uploaded.length} design page(s) uploaded`);
+    }
+  }
+
+  async function handleDocUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingDoc(true);
+    const uploaded = await uploadFiles(files, "docs/");
+    setUploadingDoc(false);
+    if (uploaded[0]) {
+      setDraft((current) => (current ? { ...current, doc_path: uploaded[0]! } : current));
+      toast.success("Documentation uploaded");
+    }
+  }
+
 
   async function handleSave() {
     if (!draft) return;
@@ -321,7 +355,22 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, github_url: e.target.value })}
               />
             </Field>
+            <Field label="video url (Drive / YouTube / mp4 — optional)">
+              <input
+                className={inputClass}
+                value={draft.video_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, video_url: e.target.value })}
+              />
+            </Field>
+            <Field label="documentation link (Drive PDF — optional)">
+              <input
+                className={inputClass}
+                value={draft.doc_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, doc_url: e.target.value })}
+              />
+            </Field>
           </div>
+
 
           <div className="mt-4 space-y-4">
             <Field label="summary (card text)">
@@ -404,6 +453,74 @@ function AdminPage() {
             </label>
           </div>
 
+          <div className="mt-5">
+            <span className="font-mono text-xs text-muted-foreground">
+              design pages (shown as a zoomable board)
+            </span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {draft.designs.map((path) => (
+                <span
+                  key={path}
+                  className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
+                >
+                  {path.split("/").pop()}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft({ ...draft, designs: draft.designs.filter((p) => p !== path) })
+                    }
+                    aria-label="Remove design page"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
+              <Upload className="h-4 w-4" />
+              {uploadingDesigns ? "Uploading…" : "Upload design pages"}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleDesignUpload(e.target.files)}
+              />
+            </label>
+          </div>
+
+          <div className="mt-5">
+            <span className="font-mono text-xs text-muted-foreground">
+              documentation file (optional — or use the link field above)
+            </span>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {draft.doc_path ? (
+                <span className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]">
+                  {draft.doc_path.split("/").pop()}
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, doc_path: null })}
+                    aria-label="Remove documentation file"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ) : null}
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
+                <Upload className="h-4 w-4" />
+                {uploadingDoc ? "Uploading…" : "Upload PDF"}
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={(e) => handleDocUpload(e.target.files)}
+                />
+              </label>
+            </div>
+          </div>
+
+
+
           <label className="mt-5 flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -455,7 +572,7 @@ function AdminPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setDraft({ ...project })}
+                  onClick={() => setDraft(toProjectInput(project))}
                   className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"
                 >
                   Edit

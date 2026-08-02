@@ -52,7 +52,14 @@ export const saveProject = createServerFn({ method: "POST" })
   .inputValidator((data: { project: Project & { id?: string } }) => data)
   .handler(async ({ data, context }) => {
     const { id, ...fields } = data.project;
-    const payload = { ...fields, live_url: fields.live_url || null, github_url: fields.github_url || null };
+    const payload = {
+      ...fields,
+      live_url: fields.live_url || null,
+      github_url: fields.github_url || null,
+      video_url: fields.video_url || null,
+      doc_url: fields.doc_url || null,
+      doc_path: fields.doc_path || null,
+    };
 
     if (id) {
       const { error } = await context.supabase.from("projects").update(payload).eq("id", id);

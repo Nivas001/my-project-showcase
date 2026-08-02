@@ -1,68 +1,51 @@
-## On the palette
+## Goal
 
-Wisteria bloom works, with one adjustment. Straight lavender-on-white reads soft/artistic — great for a creative portfolio, slightly under-powered for a Python/ML engineer. So I'll keep your exact hexes but anchor them on a deep violet-black canvas instead of white. That keeps the terminal/dev energy you picked earlier while making the violet the signature.
+Extend each project with optional, admin-managed extras that only appear on the project page when filled in: a website link, a demo video, a documentation PDF, and a zoomable "design board" of page mockups.
 
-```text
-Canvas    #0C0814  near-black with a violet cast
-Surface   #16101F  cards, panels
-Accent    #9400D3  primary violet — buttons, links, active states
-Glow      #ED80E9  hover/highlight, "Live" badges
-Text      #D3D3FF  body text on dark
-Muted     #D8BFD8  captions, metadata
-```
+Editing existing projects already works in `/admin` (Edit button on each row) — the new fields simply join that same form.
 
-Type: JetBrains Mono for code/labels/tags, a clean geometric sans for headings and body. Sharp-ish corners, thin violet hairline borders, soft `#9400D3` glow on hover.
+## 0. Website link (optional)
 
-## Site structure
+- The project already has a live URL field in admin; it stays optional and keeps driving the "Live" badge on cards.
+- On the project page the button gets clearer wording: **"Go to the site"** with an external-link icon, rendered only when a URL is given. No link = no button, nothing else changes.
 
-**Home (`/`)** — hero with your name, `Python Developer | Full Stack & Flutter Developer`, location and quick links (GitHub, LinkedIn, email, phone). Embedded video resume in a violet-framed player card. Stat strip: MCA 8.79 GPA, projects count, certifications.
+## 1. Project video (optional)
 
-**Projects index (`/projects`)** — the common selection place. A grid of project cards, each showing thumbnail, title, one-line summary, tech tags, period, and a "Live" badge where applicable. Filter chips by tech (Python, React, Flutter, NLP...) and by type (Live / Research / Mobile). Every card links to its own page.
+- New `video_url` field. Paste a Google Drive, YouTube or direct MP4 link in admin.
+- Project detail page renders a `// demo` section with an embedded player **only when the field is set**; nothing renders otherwise.
+- Link normalising: a Drive `/view` link becomes `/preview`, a YouTube watch/short link becomes an `embed` URL, a direct `.mp4` uses a native `<video>` player.
+- Screenshots stay unlimited — the upload control keeps appending.
 
-**Project detail (`/projects/$slug`)** — a full dedicated page per project, generated from the database so admin-added ones get their own page automatically:
-- Title, role, period, status
-- Full description and highlights/bullets
-- Tech stack rendered as syntax-highlighted import lines
-- Screenshot gallery with lightbox
-- "Visit live site" and "View GitHub repo" buttons
-- Prev/next project navigation at the bottom
-- Its own SEO title, description, and OG image from the first screenshot
+## 2. Project documentation (PDF)
 
-Seeded pages: Tamil Text Summarization using NER, Clinical Assistance for Dental Care, CENTAC Android App, plus two entries for your live-hosted sites that you fill in from the admin panel.
+- Answer to your question: **yes**, a Google Drive PDF can be read inside the page — Drive's `/preview` URL works in an embedded frame as long as the file is shared as "Anyone with the link".
+- Two ways to supply it, both optional:
+  - **Drive/external link** — paste the share URL; renders as an inline reader plus an "Open in new tab" button.
+  - **Direct upload** — upload the PDF into the existing private storage bucket; served through a temporary signed URL, same mechanism as screenshots.
+- A `// documentation` section appears only when one of these is set.
 
-**About (`/about`)** — professional summary, skills grouped as in your resume, education timeline, certifications, key strengths.
+## 3. Design board (Figma-style pages view)
 
-**Contact (`/contact`)** — email, phone, location, GitHub, LinkedIn, and a resume PDF download.
+- New optional list of "design" images per project (uploaded in admin, same bucket).
+- When present, the project page shows a single bordered canvas holding all page designs side by side on a grid backdrop, with:
+  - scroll-wheel / trackpad-pinch zoom anchored at the cursor,
+  - drag to pan,
+  - zoom in / out / reset controls and a zoom percentage readout,
+  - a full-screen toggle.
+- Nothing renders if no design images were uploaded for that project.
 
-## Admin panel
+## Admin changes
 
-- Email + password sign-in at `/auth`; only your account exists, public signup closed
-- `/admin` — protected list of all projects with add / edit / delete
-- Form covers every field a detail page needs: title, slug, summary, description, highlights, tech tags, period, role, live URL, GitHub URL, screenshots, featured flag, sort order
-- Screenshot upload to cloud storage; public read, admin-only write
-- Saving a project immediately publishes its detail page and card
-
-## Innovative touches
-
-- **Terminal boot intro** on the hero: types `> whoami` then resolves to your title, skippable, once per session
-- **`Ctrl+K` command palette** to jump to any page or project — IDE-like, fits the dev framing
-- **Live uptime badges** on the two hosted projects
-- Subtle violet grain/scanline overlay and glow-on-hover cards
+Inside the existing project editor, add:
+- `video url` text field
+- `documentation` — URL field + "Upload PDF" button, with remove control
+- `design pages` — multi-file upload with thumbnail list and per-item remove (mirrors the screenshots control)
 
 ## Technical notes
 
-- Lovable Cloud for database, auth, and screenshot storage
-- `projects` table (public read, admin write) + `user_roles` with a `has_role()` check — role never stored on the profile
-- Row-level security throughout; admin writes go through authenticated server functions
-- Resume PDF hosted as a CDN asset
-- Per-route SEO metadata and JSON-LD `Person` schema on home
-
-## What I need from you after the first build
-
-1. Video resume link (YouTube or Drive)
-2. The two live project URLs + their GitHub repos
-3. GitHub and LinkedIn profile URLs
-4. Project screenshots (chat upload or admin panel)
-5. The email you want for admin login
-
-I'll build with placeholders so nothing blocks, then swap in real values.
+- Database migration on `projects`: add `video_url text`, `doc_url text`, `doc_path text`, `designs text[] default '{}'`. Existing rows keep working (all nullable/defaulted).
+- Update `PROJECT_COLUMNS`, the `Project` type and `emptyProject` in `src/lib/projects.ts`.
+- Extend signing in `src/lib/projects.server.ts` to cover `designs[]` and `doc_path` alongside `screenshots`.
+- New components: `src/components/VideoEmbed.tsx`, `src/components/DocViewer.tsx`, `src/components/DesignBoard.tsx`.
+- Design board zoom uses a native non-passive `wheel` listener with exponential, delta-scaled zoom and cursor-anchored pan offset (avoids runaway zoom and page-scroll capture).
+- `src/routes/projects.$slug.tsx` gains the three conditional sections plus the reworded site button; `src/routes/_authenticated/admin.tsx` gains the matching form controls and upload handlers.
