@@ -25,6 +25,11 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
   const { data: certificates } = useQuery(certificatesQuery);
+  const { data: skillGroups } = useQuery(skillGroupsQuery);
+  const skillList =
+    skillGroups && skillGroups.length > 0
+      ? skillGroups.map((group) => ({ group: group.name, items: group.items }))
+      : skills;
   const embed = toEmbedUrl(site.videoResumeUrl);
   const hasStored = (certificates ?? []).length > 0;
 
