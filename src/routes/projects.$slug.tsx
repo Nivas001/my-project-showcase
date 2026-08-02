@@ -98,7 +98,7 @@ function ProjectDetail() {
               <ExternalLink className="h-4 w-4" /> Go to the site
             </a>
           ) : null}
-          {project.github_url ? (
+          {project.github_visibility === "public" && project.github_url ? (
             <a
               href={project.github_url}
               target="_blank"
@@ -119,6 +119,44 @@ function ProjectDetail() {
             </a>
           ) : null}
         </div>
+
+        <div className="mt-4">
+          {project.github_visibility === "private" ? (
+            <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface-raised px-3 py-1.5 font-mono text-[11px] text-muted-foreground">
+              <Lock className="h-3 w-3 text-accent" /> repository is private — source kept secured
+            </span>
+          ) : project.github_visibility === "none" ? (
+            <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface-raised px-3 py-1.5 font-mono text-[11px] text-muted-foreground">
+              <Github className="h-3 w-3" /> no public repository for this project
+            </span>
+          ) : null}
+        </div>
+
+        {project.downloads.length > 0 ? (
+          <div className="mt-6">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              // downloads
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {project.downloads.map((item) => (
+                <a
+                  key={item.url}
+                  href={item.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface-raised px-4 py-2 text-sm transition-colors hover:border-primary"
+                >
+                  <Download className="h-4 w-4 text-accent" />
+                  <span>{item.label || `${item.platform} app`}</span>
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {item.platform}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
       </header>
 
       {project.video_url ? (
