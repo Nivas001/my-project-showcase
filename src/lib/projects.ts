@@ -1,4 +1,34 @@
+export type GithubVisibility = "none" | "public" | "private";
+
+export const GITHUB_VISIBILITIES: { value: GithubVisibility; label: string }[] = [
+  { value: "none", label: "No repository" },
+  { value: "public", label: "Public repository" },
+  { value: "private", label: "Private repository" },
+];
+
+export type ProjectDownload = {
+  platform: string;
+  label: string;
+  url: string;
+};
+
+export const DOWNLOAD_PLATFORMS = ["Android", "iOS", "Windows", "macOS", "Linux", "Other"] as const;
+
+export function normaliseDownloads(value: unknown): ProjectDownload[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
+    .map((item) => ({
+      platform: String(item["platform"] ?? "Other"),
+      label: String(item["label"] ?? ""),
+      url: String(item["url"] ?? ""),
+    }))
+    .filter((item) => item.url);
+}
+
 export type Project = {
+  github_visibility: GithubVisibility;
+  downloads: ProjectDownload[];
   id: string;
   slug: string;
   title: string;
@@ -34,7 +64,7 @@ export const PROJECT_CATEGORIES = ["Live", "Web", "Mobile", "Research", "Other"]
 export const SCREENSHOT_BUCKET = "project-screenshots";
 
 export const PROJECT_COLUMNS =
-  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, video_url, doc_url, doc_path, screenshots, designs, featured, sort_order";
+  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, screenshots, designs, featured, sort_order";
 
 export function slugify(value: string): string {
   return value
@@ -74,6 +104,8 @@ export const emptyProject: ProjectInput = {
   role: "",
   live_url: null,
   github_url: null,
+  github_visibility: "none",
+  downloads: [],
   video_url: null,
   doc_url: null,
   doc_path: null,

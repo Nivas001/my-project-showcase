@@ -58,7 +58,9 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="flex items-center justify-between border-t border-border/60 pt-3 font-mono text-[11px] text-muted-foreground">
           <span>{project.period}</span>
           <span className="flex items-center gap-2">
-            {project.github_url ? <Github className="h-3.5 w-3.5" /> : null}
+            {project.github_visibility === "public" && project.github_url ? (
+              <Github className="h-3.5 w-3.5" />
+            ) : null}
             {project.live_url ? <Globe className="h-3.5 w-3.5" /> : null}
           </span>
         </div>
