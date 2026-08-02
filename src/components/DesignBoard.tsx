@@ -96,9 +96,15 @@ export function DesignBoard({ images, title }: { images: string[]; title: string
         }}
         onPointerUp={() => setDragging(false)}
         onPointerLeave={() => setDragging(false)}
-        className={`design-grid relative flex-1 touch-none overflow-hidden ${
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, hsl(var(--border) / 0.35) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.35) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+        className={`relative flex-1 touch-none overflow-hidden ${
           dragging ? "cursor-grabbing" : "cursor-grab"
         } ${fullscreen ? "rounded-md border border-border" : "h-[62vh] max-h-[720px] min-h-[360px]"}`}
+
       >
         <div
           style={{
