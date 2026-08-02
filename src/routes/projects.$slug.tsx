@@ -5,6 +5,7 @@ import { projectQuery } from "@/lib/queries";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
 import { DesignBoard } from "@/components/DesignBoard";
+import { ScreenshotCarousel } from "@/components/ScreenshotCarousel";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ context, params }) => {
