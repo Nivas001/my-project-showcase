@@ -166,7 +166,7 @@ function Home() {
               src={portraitAsset.url}
               alt="Srinivas M, Python and full stack developer, waving"
               fetchPriority="high"
-              className="relative w-full object-contain [mask-image:linear-gradient(to_bottom,black_78%,transparent_100%)]"
+              className="relative mx-auto h-[300px] w-full object-contain object-bottom sm:h-[380px] lg:h-[440px] [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
             />
             <span className="absolute bottom-2 left-3 font-mono text-[10px] tracking-widest text-muted-foreground">
               ./srinivas.png
