@@ -164,7 +164,7 @@ function Home() {
             />
             <img
               src={portraitAsset.url}
-              alt="Srinivas M, Python and full stack developer, waving"
+              alt="Duotone indigo illustrated portrait of Srinivas, Python and full stack developer"
               fetchPriority="high"
               className="relative mx-auto h-[300px] w-full object-contain object-bottom sm:h-[380px] lg:h-[440px] [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
             />
