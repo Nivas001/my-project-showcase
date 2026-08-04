@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, FileText, Presentation } from "lucide-react";
+import { ExternalLink, Eye, FileText, Presentation } from "lucide-react";
 
 type Resource = {
   kind: "pdf" | "slides";
@@ -60,6 +60,7 @@ export function DocViewer({
   kind?: "pdf" | "slides";
 }) {
   const [provider, setProvider] = useState<"office" | "google">("office");
+  const [open, setOpen] = useState(false);
 
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
@@ -91,7 +92,7 @@ export function DocViewer({
           <Icon className="h-3.5 w-3.5 text-accent" /> {title} — {label}
         </span>
         <div className="flex flex-wrap items-center gap-2">
-          {isSlides && !isHostedEmbed ? (
+          {open && isSlides && !isHostedEmbed ? (
             <div className="inline-flex overflow-hidden rounded-sm border border-border font-mono text-[11px]">
               {(["office", "google"] as const).map((option) => (
                 <button
@@ -109,6 +110,15 @@ export function DocViewer({
               ))}
             </div>
           ) : null}
+          {open ? (
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 font-mono text-[11px] transition-colors hover:border-primary"
+            >
+              hide
+            </button>
+          ) : null}
           <a
             href={url}
             target="_blank"
@@ -119,9 +129,35 @@ export function DocViewer({
           </a>
         </div>
       </div>
-      {isSlides ? (
+
+      {!open ? (
+        <div className="relative flex min-h-[220px] flex-col items-center justify-center gap-4 overflow-hidden px-6 py-12 text-center sm:min-h-[280px]">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.14]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-md border border-border bg-background">
+            <Icon className="h-5 w-5 text-accent" />
+          </div>
+          <p className="relative max-w-sm font-mono text-[11px] text-muted-foreground">
+            // {label} is hidden by default to keep the page light
+          </p>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="relative inline-flex items-center gap-2 rounded-sm border border-primary/60 bg-primary/10 px-4 py-2 font-mono text-xs text-foreground transition-all hover:bg-primary hover:text-primary-foreground"
+          >
+            <Eye className="h-3.5 w-3.5" /> show {label}
+          </button>
+        </div>
+      ) : isSlides ? (
         <>
-          <div className="aspect-video w-full">
+          <div className="aspect-video w-full animate-in fade-in duration-300">
             <iframe
               key={src}
               src={src}
@@ -142,7 +178,7 @@ export function DocViewer({
         <iframe
           src={src}
           title={`${title} documentation`}
-          className="h-[70vh] max-h-[820px] w-full border-0 bg-background"
+          className="h-[70vh] max-h-[820px] w-full animate-in fade-in border-0 bg-background duration-300"
           allow="autoplay"
         />
       )}
