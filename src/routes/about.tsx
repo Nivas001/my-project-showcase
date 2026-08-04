@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
-import { certificatesQuery, skillGroupsQuery } from "@/lib/queries";
+import { certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
+import { experiencePeriod } from "@/lib/experiences";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
   const { data: certificates } = useQuery(certificatesQuery);
+  const { data: experiences } = useQuery(experiencesQuery);
   const { data: skillGroups } = useQuery(skillGroupsQuery);
   const skillList =
     skillGroups && skillGroups.length > 0
