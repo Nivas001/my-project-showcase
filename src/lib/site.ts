@@ -9,9 +9,8 @@ export const site = {
   phone: "+91 7448724920",
   github: "https://github.com/Nivas001",
   linkedin: "https://www.linkedin.com/in/srinivas-m-734631259",
-  // Google Drive share link to the video resume
   videoResumeUrl:
-    "https://drive.google.com/file/d/1Je7F4RgD1ZJHG-qXUjjUAcm8ToFKYOLj/view?usp=sharing",
+    "https://drive.google.com/file/d/1U5qK7ywjGuswO9rOsc5f5an4AIRFWibx/view?usp=sharing",
   resumeUrl: resumeAsset.url,
   summary:
     "Motivated MCA graduate (GPA 8.79/10) with hands-on project experience in Python, NLP and full-stack development. I build real-world applications with React.js, Firebase and Flutter, and completed a research-level postgraduate project on Tamil text summarization using NER and deep learning.",
