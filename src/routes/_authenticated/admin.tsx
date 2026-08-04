@@ -505,11 +505,18 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, video_url: e.target.value })}
               />
             </Field>
-            <Field label="documentation / slides link (Drive PDF, Google Slides — optional)">
+            <Field label="documentation link (Drive PDF, Google Doc — optional)">
               <input
                 className={inputClass}
                 value={draft.doc_url ?? ""}
                 onChange={(e) => setDraft({ ...draft, doc_url: e.target.value })}
+              />
+            </Field>
+            <Field label="slides link (Google Slides, PPT url — optional)">
+              <input
+                className={inputClass}
+                value={draft.slides_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, slides_url: e.target.value })}
               />
             </Field>
           </div>
