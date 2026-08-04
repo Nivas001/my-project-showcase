@@ -43,13 +43,31 @@ export function toResource(url: string): Resource {
   return { kind: "pdf", src: trimmed, needsAbsolute: false };
 }
 
-export function DocViewer({ url, title }: { url: string; title: string }) {
-  const isSlides = SLIDE_EXT.test(url) || url.includes("/presentation/d/");
+export function DocViewer({
+  url,
+  title,
+  kind,
+}: {
+  url: string;
+  title: string;
+  /** Force the viewer type — documentation and slides are separate resources. */
+  kind?: "pdf" | "slides";
+}) {
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
       ? new URL(url, window.location.origin).toString()
       : url;
-  const resource = toResource(absolute);
+  const detected = toResource(absolute);
+  const resolvedKind = kind ?? detected.kind;
+  const resource: Resource =
+    kind === "slides" && detected.kind !== "slides"
+      ? {
+          kind: "slides",
+          src: `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absolute)}`,
+          needsAbsolute: false,
+        }
+      : { ...detected, kind: resolvedKind };
+  const isSlides = resource.kind === "slides";
   const label = isSlides ? "slide deck" : "documentation";
   const Icon = isSlides ? Presentation : FileText;
 
