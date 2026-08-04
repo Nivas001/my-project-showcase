@@ -84,6 +84,7 @@ export function toProjectInput(project: SignedProject | Project): ProjectInput {
     screenshot_paths,
     design_paths,
     doc_signed_url,
+    slides_signed_url,
     screenshots,
     designs,
     ...rest
