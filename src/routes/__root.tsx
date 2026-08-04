@@ -4,10 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -134,13 +136,28 @@ const navLinks = [
 ];
 
 function SiteHeader() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur">
+    <header
+      className={`sticky top-0 z-40 border-b bg-background/80 backdrop-blur transition-[border-color,box-shadow,background-color] duration-300 ${
+        scrolled
+          ? "border-primary/40 bg-background/95 shadow-[0_8px_30px_-18px_var(--glow)]"
+          : "border-border/70"
+      }`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="group flex items-center gap-2 font-mono text-sm">
           <span className="text-primary">$</span>
           <span className="font-semibold tracking-tight">srinivas</span>
-          <span className="text-accent transition-opacity group-hover:opacity-40">_</span>
+          <span className="inline-block h-3.5 w-1.5 animate-pulse bg-accent align-middle" />
         </Link>
 
         <nav className="flex items-center gap-1 font-mono text-xs sm:gap-3 sm:text-sm">
@@ -149,8 +166,8 @@ function SiteHeader() {
               key={link.to}
               to={link.to}
               activeOptions={{ exact: link.to === "/" }}
-              className="rounded-sm px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-accent" }}
+              className="nav-link rounded-sm px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "nav-link-active text-accent" }}
             >
               {link.label}
             </Link>
@@ -162,12 +179,20 @@ function SiteHeader() {
   );
 }
 
+
 function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border/70">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <span>© {new Date().getFullYear()} Srinivas — {site.location}</span>
-        <span className="flex gap-4">
+        <span className="flex flex-wrap items-center gap-4">
+          <Link
+            to="/surprise"
+            title="something is sealed behind a frame…"
+            className="text-muted-foreground/40 transition-colors hover:text-accent"
+          >
+            {"// ???"}
+          </Link>
           <a href={`mailto:${site.email}`} className="hover:text-accent">
             {site.email}
           </a>
@@ -183,6 +208,7 @@ function SiteFooter() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
@@ -198,11 +224,12 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <main className="flex-1">
+        <main key={pathname} className="route-fade flex-1">
           <Outlet />
         </main>
         <SiteFooter />
       </div>
+
       <Toaster />
     </QueryClientProvider>
   );

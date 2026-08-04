@@ -4,6 +4,8 @@ import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
 import { certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
 import { experiencePeriod } from "@/lib/experiences";
+import { Reveal } from "@/components/Reveal";
+
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -99,68 +101,83 @@ function AboutPage() {
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             // experience
           </h2>
-          <div className="mt-5 space-y-3">
-            {(experiences ?? []).map((experience) => (
-              <div key={experience.id} className="rounded-md border border-border bg-card p-4">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold">{experience.role}</h3>
-                    <p className="mt-0.5 text-sm text-muted-foreground">
-                      {experience.company_url ? (
-                        <a
-                          href={experience.company_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 hover:text-primary"
-                        >
-                          {experience.company}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        experience.company
-                      )}
-                      {experience.location ? ` · ${experience.location}` : ""}
-                    </p>
+          <div className="relative mt-5 pl-6">
+            <span
+              aria-hidden
+              className="timeline-draw absolute bottom-2 left-[7px] top-2 w-px bg-gradient-to-b from-primary via-accent/50 to-transparent"
+            />
+            <div className="space-y-4">
+              {(experiences ?? []).map((experience, index) => (
+                <Reveal key={experience.id} delay={index * 100}>
+                  <div className="relative">
+                    <span
+                      aria-hidden
+                      className="absolute -left-6 top-5 h-3 w-3 rounded-full border-2 border-primary bg-background shadow-[0_0_12px_var(--glow)]"
+                    />
+                    <div className="lift rounded-md border border-border bg-card p-4">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-semibold">{experience.role}</h3>
+                          <p className="mt-0.5 text-sm text-muted-foreground">
+                            {experience.company_url ? (
+                              <a
+                                href={experience.company_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 hover:text-primary"
+                              >
+                                {experience.company}
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            ) : (
+                              experience.company
+                            )}
+                            {experience.location ? ` · ${experience.location}` : ""}
+                          </p>
+                        </div>
+                        <div className="shrink-0 font-mono text-[11px] text-muted-foreground sm:text-right">
+                          <div>{experiencePeriod(experience)}</div>
+                          {experience.employment_type ? (
+                            <div className="text-accent">{experience.employment_type}</div>
+                          ) : null}
+                        </div>
+                      </div>
+                      {experience.summary ? (
+                        <p className="mt-3 text-sm leading-relaxed text-foreground/85">
+                          {experience.summary}
+                        </p>
+                      ) : null}
+                      {experience.highlights.length > 0 ? (
+                        <ul className="mt-3 space-y-1.5 text-sm text-foreground/85">
+                          {experience.highlights.map((item) => (
+                            <li key={item} className="flex gap-2">
+                              <span className="font-mono text-accent">▹</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {experience.tech.length > 0 ? (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {experience.tech.map((item) => (
+                            <span
+                              key={item}
+                              className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80"
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
-                  <div className="font-mono text-[11px] text-muted-foreground sm:text-right">
-                    <div>{experiencePeriod(experience)}</div>
-                    {experience.employment_type ? (
-                      <div className="text-accent">{experience.employment_type}</div>
-                    ) : null}
-                  </div>
-                </div>
-                {experience.summary ? (
-                  <p className="mt-3 text-sm leading-relaxed text-foreground/85">
-                    {experience.summary}
-                  </p>
-                ) : null}
-                {experience.highlights.length > 0 ? (
-                  <ul className="mt-3 space-y-1.5 text-sm text-foreground/85">
-                    {experience.highlights.map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <span className="font-mono text-accent">▹</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                {experience.tech.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {experience.tech.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
+
 
 
       <section className="mt-14">
