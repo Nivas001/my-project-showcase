@@ -95,6 +95,7 @@ function ProjectDetail() {
   if (!data) return <ProjectMissing />;
   const { project, prev, next } = data;
   const docUrl = project.doc_url || project.doc_signed_url || null;
+  const slidesUrl = project.slides_url || project.slides_signed_url || null;
 
 
 
