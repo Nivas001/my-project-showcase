@@ -59,46 +59,11 @@ function ProjectMissing() {
 }
 
 function CollapsibleSummary({ text }: { text: string }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [shouldCollapse, setShouldCollapse] = useState(false);
-  const textRef = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    if (textRef.current) {
-      if (textRef.current.scrollHeight > 90) {
-        setShouldCollapse(true);
-      }
-    }
-  }, [text]);
-
-  if (!shouldCollapse) {
-    return (
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-        {text}
-      </p>
-    );
-  }
-
   return (
-    <div className="relative mt-4 max-w-2xl">
-      <p
-        ref={textRef}
-        className={`text-base leading-relaxed text-muted-foreground overflow-hidden transition-all duration-300 ${
-          isExpanded ? "max-h-[500px]" : "max-h-[72px]"
-        }`}
-      >
-        {text}
-      </p>
-      {!isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-      )}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="mt-1.5 font-mono text-xs text-accent hover:underline focus:outline-none"
-      >
-        {isExpanded ? "// show less" : "// read more"}
-      </button>
+    <div className="mt-4 max-w-2xl">
+      <Expandable collapsedLines={3} lineHeight={26}>
+        <p className="text-base leading-relaxed text-muted-foreground">{text}</p>
+      </Expandable>
     </div>
   );
 }
@@ -106,63 +71,19 @@ function CollapsibleSummary({ text }: { text: string }) {
 function CollapsibleSection({
   title,
   children,
-  maxHeightClass = "max-h-[96px]",
 }: {
   title: string;
   children: React.ReactNode;
-  maxHeightClass?: string;
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [shouldCollapse, setShouldCollapse] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      if (contentRef.current.scrollHeight > 115) {
-        setShouldCollapse(true);
-      }
-    }
-  }, [children]);
-
-  if (!shouldCollapse) {
-    return (
-      <section className="mt-12">
-        <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {title}
-        </h2>
-        <div className="mt-4">
-          {children}
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="mt-12">
       <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
         {title}
       </h2>
-      <div className="relative mt-4">
-        <div
-          ref={contentRef}
-          className={`overflow-hidden transition-all duration-500 ease-in-out ${
-            isExpanded ? "max-h-[1200px]" : maxHeightClass
-          }`}
-        >
+      <div className="mt-4">
+        <Expandable collapsedLines={3} lineHeight={26}>
           {children}
-        </div>
-        
-        {!isExpanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-        )}
-        
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-3 font-mono text-xs text-accent hover:underline focus:outline-none"
-        >
-          {isExpanded ? "// show less" : "// read more"}
-        </button>
+        </Expandable>
       </div>
     </section>
   );
