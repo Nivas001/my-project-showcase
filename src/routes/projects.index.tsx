@@ -63,10 +63,10 @@ function ProjectsPage() {
               key={category}
               type="button"
               onClick={() => setFilter(category)}
-              className={`rounded-sm border px-3 py-1.5 font-mono text-xs transition-colors ${
+              className={`rounded-sm border px-3 py-1.5 font-mono text-xs transition-all duration-200 ${
                 filter === category
-                  ? "border-primary bg-primary/15 text-foreground"
-                  : "border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
+                  ? "border-primary bg-primary/15 text-foreground shadow-[var(--shadow-glow)]"
+                  : "border-border text-muted-foreground hover:-translate-y-0.5 hover:border-primary/60 hover:text-foreground"
               }`}
             >
               {category.toLowerCase()}
@@ -78,21 +78,46 @@ function ProjectsPage() {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="grep by name or tech…"
           aria-label="Search projects"
-          className="w-full rounded-sm border border-border bg-card px-3 py-2 font-mono text-xs text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:w-64"
+          className="w-full rounded-sm border border-border bg-card px-3 py-2 font-mono text-xs text-foreground outline-none transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-[var(--shadow-glow)] sm:w-64"
         />
       </div>
 
+      <p className="mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        {visible.length} of {projects.length} projects
+      </p>
+
       {visible.length === 0 ? (
-        <p className="mt-16 font-mono text-sm text-muted-foreground">
-          No projects match that filter yet.
-        </p>
+        <div className="mt-12 rounded-md border border-dashed border-border bg-card/40 p-8 text-center font-mono text-sm text-muted-foreground">
+          <p className="text-accent">{"// 0 results"}</p>
+          <p className="mt-2">Nothing matches that filter yet.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setFilter("All");
+              setQuery("");
+            }}
+            className="mt-4 rounded-sm border border-border px-3 py-1.5 text-xs transition-colors hover:border-primary hover:text-accent"
+          >
+            clear filters
+          </button>
+        </div>
       ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+        <div
+          key={`${filter}-${query}`}
+          className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {visible.map((project, index) => (
+            <div
+              key={project.id}
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}
+            >
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       )}
+
     </div>
   );
 }
