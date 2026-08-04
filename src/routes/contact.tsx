@@ -323,7 +323,10 @@ function CyberTerminal({ onCardTriggerRef }: { onCardTriggerRef: React.MutableRe
 
       {/* Terminal Input Form */}
       <form onSubmit={handleCommand} className="flex border-t border-border/70 bg-card/25 p-2 font-mono text-xs">
-        <span className="flex items-center px-2 text-accent">srinivas@terminal:~$</span>
+        <span className="flex items-center px-1 sm:px-2 text-accent select-none">
+          <span className="hidden sm:inline">srinivas@terminal:~$</span>
+          <span className="inline sm:hidden">:~$</span>
+        </span>
         <input
           type="text"
           value={inputVal}

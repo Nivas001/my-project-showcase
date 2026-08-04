@@ -70,13 +70,13 @@ function AboutPage() {
                 srinivas — intro.mp4
               </span>
             </div>
-            <div className="aspect-video bg-background">
+            <div className="relative w-full aspect-video bg-background overflow-hidden">
               {isDirectVideo ? (
                 <video
                   src={site.videoResumeUrl}
                   controls
                   preload="metadata"
-                  className="h-full w-full"
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
               ) : (
                 <iframe
@@ -84,7 +84,7 @@ function AboutPage() {
                   title="Video resume of Srinivas M"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
                   allowFullScreen
-                  className="h-full w-full"
+                  className="absolute inset-0 h-full w-full border-0"
                 />
               )}
             </div>

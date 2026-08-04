@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Download, ExternalLink, FileText, Github, Lock } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { projectQuery } from "@/lib/queries";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
@@ -57,6 +58,116 @@ function ProjectMissing() {
   );
 }
 
+function CollapsibleSummary({ text }: { text: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldCollapse, setShouldCollapse] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      if (textRef.current.scrollHeight > 90) {
+        setShouldCollapse(true);
+      }
+    }
+  }, [text]);
+
+  if (!shouldCollapse) {
+    return (
+      <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+        {text}
+      </p>
+    );
+  }
+
+  return (
+    <div className="relative mt-4 max-w-2xl">
+      <p
+        ref={textRef}
+        className={`text-base leading-relaxed text-muted-foreground overflow-hidden transition-all duration-300 ${
+          isExpanded ? "max-h-[500px]" : "max-h-[72px]"
+        }`}
+      >
+        {text}
+      </p>
+      {!isExpanded && (
+        <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+      )}
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="mt-1.5 font-mono text-xs text-accent hover:underline focus:outline-none"
+      >
+        {isExpanded ? "// show less" : "// read more"}
+      </button>
+    </div>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  children,
+  maxHeightClass = "max-h-[96px]",
+}: {
+  title: string;
+  children: React.ReactNode;
+  maxHeightClass?: string;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldCollapse, setShouldCollapse] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      if (contentRef.current.scrollHeight > 115) {
+        setShouldCollapse(true);
+      }
+    }
+  }, [children]);
+
+  if (!shouldCollapse) {
+    return (
+      <section className="mt-12">
+        <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          {title}
+        </h2>
+        <div className="mt-4">
+          {children}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mt-12">
+      <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+        {title}
+      </h2>
+      <div className="relative mt-4">
+        <div
+          ref={contentRef}
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            isExpanded ? "max-h-[1200px]" : maxHeightClass
+          }`}
+        >
+          {children}
+        </div>
+        
+        {!isExpanded && (
+          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+        )}
+        
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="mt-3 font-mono text-xs text-accent hover:underline focus:outline-none"
+        >
+          {isExpanded ? "// show less" : "// read more"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function ProjectDetail() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(projectQuery(slug));
@@ -84,9 +195,7 @@ function ProjectDetail() {
         <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
           {project.title}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          {project.summary}
-        </p>
+        <CollapsibleSummary text={project.summary} />
 
         <div className="mt-6 flex flex-wrap gap-3">
           {project.live_url ? (
@@ -187,24 +296,18 @@ function ProjectDetail() {
       </section>
 
       {project.description ? (
-        <section className="mt-12">
-          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            // overview
-          </h2>
-          <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+        <CollapsibleSection title="// overview">
+          <div className="space-y-4 text-[15px] leading-relaxed text-foreground/85">
             {project.description.split(/\n{2,}/).map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>
-        </section>
+        </CollapsibleSection>
       ) : null}
 
       {project.highlights.length > 0 ? (
-        <section className="mt-12">
-          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            // highlights
-          </h2>
-          <ul className="mt-4 space-y-3">
+        <CollapsibleSection title="// highlights">
+          <ul className="space-y-3">
             {project.highlights.map((highlight) => (
               <li key={highlight} className="flex gap-3 text-[15px] leading-relaxed">
                 <span className="mt-1 font-mono text-accent">▹</span>
@@ -212,7 +315,7 @@ function ProjectDetail() {
               </li>
             ))}
           </ul>
-        </section>
+        </CollapsibleSection>
       ) : null}
 
       {project.screenshots.length > 0 ? (
