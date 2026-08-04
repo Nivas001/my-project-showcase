@@ -303,7 +303,7 @@ function AdminPage() {
     setUploadingDoc(false);
     if (uploaded[0]) {
       setDraft((current) => (current ? { ...current, doc_path: uploaded[0]! } : current));
-      toast.success("Documentation uploaded");
+      toast.success("Resource uploaded");
     }
   }
 
@@ -493,7 +493,7 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, video_url: e.target.value })}
               />
             </Field>
-            <Field label="documentation link (Drive PDF — optional)">
+            <Field label="documentation / slides link (Drive PDF, Google Slides — optional)">
               <input
                 className={inputClass}
                 value={draft.doc_url ?? ""}
@@ -662,7 +662,7 @@ function AdminPage() {
 
           <div className="mt-5">
             <span className="font-mono text-xs text-muted-foreground">
-              documentation file (optional — or use the link field above)
+              documentation or slide deck file (PDF, PPT, PPTX, ODP, KEY — optional)
             </span>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {draft.doc_path ? (
@@ -679,10 +679,10 @@ function AdminPage() {
               ) : null}
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
                 <Upload className="h-4 w-4" />
-                {uploadingDoc ? "Uploading…" : "Upload PDF"}
+                {uploadingDoc ? "Uploading…" : "Upload PDF / slides"}
                 <input
                   type="file"
-                  accept="application/pdf"
+                  accept=".pdf,.ppt,.pptx,.odp,.key,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
                   className="hidden"
                   onChange={(e) => handleDocUpload(e.target.files)}
                 />
