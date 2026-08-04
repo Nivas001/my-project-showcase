@@ -40,6 +40,7 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
       ...rows.flatMap((row) => row.screenshots ?? []),
       ...rows.flatMap((row) => row.designs ?? []),
       ...rows.map((row) => row.doc_path ?? ""),
+      ...rows.map((row) => row.slides_path ?? ""),
     ]),
   ].filter((path) => path && !path.startsWith("http"));
 
@@ -56,6 +57,9 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
 
   const sign = (path: string) => (path.startsWith("http") ? path : (map.get(path) ?? path));
 
+  const proxy = (row: Project, kind: "doc" | "slides", path: string) =>
+    `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}&kind=${kind}&ext=${(path.split(".").pop() ?? "pdf").toLowerCase()}`;
+
   return rows.map((row) => ({
     ...row,
     screenshot_paths: row.screenshots ?? [],
@@ -65,9 +69,8 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     downloads: normaliseDownloads(row.downloads),
     // Served through a proxy so the file renders inline; ext lets the viewer
     // pick a PDF reader or a slide-deck embed.
-    doc_signed_url: row.doc_path
-      ? `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}&ext=${(row.doc_path.split(".").pop() ?? "pdf").toLowerCase()}`
-      : null,
+    doc_signed_url: row.doc_path ? proxy(row, "doc", row.doc_path) : null,
+    slides_signed_url: row.slides_path ? proxy(row, "slides", row.slides_path) : null,
   }));
 }
 
