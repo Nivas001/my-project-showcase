@@ -9,7 +9,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <Link
       to="/projects/$slug"
       params={{ slug: project.slug }}
-      className="glow-card group flex flex-col overflow-hidden rounded-md border border-border bg-card"
+      className="glow-card group flex h-full flex-col overflow-hidden rounded-md border border-border bg-card"
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-surface-raised">
         {cover ? (
@@ -39,8 +39,8 @@ export function ProjectCard({ project }: { project: Project }) {
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-lg font-semibold leading-tight text-foreground">{project.title}</h3>
-          <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-accent" />
+          <h3 className="text-lg font-semibold leading-tight text-foreground transition-colors duration-200 group-hover:text-accent">{project.title}</h3>
+          <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
         </div>
         <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{project.summary}</p>
 
@@ -48,7 +48,7 @@ export function ProjectCard({ project }: { project: Project }) {
           {project.tech.slice(0, 5).map((tech) => (
             <span
               key={tech}
-              className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80"
+              className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80 transition-colors duration-200 group-hover:bg-primary/20 group-hover:text-foreground"
             >
               {tech}
             </span>
