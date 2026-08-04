@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ExternalLink, FileText, Presentation } from "lucide-react";
 
 type Resource = {
@@ -43,6 +44,11 @@ export function toResource(url: string): Resource {
   return { kind: "pdf", src: trimmed, needsAbsolute: false };
 }
 
+const officeSrc = (url: string) =>
+  `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+const googleSrc = (url: string) =>
+  `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+
 export function DocViewer({
   url,
   title,
@@ -53,21 +59,28 @@ export function DocViewer({
   /** Force the viewer type — documentation and slides are separate resources. */
   kind?: "pdf" | "slides";
 }) {
+  const [provider, setProvider] = useState<"office" | "google">("office");
+
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
       ? new URL(url, window.location.origin).toString()
       : url;
   const detected = toResource(absolute);
   const resolvedKind = kind ?? detected.kind;
-  const resource: Resource =
-    kind === "slides" && detected.kind !== "slides"
-      ? {
-          kind: "slides",
-          src: `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absolute)}`,
-          needsAbsolute: false,
-        }
-      : { ...detected, kind: resolvedKind };
-  const isSlides = resource.kind === "slides";
+  const isSlides = resolvedKind === "slides";
+  // A Google Slides / Drive embed is already an iframe-ready URL; only raw
+  // office files need to go through a remote rendering service.
+  const isHostedEmbed = /docs\.google\.com|drive\.google\.com/.test(detected.src);
+  const src = isSlides
+    ? isHostedEmbed
+      ? detected.src
+      : provider === "office"
+        ? officeSrc(absolute)
+        : googleSrc(absolute)
+    : detected.src;
+
+  const isLocal =
+    typeof window !== "undefined" && /localhost|127\.0\.0\.1/.test(window.location.hostname);
   const label = isSlides ? "slide deck" : "documentation";
   const Icon = isSlides ? Presentation : FileText;
 
@@ -77,27 +90,57 @@ export function DocViewer({
         <span className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground">
           <Icon className="h-3.5 w-3.5 text-accent" /> {title} — {label}
         </span>
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 font-mono text-[11px] transition-colors hover:border-primary"
-        >
-          <ExternalLink className="h-3 w-3" /> open in new tab
-        </a>
-      </div>
-      {resource.kind === "slides" ? (
-        <div className="aspect-video w-full">
-          <iframe
-            src={resource.src}
-            title={`${title} slide deck`}
-            allowFullScreen
-            className="h-full w-full border-0 bg-background"
-          />
+        <div className="flex flex-wrap items-center gap-2">
+          {isSlides && !isHostedEmbed ? (
+            <div className="inline-flex overflow-hidden rounded-sm border border-border font-mono text-[11px]">
+              {(["office", "google"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setProvider(option)}
+                  className={`px-2.5 py-1.5 transition-colors ${
+                    provider === option
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 font-mono text-[11px] transition-colors hover:border-primary"
+          >
+            <ExternalLink className="h-3 w-3" /> open in new tab
+          </a>
         </div>
+      </div>
+      {isSlides ? (
+        <>
+          <div className="aspect-video w-full">
+            <iframe
+              key={src}
+              src={src}
+              title={`${title} slide deck`}
+              allowFullScreen
+              className="h-full w-full border-0 bg-background"
+            />
+          </div>
+          <p className="border-t border-border/70 px-4 py-2 font-mono text-[11px] text-muted-foreground">
+            {isHostedEmbed
+              ? "rendered by google slides"
+              : isLocal
+                ? "// preview only: the remote slide renderer cannot reach a local URL — publish to view the deck inline"
+                : "// deck rendered remotely — switch viewer if it fails to load"}
+          </p>
+        </>
       ) : (
         <iframe
-          src={resource.src}
+          src={src}
           title={`${title} documentation`}
           className="h-[70vh] max-h-[820px] w-full border-0 bg-background"
           allow="autoplay"
