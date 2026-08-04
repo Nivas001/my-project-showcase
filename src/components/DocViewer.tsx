@@ -60,6 +60,7 @@ export function DocViewer({
   kind?: "pdf" | "slides";
 }) {
   const [provider, setProvider] = useState<"office" | "google">("office");
+  const [open, setOpen] = useState(false);
 
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
