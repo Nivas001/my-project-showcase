@@ -30,7 +30,13 @@ function AboutPage() {
     skillGroups && skillGroups.length > 0
       ? skillGroups.map((group) => ({ group: group.name, items: group.items }))
       : skills;
-  const embed = toEmbedUrl(site.videoResumeUrl);
+  const isDirectVideo = site.videoResumeUrl && (
+    site.videoResumeUrl.toLowerCase().endsWith(".mp4") ||
+    site.videoResumeUrl.toLowerCase().endsWith(".webm") ||
+    site.videoResumeUrl.toLowerCase().includes("supabase.co/storage/v1/object/public/")
+  );
+  const embed = isDirectVideo ? null : toEmbedUrl(site.videoResumeUrl);
+  const hasVideo = isDirectVideo || embed;
   const hasStored = (certificates ?? []).length > 0;
 
   return (
@@ -50,7 +56,7 @@ function AboutPage() {
         <Download className="h-4 w-4" /> Download resume
       </a>
 
-      {embed ? (
+      {hasVideo ? (
         <section className="mt-14">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             // video resume
@@ -65,13 +71,22 @@ function AboutPage() {
               </span>
             </div>
             <div className="aspect-video bg-background">
-              <iframe
-                src={embed}
-                title="Video resume of Srinivas M"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowFullScreen
-                className="h-full w-full"
-              />
+              {isDirectVideo ? (
+                <video
+                  src={site.videoResumeUrl}
+                  controls
+                  preload="metadata"
+                  className="h-full w-full"
+                />
+              ) : (
+                <iframe
+                  src={embed || ""}
+                  title="Video resume of Srinivas M"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  className="h-full w-full"
+                />
+              )}
             </div>
           </div>
         </section>
