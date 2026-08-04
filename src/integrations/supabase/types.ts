@@ -50,6 +50,60 @@ export type Database = {
         }
         Relationships: []
       }
+      experiences: {
+        Row: {
+          company: string
+          company_url: string | null
+          created_at: string
+          employment_type: string
+          end_date: string
+          highlights: string[]
+          id: string
+          is_current: boolean
+          location: string
+          role: string
+          sort_order: number
+          start_date: string
+          summary: string
+          tech: string[]
+          updated_at: string
+        }
+        Insert: {
+          company?: string
+          company_url?: string | null
+          created_at?: string
+          employment_type?: string
+          end_date?: string
+          highlights?: string[]
+          id?: string
+          is_current?: boolean
+          location?: string
+          role: string
+          sort_order?: number
+          start_date?: string
+          summary?: string
+          tech?: string[]
+          updated_at?: string
+        }
+        Update: {
+          company?: string
+          company_url?: string | null
+          created_at?: string
+          employment_type?: string
+          end_date?: string
+          highlights?: string[]
+          id?: string
+          is_current?: boolean
+          location?: string
+          role?: string
+          sort_order?: number
+          start_date?: string
+          summary?: string
+          tech?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category: string
