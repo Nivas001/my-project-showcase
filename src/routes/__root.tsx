@@ -185,7 +185,14 @@ function SiteFooter() {
     <footer className="mt-24 border-t border-border/70">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <span>© {new Date().getFullYear()} Srinivas — {site.location}</span>
-        <span className="flex gap-4">
+        <span className="flex flex-wrap items-center gap-4">
+          <Link
+            to="/surprise"
+            title="something is sealed behind a frame…"
+            className="text-muted-foreground/40 transition-colors hover:text-accent"
+          >
+            {"// ???"}
+          </Link>
           <a href={`mailto:${site.email}`} className="hover:text-accent">
             {site.email}
           </a>
@@ -201,6 +208,7 @@ function SiteFooter() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
@@ -216,11 +224,12 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <main className="flex-1">
+        <main key={pathname} className="route-fade flex-1">
           <Outlet />
         </main>
         <SiteFooter />
       </div>
+
       <Toaster />
     </QueryClientProvider>
   );
