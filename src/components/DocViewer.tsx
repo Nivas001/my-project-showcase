@@ -7,7 +7,7 @@ type Resource = {
   needsAbsolute: boolean;
 };
 
-const SLIDE_EXT = /\.(ppt|pptx|key|odp)(\?|$)/i;
+const SLIDE_EXT = /(\.(ppt|pptx|key|odp)(\?|$)|[?&]ext=(ppt|pptx|key|odp)(&|$))/i;
 
 /** Work out how a documentation link should be embedded (PDF reader vs slide deck). */
 export function toResource(url: string): Resource {
@@ -44,7 +44,7 @@ export function toResource(url: string): Resource {
 }
 
 export function DocViewer({ url, title }: { url: string; title: string }) {
-  const isSlides = /\.(ppt|pptx|key|odp)(\?|$)/i.test(url) || url.includes("/presentation/d/");
+  const isSlides = SLIDE_EXT.test(url) || url.includes("/presentation/d/");
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
       ? new URL(url, window.location.origin).toString()
