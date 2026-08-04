@@ -62,9 +62,20 @@ export function DocViewer({
   const [provider, setProvider] = useState<"office" | "google">("office");
   const [open, setOpen] = useState(false);
 
+  // Remote renderers (Office Online / Google) fetch the file from the public
+  // internet, so the editor's *.lovableproject.com sandbox host will not work.
+  // Map it to the equivalent public preview host.
+  const publicOrigin = () => {
+    if (typeof window === "undefined") return "";
+    const { origin, hostname } = window.location;
+    const sandbox = hostname.match(/^([0-9a-f-]{36})\.lovableproject\.com$/i);
+    if (sandbox) return `https://id-preview--${sandbox[1]}.lovable.app`;
+    return origin;
+  };
+
   const absolute =
     typeof window !== "undefined" && !/^https?:\/\//i.test(url.trim())
-      ? new URL(url, window.location.origin).toString()
+      ? new URL(url, publicOrigin()).toString()
       : url;
   const detected = toResource(absolute);
   const resolvedKind = kind ?? detected.kind;
