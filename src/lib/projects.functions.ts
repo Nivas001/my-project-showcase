@@ -64,6 +64,8 @@ export const saveProject = createServerFn({ method: "POST" })
       video_url: fields.video_url || null,
       doc_url: fields.doc_url || null,
       doc_path: fields.doc_path || null,
+      slides_url: fields.slides_url || null,
+      slides_path: fields.slides_path || null,
       downloads: (fields.downloads ?? []).filter((item) => item.url.trim()),
     };
 
