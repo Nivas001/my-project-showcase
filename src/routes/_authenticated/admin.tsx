@@ -836,6 +836,204 @@ function AdminPage() {
       <section className="mt-16">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // work experience
+          </h2>
+          <button
+            onClick={() =>
+              setExpDraft({ ...emptyExperience, sort_order: (experiences?.length ?? 0) + 1 })
+            }
+            className="inline-flex items-center gap-2 rounded-sm border border-border px-3 py-1.5 text-sm hover:border-primary"
+          >
+            <Plus className="h-4 w-4" /> New experience
+          </button>
+        </div>
+
+        {expDraft ? (
+          <div className="mt-5 rounded-md border border-primary/40 bg-card p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-sm text-accent">
+                {expDraft.id ? "edit experience" : "new experience"}
+              </h3>
+              <button onClick={() => setExpDraft(null)} aria-label="Close experience editor">
+                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <Field label="role / job title">
+                <input
+                  className={inputClass}
+                  value={expDraft.role}
+                  onChange={(e) => setExpDraft({ ...expDraft, role: e.target.value })}
+                />
+              </Field>
+              <Field label="company">
+                <input
+                  className={inputClass}
+                  value={expDraft.company}
+                  onChange={(e) => setExpDraft({ ...expDraft, company: e.target.value })}
+                />
+              </Field>
+              <Field label="location (e.g. Chennai, Remote)">
+                <input
+                  className={inputClass}
+                  value={expDraft.location}
+                  onChange={(e) => setExpDraft({ ...expDraft, location: e.target.value })}
+                />
+              </Field>
+              <Field label="employment type">
+                <select
+                  className={inputClass}
+                  value={expDraft.employment_type}
+                  onChange={(e) => setExpDraft({ ...expDraft, employment_type: e.target.value })}
+                >
+                  {EMPLOYMENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="start date (e.g. Jan 2026)">
+                <input
+                  className={inputClass}
+                  value={expDraft.start_date}
+                  onChange={(e) => setExpDraft({ ...expDraft, start_date: e.target.value })}
+                />
+              </Field>
+              <Field label="end date (e.g. Aug 2026)">
+                <input
+                  className={inputClass}
+                  disabled={expDraft.is_current}
+                  placeholder={expDraft.is_current ? "Present" : ""}
+                  value={expDraft.end_date}
+                  onChange={(e) => setExpDraft({ ...expDraft, end_date: e.target.value })}
+                />
+              </Field>
+              <Field label="company url (optional)">
+                <input
+                  className={inputClass}
+                  value={expDraft.company_url ?? ""}
+                  onChange={(e) => setExpDraft({ ...expDraft, company_url: e.target.value })}
+                />
+              </Field>
+              <Field label="sort order">
+                <input
+                  type="number"
+                  className={inputClass}
+                  value={expDraft.sort_order}
+                  onChange={(e) => setExpDraft({ ...expDraft, sort_order: Number(e.target.value) })}
+                />
+              </Field>
+            </div>
+
+            <label className="mt-4 flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={expDraft.is_current}
+                onChange={(e) => setExpDraft({ ...expDraft, is_current: e.target.checked })}
+              />
+              I currently work here
+            </label>
+
+            <div className="mt-4">
+              <Field label="summary">
+                <textarea
+                  rows={3}
+                  className={inputClass}
+                  value={expDraft.summary}
+                  onChange={(e) => setExpDraft({ ...expDraft, summary: e.target.value })}
+                />
+              </Field>
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field label="highlights (one per line)">
+                <textarea
+                  rows={4}
+                  className={inputClass}
+                  value={expDraft.highlights.join("\n")}
+                  onChange={(e) =>
+                    setExpDraft({ ...expDraft, highlights: e.target.value.split("\n") })
+                  }
+                />
+              </Field>
+              <Field label="tech used (comma separated)">
+                <textarea
+                  rows={4}
+                  className={inputClass}
+                  value={expDraft.tech.join(", ")}
+                  onChange={(e) =>
+                    setExpDraft({ ...expDraft, tech: e.target.value.split(",") })
+                  }
+                />
+              </Field>
+            </div>
+
+            <div className="mt-6 flex gap-2">
+              <button
+                onClick={handleExpSave}
+                disabled={expSaving}
+                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+              >
+                {expSaving ? "Saving…" : "Save experience"}
+              </button>
+              <button
+                onClick={() => setExpDraft(null)}
+                className="rounded-sm border border-border px-4 py-2 text-sm hover:border-primary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-5 space-y-3">
+          {(experiences ?? []).map((experience) => (
+            <div
+              key={experience.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card p-4"
+            >
+              <div>
+                <h3 className="text-sm font-semibold">
+                  {experience.role}
+                  {experience.company ? ` @ ${experience.company}` : ""}
+                </h3>
+                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                  {[experiencePeriod(experience), experience.employment_type]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setExpDraft({ ...experience })}
+                  className="rounded-sm border border-border px-3 py-1.5 text-xs hover:border-primary"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleExpDelete(experience.id, experience.role)}
+                  className="rounded-sm border border-destructive/50 px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10"
+                  aria-label={`Delete ${experience.role}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {(experiences ?? []).length === 0 ? (
+            <p className="font-mono text-sm text-muted-foreground">
+              No work experience added yet — add roles here when you start.
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+
+      <section className="mt-16">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             // certificates
           </h2>
           <button
