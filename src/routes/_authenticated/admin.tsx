@@ -85,6 +85,7 @@ function AdminPage() {
   const { data: projects, isLoading } = useQuery(projectsQuery);
   const { data: certificates } = useQuery(certificatesQuery);
   const { data: skillGroups } = useQuery(skillGroupsQuery);
+  const { data: experiences } = useQuery(experiencesQuery);
   const { data: adminInfo, isLoading: checkingRole } = useQuery({
     queryKey: ["is-admin"],
     queryFn: () => checkIsAdmin(),
@@ -100,6 +101,48 @@ function AdminPage() {
   const [certUploading, setCertUploading] = useState(false);
   const [skillDraft, setSkillDraft] = useState<SkillGroupInput | null>(null);
   const [skillSaving, setSkillSaving] = useState(false);
+  const [expDraft, setExpDraft] = useState<ExperienceInput | null>(null);
+  const [expSaving, setExpSaving] = useState(false);
+
+  async function handleExpSave() {
+    if (!expDraft) return;
+    if (!expDraft.role.trim()) {
+      toast.error("Role title is required");
+      return;
+    }
+    setExpSaving(true);
+    try {
+      await saveExperience({
+        data: {
+          experience: {
+            ...expDraft,
+            role: expDraft.role.trim(),
+            highlights: expDraft.highlights.map((h) => h.trim()).filter(Boolean),
+            tech: expDraft.tech.map((t) => t.trim()).filter(Boolean),
+          } as Experience,
+        },
+      });
+      await queryClient.invalidateQueries({ queryKey: ["experiences"] });
+      toast.success("Experience saved");
+      setExpDraft(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save experience");
+    } finally {
+      setExpSaving(false);
+    }
+  }
+
+  async function handleExpDelete(id: string, role: string) {
+    if (!window.confirm(`Delete “${role}”?`)) return;
+    try {
+      await deleteExperience({ data: { id } });
+      await queryClient.invalidateQueries({ queryKey: ["experiences"] });
+      toast.success("Experience deleted");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete experience");
+    }
+  }
+
 
   async function handleSkillSave() {
     if (!skillDraft) return;
