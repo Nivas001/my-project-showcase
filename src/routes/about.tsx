@@ -4,6 +4,8 @@ import { Download, ExternalLink } from "lucide-react";
 import { site, skills, education, certifications, strengths, toEmbedUrl } from "@/lib/site";
 import { certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
 import { experiencePeriod } from "@/lib/experiences";
+import { Reveal } from "@/components/Reveal";
+
 
 export const Route = createFileRoute("/about")({
   head: () => ({
