@@ -5,6 +5,8 @@ import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "luc
 import { site } from "@/lib/site";
 import { projectsQuery } from "@/lib/queries";
 import { ProjectCard } from "@/components/ProjectCard";
+import { Reveal, CountUp } from "@/components/Reveal";
+
 
 
 export const Route = createFileRoute("/")({
