@@ -278,13 +278,21 @@ function ProjectDetail() {
       {docUrl ? (
         <section className="mt-12">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            {/(\.(ppt|pptx|key|odp)(\?|$)|[?&]ext=(ppt|pptx|key|odp)(&|$))/i.test(docUrl) ||
-            docUrl.includes("/presentation/d/")
-              ? "// slides"
-              : "// documentation"}
+            // documentation
           </h2>
           <div className="mt-4">
-            <DocViewer url={docUrl} title={project.title} />
+            <DocViewer url={docUrl} title={project.title} kind="pdf" />
+          </div>
+        </section>
+      ) : null}
+
+      {slidesUrl ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // slides
+          </h2>
+          <div className="mt-4">
+            <DocViewer url={slidesUrl} title={project.title} kind="slides" />
           </div>
         </section>
       ) : null}
