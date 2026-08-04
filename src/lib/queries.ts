@@ -2,6 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { listProjects, getProjectBySlug } from "@/lib/projects.functions";
 import { listCertificates } from "@/lib/certificates.functions";
 import { listSkillGroups } from "@/lib/skills.functions";
+import { listExperiences } from "@/lib/experiences.functions";
 
 export const skillGroupsQuery = queryOptions({
   queryKey: ["skill-groups"],
@@ -22,4 +23,9 @@ export const projectQuery = (slug: string) =>
 export const certificatesQuery = queryOptions({
   queryKey: ["certificates"],
   queryFn: () => listCertificates(),
+});
+
+export const experiencesQuery = queryOptions({
+  queryKey: ["experiences"],
+  queryFn: () => listExperiences(),
 });
