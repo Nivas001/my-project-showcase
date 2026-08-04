@@ -113,6 +113,8 @@ export const emptyProject: ProjectInput = {
   video_url: null,
   doc_url: null,
   doc_path: null,
+  slides_url: null,
+  slides_path: null,
   screenshots: [],
   designs: [],
   featured: false,
