@@ -19,6 +19,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as ApiPublicProjectDocRouteImport } from './routes/api/public/project-doc'
+import { Route as ApiPublicProjectFileSplatRouteImport } from './routes/api/public/project-file.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -69,6 +70,12 @@ const ApiPublicProjectDocRoute = ApiPublicProjectDocRouteImport.update({
   path: '/api/public/project-doc',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicProjectFileSplatRoute =
+  ApiPublicProjectFileSplatRouteImport.update({
+    id: '/api/public/project-file/$',
+    path: '/api/public/project-file/$',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,6 +99,7 @@ export interface FileRoutesByTo {
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +113,7 @@ export interface FileRoutesById {
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/projects/$slug'
     | '/projects/'
     | '/api/public/project-doc'
+    | '/api/public/project-file/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/projects/$slug'
     | '/projects'
     | '/api/public/project-doc'
+    | '/api/public/project-file/$'
   id:
     | '__root__'
     | '/'
@@ -140,6 +152,7 @@ export interface FileRouteTypes {
     | '/projects/$slug'
     | '/projects/'
     | '/api/public/project-doc'
+    | '/api/public/project-file/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,6 +165,7 @@ export interface RootRouteChildren {
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   ApiPublicProjectDocRoute: typeof ApiPublicProjectDocRoute
+  ApiPublicProjectFileSplatRoute: typeof ApiPublicProjectFileSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -226,6 +240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicProjectDocRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/project-file/$': {
+      id: '/api/public/project-file/$'
+      path: '/api/public/project-file/$'
+      fullPath: '/api/public/project-file/$'
+      preLoaderRoute: typeof ApiPublicProjectFileSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -250,6 +271,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsSlugRoute: ProjectsSlugRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   ApiPublicProjectDocRoute: ApiPublicProjectDocRoute,
+  ApiPublicProjectFileSplatRoute: ApiPublicProjectFileSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

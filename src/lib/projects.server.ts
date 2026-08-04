@@ -57,8 +57,12 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
 
   const sign = (path: string) => (path.startsWith("http") ? path : (map.get(path) ?? path));
 
-  const proxy = (row: Project, kind: "doc" | "slides", path: string) =>
-    `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}&kind=${kind}&ext=${(path.split(".").pop() ?? "pdf").toLowerCase()}`;
+  // Real file extension in the path — Office Online / Google viewers reject
+  // query-string-only URLs when embedding .pptx decks.
+  const proxy = (row: Project, kind: "doc" | "slides", path: string) => {
+    const ext = (path.split(".").pop() ?? "pdf").toLowerCase();
+    return `/api/public/project-file/${encodeURIComponent(row.slug)}/${kind}/${kind === "slides" ? "deck" : "documentation"}.${ext}`;
+  };
 
   return rows.map((row) => ({
     ...row,
