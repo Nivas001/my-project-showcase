@@ -44,6 +44,8 @@ export type Project = {
   video_url: string | null;
   doc_url: string | null;
   doc_path: string | null;
+  slides_url: string | null;
+  slides_path: string | null;
   screenshots: string[];
   designs: string[];
   featured: boolean;
