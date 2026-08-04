@@ -14,9 +14,17 @@ import {
   type Certificate,
   type CertificateInput,
 } from "@/lib/certificates";
-import { projectsQuery, certificatesQuery, skillGroupsQuery } from "@/lib/queries";
+import { projectsQuery, certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
 import { emptySkillGroup, type SkillGroup, type SkillGroupInput } from "@/lib/skills";
 import { saveSkillGroup, deleteSkillGroup } from "@/lib/skills.functions";
+import {
+  EMPLOYMENT_TYPES,
+  emptyExperience,
+  experiencePeriod,
+  type Experience,
+  type ExperienceInput,
+} from "@/lib/experiences";
+import { saveExperience, deleteExperience } from "@/lib/experiences.functions";
 import {
   DOWNLOAD_PLATFORMS,
   GITHUB_VISIBILITIES,
