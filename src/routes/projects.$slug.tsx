@@ -146,7 +146,7 @@ function ProjectDetail() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
             >
-              <FileText className="h-4 w-4" /> Documentation
+              <FileText className="h-4 w-4" /> Documentation / slides
             </a>
           ) : null}
         </div>
@@ -267,7 +267,10 @@ function ProjectDetail() {
       {docUrl ? (
         <section className="mt-12">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            // documentation
+            {/(\.(ppt|pptx|key|odp)(\?|$)|[?&]ext=(ppt|pptx|key|odp)(&|$))/i.test(docUrl) ||
+            docUrl.includes("/presentation/d/")
+              ? "// slides"
+              : "// documentation"}
           </h2>
           <div className="mt-4">
             <DocViewer url={docUrl} title={project.title} />

@@ -29,9 +29,17 @@ export const Route = createFileRoute("/api/public/project-doc")({
         if (error || !file) return new Response("Not found", { status: 404 });
 
         const name = project.doc_path.split("/").pop() ?? "documentation.pdf";
+        const ext = (name.split(".").pop() ?? "pdf").toLowerCase();
+        const types: Record<string, string> = {
+          pdf: "application/pdf",
+          ppt: "application/vnd.ms-powerpoint",
+          pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          odp: "application/vnd.oasis.opendocument.presentation",
+          key: "application/octet-stream",
+        };
         return new Response(file.stream(), {
           headers: {
-            "Content-Type": "application/pdf",
+            "Content-Type": types[ext] ?? "application/octet-stream",
             "Content-Disposition": `inline; filename="${name}"`,
             "Cache-Control": "public, max-age=300",
           },

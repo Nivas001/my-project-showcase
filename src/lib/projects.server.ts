@@ -63,8 +63,11 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     screenshots: (row.screenshots ?? []).map(sign),
     designs: (row.designs ?? []).map(sign),
     downloads: normaliseDownloads(row.downloads),
-    // Served through a proxy so the PDF renders inline instead of downloading.
-    doc_signed_url: row.doc_path ? `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}` : null,
+    // Served through a proxy so the file renders inline; ext lets the viewer
+    // pick a PDF reader or a slide-deck embed.
+    doc_signed_url: row.doc_path
+      ? `/api/public/project-doc?slug=${encodeURIComponent(row.slug)}&ext=${(row.doc_path.split(".").pop() ?? "pdf").toLowerCase()}`
+      : null,
   }));
 }
 
