@@ -122,6 +122,8 @@ export type Database = {
           period: string
           role: string
           screenshots: string[]
+          slides_path: string | null
+          slides_url: string | null
           slug: string
           sort_order: number
           summary: string
@@ -147,6 +149,8 @@ export type Database = {
           period?: string
           role?: string
           screenshots?: string[]
+          slides_path?: string | null
+          slides_url?: string | null
           slug: string
           sort_order?: number
           summary?: string
@@ -172,6 +176,8 @@ export type Database = {
           period?: string
           role?: string
           screenshots?: string[]
+          slides_path?: string | null
+          slides_url?: string | null
           slug?: string
           sort_order?: number
           summary?: string

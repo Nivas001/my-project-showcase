@@ -44,6 +44,8 @@ export type Project = {
   video_url: string | null;
   doc_url: string | null;
   doc_path: string | null;
+  slides_url: string | null;
+  slides_path: string | null;
   screenshots: string[];
   designs: string[];
   featured: boolean;
@@ -55,6 +57,7 @@ export type SignedProject = Project & {
   screenshot_paths: string[];
   design_paths: string[];
   doc_signed_url: string | null;
+  slides_signed_url: string | null;
 };
 
 export type ProjectInput = Omit<Project, "id"> & { id?: string };
@@ -64,7 +67,7 @@ export const PROJECT_CATEGORIES = ["Live", "Web", "Mobile", "Research", "Other"]
 export const SCREENSHOT_BUCKET = "project-screenshots";
 
 export const PROJECT_COLUMNS =
-  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, screenshots, designs, featured, sort_order";
+  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, slides_url, slides_path, screenshots, designs, featured, sort_order";
 
 export function slugify(value: string): string {
   return value
@@ -81,6 +84,7 @@ export function toProjectInput(project: SignedProject | Project): ProjectInput {
     screenshot_paths,
     design_paths,
     doc_signed_url,
+    slides_signed_url,
     screenshots,
     designs,
     ...rest
@@ -109,6 +113,8 @@ export const emptyProject: ProjectInput = {
   video_url: null,
   doc_url: null,
   doc_path: null,
+  slides_url: null,
+  slides_path: null,
   screenshots: [],
   designs: [],
   featured: false,

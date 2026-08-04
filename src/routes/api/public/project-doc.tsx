@@ -9,26 +9,29 @@ export const Route = createFileRoute("/api/public/project-doc")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const slug = new URL(request.url).searchParams.get("slug");
+        const params = new URL(request.url).searchParams;
+        const slug = params.get("slug");
+        const kind = params.get("kind") === "slides" ? "slides" : "doc";
         if (!slug) return new Response("Missing slug", { status: 400 });
 
         const { createPublicServerClient } = await import("@/lib/projects.server");
         const supabase = createPublicServerClient();
         const { data: project } = await supabase
           .from("projects")
-          .select("doc_path, title")
+          .select("doc_path, slides_path, title")
           .eq("slug", slug)
           .maybeSingle();
 
-        if (!project?.doc_path) return new Response("Not found", { status: 404 });
+        const storagePath = kind === "slides" ? project?.slides_path : project?.doc_path;
+        if (!storagePath) return new Response("Not found", { status: 404 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: file, error } = await supabaseAdmin.storage
           .from(SCREENSHOT_BUCKET)
-          .download(project.doc_path);
+          .download(storagePath);
         if (error || !file) return new Response("Not found", { status: 404 });
 
-        const name = project.doc_path.split("/").pop() ?? "documentation.pdf";
+        const name = storagePath.split("/").pop() ?? "documentation.pdf";
         const ext = (name.split(".").pop() ?? "pdf").toLowerCase();
         const types: Record<string, string> = {
           pdf: "application/pdf",

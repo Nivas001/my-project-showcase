@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, Download, ExternalLink, FileText, Github, Lock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, ExternalLink, FileText, Github, Lock, Presentation } from "lucide-react";
 import { Expandable } from "@/components/Expandable";
 import { projectQuery } from "@/lib/queries";
 import { VideoEmbed } from "@/components/VideoEmbed";
@@ -95,6 +95,7 @@ function ProjectDetail() {
   if (!data) return <ProjectMissing />;
   const { project, prev, next } = data;
   const docUrl = project.doc_url || project.doc_signed_url || null;
+  const slidesUrl = project.slides_url || project.slides_signed_url || null;
 
 
 
@@ -146,7 +147,17 @@ function ProjectDetail() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
             >
-              <FileText className="h-4 w-4" /> Documentation / slides
+              <FileText className="h-4 w-4" /> Documentation
+            </a>
+          ) : null}
+          {slidesUrl ? (
+            <a
+              href={slidesUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
+            >
+              <Presentation className="h-4 w-4" /> Slides
             </a>
           ) : null}
         </div>
@@ -267,13 +278,21 @@ function ProjectDetail() {
       {docUrl ? (
         <section className="mt-12">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            {/(\.(ppt|pptx|key|odp)(\?|$)|[?&]ext=(ppt|pptx|key|odp)(&|$))/i.test(docUrl) ||
-            docUrl.includes("/presentation/d/")
-              ? "// slides"
-              : "// documentation"}
+            // documentation
           </h2>
           <div className="mt-4">
-            <DocViewer url={docUrl} title={project.title} />
+            <DocViewer url={docUrl} title={project.title} kind="pdf" />
+          </div>
+        </section>
+      ) : null}
+
+      {slidesUrl ? (
+        <section className="mt-12">
+          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            // slides
+          </h2>
+          <div className="mt-4">
+            <DocViewer url={slidesUrl} title={project.title} kind="slides" />
           </div>
         </section>
       ) : null}

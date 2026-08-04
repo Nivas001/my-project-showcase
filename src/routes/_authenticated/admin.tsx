@@ -96,6 +96,7 @@ function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadingDesigns, setUploadingDesigns] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [uploadingSlides, setUploadingSlides] = useState(false);
   const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
   const [certSaving, setCertSaving] = useState(false);
   const [certUploading, setCertUploading] = useState(false);
@@ -303,7 +304,18 @@ function AdminPage() {
     setUploadingDoc(false);
     if (uploaded[0]) {
       setDraft((current) => (current ? { ...current, doc_path: uploaded[0]! } : current));
-      toast.success("Resource uploaded");
+      toast.success("Documentation uploaded");
+    }
+  }
+
+  async function handleSlidesUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingSlides(true);
+    const uploaded = await uploadFiles(files, "slides/");
+    setUploadingSlides(false);
+    if (uploaded[0]) {
+      setDraft((current) => (current ? { ...current, slides_path: uploaded[0]! } : current));
+      toast.success("Slide deck uploaded");
     }
   }
 
@@ -493,11 +505,18 @@ function AdminPage() {
                 onChange={(e) => setDraft({ ...draft, video_url: e.target.value })}
               />
             </Field>
-            <Field label="documentation / slides link (Drive PDF, Google Slides — optional)">
+            <Field label="documentation link (Drive PDF, Google Doc — optional)">
               <input
                 className={inputClass}
                 value={draft.doc_url ?? ""}
                 onChange={(e) => setDraft({ ...draft, doc_url: e.target.value })}
+              />
+            </Field>
+            <Field label="slides link (Google Slides, PPT url — optional)">
+              <input
+                className={inputClass}
+                value={draft.slides_url ?? ""}
+                onChange={(e) => setDraft({ ...draft, slides_url: e.target.value })}
               />
             </Field>
           </div>
@@ -662,7 +681,7 @@ function AdminPage() {
 
           <div className="mt-5">
             <span className="font-mono text-xs text-muted-foreground">
-              documentation or slide deck file (PDF, PPT, PPTX, ODP, KEY — optional)
+              documentation file (PDF — optional)
             </span>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {draft.doc_path ? (
@@ -679,16 +698,47 @@ function AdminPage() {
               ) : null}
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
                 <Upload className="h-4 w-4" />
-                {uploadingDoc ? "Uploading…" : "Upload PDF / slides"}
+                {uploadingDoc ? "Uploading…" : "Upload documentation PDF"}
                 <input
                   type="file"
-                  accept=".pdf,.ppt,.pptx,.odp,.key,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                  accept=".pdf,application/pdf"
                   className="hidden"
                   onChange={(e) => handleDocUpload(e.target.files)}
                 />
               </label>
             </div>
           </div>
+
+          <div className="mt-5">
+            <span className="font-mono text-xs text-muted-foreground">
+              slide deck file (PPT, PPTX, ODP, KEY — optional)
+            </span>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {draft.slides_path ? (
+                <span className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]">
+                  {draft.slides_path.split("/").pop()}
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, slides_path: null })}
+                    aria-label="Remove slide deck file"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ) : null}
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
+                <Upload className="h-4 w-4" />
+                {uploadingSlides ? "Uploading…" : "Upload slide deck"}
+                <input
+                  type="file"
+                  accept=".ppt,.pptx,.odp,.key,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                  className="hidden"
+                  onChange={(e) => handleSlidesUpload(e.target.files)}
+                />
+              </label>
+            </div>
+          </div>
+
 
 
 
