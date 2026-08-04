@@ -57,6 +57,7 @@ export type SignedProject = Project & {
   screenshot_paths: string[];
   design_paths: string[];
   doc_signed_url: string | null;
+  slides_signed_url: string | null;
 };
 
 export type ProjectInput = Omit<Project, "id"> & { id?: string };
