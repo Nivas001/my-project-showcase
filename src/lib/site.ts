@@ -13,7 +13,7 @@ export const site = {
     "https://drive.google.com/file/d/1U5qK7ywjGuswO9rOsc5f5an4AIRFWibx/view?usp=sharing",
   resumeUrl: resumeAsset.url,
   summary:
-    "Motivated MCA graduate (GPA 8.79/10) with hands-on project experience in Python, NLP and full-stack development. I build real-world applications with React.js, Firebase and Flutter, and completed a research-level postgraduate project on Tamil text summarization using NER and deep learning.",
+    "Motivated MCA graduate with hands-on project experience in Python, NLP and full-stack development. I build real-world applications with React.js, Firebase and Flutter, and completed a research-level postgraduate project on Tamil text summarization using NER and deep learning.",
 };
 
 export const skills = [
