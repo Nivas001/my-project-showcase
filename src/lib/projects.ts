@@ -67,7 +67,7 @@ export const PROJECT_CATEGORIES = ["Live", "Web", "Mobile", "Research", "Other"]
 export const SCREENSHOT_BUCKET = "project-screenshots";
 
 export const PROJECT_COLUMNS =
-  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, screenshots, designs, featured, sort_order";
+  "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, slides_url, slides_path, screenshots, designs, featured, sort_order";
 
 export function slugify(value: string): string {
   return value
