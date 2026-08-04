@@ -96,6 +96,7 @@ function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadingDesigns, setUploadingDesigns] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [uploadingSlides, setUploadingSlides] = useState(false);
   const [certDraft, setCertDraft] = useState<CertificateInput | null>(null);
   const [certSaving, setCertSaving] = useState(false);
   const [certUploading, setCertUploading] = useState(false);
