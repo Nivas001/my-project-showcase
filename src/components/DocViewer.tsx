@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, FileText, Presentation } from "lucide-react";
+import { ExternalLink, Eye, FileText, Presentation } from "lucide-react";
 
 type Resource = {
   kind: "pdf" | "slides";
