@@ -147,7 +147,17 @@ function ProjectDetail() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
             >
-              <FileText className="h-4 w-4" /> Documentation / slides
+              <FileText className="h-4 w-4" /> Documentation
+            </a>
+          ) : null}
+          {slidesUrl ? (
+            <a
+              href={slidesUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-primary"
+            >
+              <Presentation className="h-4 w-4" /> Slides
             </a>
           ) : null}
         </div>
