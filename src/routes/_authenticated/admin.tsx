@@ -304,7 +304,18 @@ function AdminPage() {
     setUploadingDoc(false);
     if (uploaded[0]) {
       setDraft((current) => (current ? { ...current, doc_path: uploaded[0]! } : current));
-      toast.success("Resource uploaded");
+      toast.success("Documentation uploaded");
+    }
+  }
+
+  async function handleSlidesUpload(files: FileList | null) {
+    if (!files || !draft) return;
+    setUploadingSlides(true);
+    const uploaded = await uploadFiles(files, "slides/");
+    setUploadingSlides(false);
+    if (uploaded[0]) {
+      setDraft((current) => (current ? { ...current, slides_path: uploaded[0]! } : current));
+      toast.success("Slide deck uploaded");
     }
   }
 
