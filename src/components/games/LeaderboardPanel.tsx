@@ -5,7 +5,7 @@ import { leaderboardQuery } from "@/lib/queries";
 import { GAMES, type GameId, formatScore } from "@/lib/games";
 import { submitScore } from "@/lib/games.functions";
 
-export function LeaderboardPanel({ gameId }: { gameId: GameId }) {
+export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastScore?: number }) {
   const { data, isLoading, error, refetch } = useQuery(leaderboardQuery(gameId));
   const [nickname, setNickname] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -16,11 +16,11 @@ export function LeaderboardPanel({ gameId }: { gameId: GameId }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nickname.trim() || !window.lastGameScore) return;
+    if (lastScore === undefined) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await submitScore({ data: { game: gameId, nickname: nickname.trim(), score: window.lastGameScore } });
+      await submitScore({ data: { game: gameId, nickname: nickname.trim(), score: lastScore } });
       setSubmitted(true);
       setNickname("");
       refetch();
@@ -80,11 +80,11 @@ export function LeaderboardPanel({ gameId }: { gameId: GameId }) {
         </div>
       )}
 
-      {typeof window !== "undefined" && window.lastGameScore !== undefined && !submitted && (
+      {lastScore !== undefined && !submitted && (
         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
             <label className="block font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-              Your last score: {formatScore(gameId, window.lastGameScore)}
+              Your last score: {formatScore(gameId, lastScore)}
             </label>
             <input
               type="text"
@@ -114,10 +114,4 @@ export function LeaderboardPanel({ gameId }: { gameId: GameId }) {
       )}
     </div>
   );
-}
-
-declare global {
-  interface Window {
-    lastGameScore?: number;
-  }
 }

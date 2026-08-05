@@ -33,9 +33,15 @@ const GAME_ICONS: Record<GameId, typeof Bug> = {
 
 export function FunPage() {
   const [active, setActive] = useState<GameId>("bug-hunt");
+  const [lastScore, setLastScore] = useState<number | undefined>(undefined);
 
   const handleGameOver = (score: number) => {
-    window.lastGameScore = score;
+    setLastScore(score);
+  };
+
+  const handleTabChange = (gameId: GameId) => {
+    setActive(gameId);
+    setLastScore(undefined);
   };
 
   return (
