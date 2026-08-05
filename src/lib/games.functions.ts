@@ -4,7 +4,6 @@ import { createClient } from "@supabase/supabase-js";
 import { isGameId, GAME_CONFIG, type GameScore } from "@/lib/games";
 import type { Database } from "@/integrations/supabase/types";
 
-
 const MAX_NICKNAME_LENGTH = 20;
 const SUBMISSIONS_PER_IP_PER_DAY = 5;
 
@@ -22,10 +21,6 @@ export const getLeaderboard = createServerFn({ method: "GET" })
   .inputValidator((data: { game: string }) => data)
   .handler(async ({ data }) => {
     if (!isGameId(data.game)) throw new Error("Unknown game.");
-
-    const { createClient } = await import("@supabase/supabase-js");
-    const { default: dbTypes } = await import("@/integrations/supabase/types");
-    type Database = typeof dbTypes;
 
     const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
     const supabase = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
