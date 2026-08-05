@@ -128,6 +128,39 @@ export type Database = {
         }
         Relationships: []
       }
+      horror_runs: {
+        Row: {
+          choices: string[]
+          created_at: string
+          duration_seconds: number
+          ending: string
+          id: string
+          nickname: string
+          outcome: string
+          story: string
+        }
+        Insert: {
+          choices?: string[]
+          created_at?: string
+          duration_seconds?: number
+          ending: string
+          id?: string
+          nickname?: string
+          outcome?: string
+          story: string
+        }
+        Update: {
+          choices?: string[]
+          created_at?: string
+          duration_seconds?: number
+          ending?: string
+          id?: string
+          nickname?: string
+          outcome?: string
+          story?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category: string
