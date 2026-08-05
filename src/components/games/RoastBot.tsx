@@ -6,9 +6,9 @@ import { Bot, Send, Loader2, Zap, GraduationCap } from "lucide-react";
 type Msg = { role: "user" | "assistant"; content: string };
 
 const OPENERS = [
-  "oh look, a challenger. i'm GLITCH-9000 and i've already read your scores. tragic. ask me anything, i'll be honest. brutally. 🤖",
-  "welcome to my arcade. i live here. you visit here. that's the difference between us. what do you want? 💀",
-  "beep boop. detected: mediocre reflexes. want to argue about it? go ahead, type something.",
+  "oh look, a challenger. i'm GLITCH-9000, i already read your scores and ngl? cooked. ask me anything, i'll be honest. brutally. 🤖",
+  "welcome to my arcade bestie. i live here. you visit here. that's the entire difference between us. what do you want? 💀",
+  "beep boop. scanning… detected: npc reflexes, -40 aura. wanna argue about it? type something, i dare you.",
 ];
 
 const QUICK = [
@@ -19,11 +19,15 @@ const QUICK = [
 ];
 
 const THINKING = [
-  "calculating how bad you are...",
+  "calculating how cooked you are...",
   "loading insults...",
   "consulting the skill-issue database...",
   "buffering (like your reflexes)...",
+  "checking your aura levels... oh no...",
+  "screenshotting this for later...",
 ];
+
+const LIMIT = 10;
 
 export function RoastBot({ context }: { context?: string | undefined }) {
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -31,7 +35,10 @@ export function RoastBot({ context }: { context?: string | undefined }) {
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [thinking, setThinking] = useState(THINKING[0]!);
+  const [asked, setAsked] = useState(0);
+  const [graduated, setGraduated] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMessages([{ role: "assistant", content: OPENERS[Math.floor(Math.random() * OPENERS.length)]! }]);
@@ -39,20 +46,37 @@ export function RoastBot({ context }: { context?: string | undefined }) {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, streaming]);
+  }, [messages, streaming, graduated]);
+
+  useEffect(() => {
+    if (!graduated) return;
+    const id = window.setTimeout(() => {
+      void navigate({ to: "/how-to-be-smarter-than-an-ai" });
+    }, 6000);
+    return () => window.clearTimeout(id);
+  }, [graduated, navigate]);
 
   const send = async (text: string) => {
     const trimmed = text.trim().slice(0, 500);
-    if (!trimmed || streaming) return;
+    if (!trimmed || streaming || graduated) return;
     setError(null);
     setInput("");
     setThinking(THINKING[Math.floor(Math.random() * THINKING.length)]!);
+    const count = asked + 1;
+    setAsked(count);
     const withUser: Msg[] = [...messages, { role: "user", content: trimmed }];
-    const payload = context
-      ? [...withUser.slice(0, -1), { role: "user" as const, content: `[${context}]\n${trimmed}` }]
+    const tags = [
+      context ? `[${context}]` : "",
+      count >= LIMIT ? "[SYSTEM: this is their 10th question]" : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const payload = tags
+      ? [...withUser.slice(0, -1), { role: "user" as const, content: `${tags}\n${trimmed}` }]
       : withUser;
     setMessages(withUser);
     setStreaming(true);
+
 
     try {
       const res = await fetch("/api/roast", {
