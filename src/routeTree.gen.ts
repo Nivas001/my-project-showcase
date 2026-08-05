@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FunRouteImport } from './routes/fun'
+import { Route as HowToBeSmarterThanAnAiRouteImport } from './routes/how-to-be-smarter-than-an-ai'
 import { Route as SurpriseRouteImport } from './routes/surprise'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiRoastRouteImport } from './routes/api/roast'
@@ -50,6 +51,11 @@ const ContactRoute = ContactRouteImport.update({
 const FunRoute = FunRouteImport.update({
   id: '/fun',
   path: '/fun',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowToBeSmarterThanAnAiRoute = HowToBeSmarterThanAnAiRouteImport.update({
+  id: '/how-to-be-smarter-than-an-ai',
+  path: '/how-to-be-smarter-than-an-ai',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SurpriseRoute = SurpriseRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/surprise': typeof SurpriseRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/how-to-be-smarter-than-an-ai'
     | '/surprise'
     | '/admin'
     | '/api/roast'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/how-to-be-smarter-than-an-ai'
     | '/surprise'
     | '/admin'
     | '/api/roast'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/how-to-be-smarter-than-an-ai'
     | '/surprise'
     | '/_authenticated/admin'
     | '/api/roast'
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   FunRoute: typeof FunRoute
+  HowToBeSmarterThanAnAiRoute: typeof HowToBeSmarterThanAnAiRoute
   SurpriseRoute: typeof SurpriseRoute
   ApiRoastRoute: typeof ApiRoastRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
@@ -236,6 +249,13 @@ declare module '@tanstack/react-router' {
       path: '/fun'
       fullPath: '/fun'
       preLoaderRoute: typeof FunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-to-be-smarter-than-an-ai': {
+      id: '/how-to-be-smarter-than-an-ai'
+      path: '/how-to-be-smarter-than-an-ai'
+      fullPath: '/how-to-be-smarter-than-an-ai'
+      preLoaderRoute: typeof HowToBeSmarterThanAnAiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/surprise': {
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   FunRoute: FunRoute,
+  HowToBeSmarterThanAnAiRoute: HowToBeSmarterThanAnAiRoute,
   SurpriseRoute: SurpriseRoute,
   ApiRoastRoute: ApiRoastRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
@@ -318,3 +339,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

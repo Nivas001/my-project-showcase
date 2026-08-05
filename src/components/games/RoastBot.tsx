@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, Send, Loader2, Zap } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Bot, Send, Loader2, Zap, GraduationCap } from "lucide-react";
+
 
 type Msg = { role: "user" | "assistant"; content: string };
 
