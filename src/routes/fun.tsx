@@ -65,7 +65,7 @@ export function FunPage() {
               <button
                 key={game.id}
                 type="button"
-                onClick={() => setActive(game.id)}
+                onClick={() => handleTabChange(game.id)}
                 className={`inline-flex items-center gap-2 rounded-sm border px-4 py-2 font-mono text-xs transition-all hover:-translate-y-0.5 ${
                   isActive
                     ? "border-accent bg-accent/10 text-accent"
