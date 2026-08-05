@@ -46,10 +46,10 @@ export function SnakeByte({ onGameOver }: { onGameOver: (score: number) => void 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "var(--surface-raised)";
+    ctx.fillStyle = "#191536";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = "var(--border)";
+    ctx.strokeStyle = "rgba(120,110,220,0.12)";
     ctx.lineWidth = 1;
     for (let x = 0; x <= COLS; x++) {
       ctx.beginPath();
@@ -66,14 +66,14 @@ export function SnakeByte({ onGameOver }: { onGameOver: (score: number) => void 
 
     const { snake, food } = stateRef.current;
     snake.forEach((seg, i) => {
-      ctx.fillStyle = i === 0 ? "var(--primary)" : "var(--accent)";
-      ctx.shadowColor = "var(--glow)";
+      ctx.fillStyle = i === 0 ? "#6366f1" : "#a5a2f5";
+      ctx.shadowColor = "#8b8bff";
       ctx.shadowBlur = i === 0 ? 12 : 0;
       ctx.fillRect(seg.x * CELL + 2, seg.y * CELL + 2, CELL - 4, CELL - 4);
       ctx.shadowBlur = 0;
     });
 
-    ctx.fillStyle = "var(--accent-foreground)";
+    ctx.fillStyle = "#34d399";
     ctx.beginPath();
     ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 3, 0, Math.PI * 2);
     ctx.fill();

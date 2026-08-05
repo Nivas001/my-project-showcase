@@ -12,6 +12,7 @@ export function BugHunt({ onGameOver }: { onGameOver: (score: number) => void })
   const [peekMs, setPeekMs] = useState(1500);
   const timerRef = useRef<number | null>(null);
   const hideRef = useRef<number | null>(null);
+  const scoreRef = useRef(0);
 
   const spawnBug = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -27,6 +28,7 @@ export function BugHunt({ onGameOver }: { onGameOver: (score: number) => void })
 
   const start = () => {
     setStatus("playing");
+    scoreRef.current = 0;
     setScore(0);
     setTimeLeft(GAME_DURATION);
     setPeekMs(1500);
@@ -38,7 +40,7 @@ export function BugHunt({ onGameOver }: { onGameOver: (score: number) => void })
     setActiveCell(null);
     if (timerRef.current) clearTimeout(timerRef.current);
     if (hideRef.current) clearTimeout(hideRef.current);
-    onGameOver(score);
+    onGameOver(scoreRef.current);
   };
 
   useEffect(() => {
@@ -60,7 +62,8 @@ export function BugHunt({ onGameOver }: { onGameOver: (score: number) => void })
 
   const whack = (index: number) => {
     if (status !== "playing" || activeCell !== index) return;
-    setScore((s) => s + 1);
+    scoreRef.current += 1;
+    setScore(scoreRef.current);
     setActiveCell(null);
     if (hideRef.current) clearTimeout(hideRef.current);
     timerRef.current = window.setTimeout(() => spawnBug(), 250);
