@@ -15,6 +15,7 @@ const pages = [
   { label: "Home", to: "/" as const },
   { label: "Projects", to: "/projects" as const },
   { label: "About", to: "/about" as const },
+  { label: "Fun", to: "/fun" as const },
   { label: "Contact", to: "/contact" as const },
 ];
 
