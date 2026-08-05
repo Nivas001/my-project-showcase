@@ -10,8 +10,8 @@ export function BugHunt({ onGameOver }: { onGameOver: (score: number) => void })
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [activeCell, setActiveCell] = useState<number | null>(null);
   const [peekMs, setPeekMs] = useState(1500);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timerRef = useRef<number | null>(null);
+  const hideRef = useRef<number | null>(null);
 
   const spawnBug = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
