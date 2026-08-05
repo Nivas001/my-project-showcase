@@ -119,6 +119,7 @@ function Player({ story }: { story: Story }) {
 
   // Boot audio (called from the entry gate click, so the context unlocks).
   useEffect(() => {
+    cancelled.current = false;
     const a = new HorrorAudio();
     a.unlock();
     a.setAmbience(story.ambience);
