@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP } from "@tanstack/react-start/server";
+import { createClient } from "@supabase/supabase-js";
 import { isGameId, GAME_CONFIG, type GameScore } from "@/lib/games";
+import type { Database } from "@/integrations/supabase/types";
+
 
 const MAX_NICKNAME_LENGTH = 20;
 const SUBMISSIONS_PER_IP_PER_DAY = 5;
