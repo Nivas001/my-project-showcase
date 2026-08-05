@@ -10,18 +10,18 @@ const SENTENCES = [
   "The five boxing wizards jump quickly.",
   "Bright vixens jump dozy fowl quack.",
   "A wizard's job is to vex chumps quickly.",
-];
+] as const;
 
 const GAME_DURATION = 60;
 
 export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void }) {
   const [status, setStatus] = useState<"idle" | "playing" | "over">("idle");
-  const [target, setTarget] = useState(SENTENCES[0]);
+  const [target, setTarget] = useState<string>(SENTENCES[0]);
   const [input, setInput] = useState("");
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [stats, setStats] = useState({ correct: 0, total: 0, wpm: 0 });
   const startTimeRef = useRef<number | null>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = useRef<number | null>(null);
 
   const start = () => {
     setStatus("playing");
