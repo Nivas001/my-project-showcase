@@ -8,6 +8,7 @@ import { MemoryStack } from "@/components/games/MemoryStack";
 import { CodeSprint } from "@/components/games/CodeSprint";
 import { ReactionTime } from "@/components/games/ReactionTime";
 import { LeaderboardPanel } from "@/components/games/LeaderboardPanel";
+import { Reveal } from "@/components/Reveal";
 
 export const Route = createFileRoute("/fun")({
   head: () => ({
