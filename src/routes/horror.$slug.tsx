@@ -180,8 +180,11 @@ function Player({ story }: { story: Story }) {
     [bump, story],
   );
 
-  // kick off
+  // kick off (guarded so StrictMode's double-mount doesn't play the story twice)
+  const bootedRef = useRef(false);
   useEffect(() => {
+    if (bootedRef.current) return;
+    bootedRef.current = true;
     cancelled.current = false;
     void runNode("start");
     // eslint-disable-next-line react-hooks/exhaustive-deps
