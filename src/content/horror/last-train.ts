@@ -177,7 +177,7 @@ export const lastTrain: Story = {
     ],
 
     question: [
-      { t: "text", s: "The intercom crackles. A voice that has never had a throat says:", sfx: "static" as never, fear: 16 },
+      { t: "text", s: "The intercom crackles. A voice that has never had a throat says:", sfx: "scrape", fear: 16 },
       { t: "text", s: "\"WHO IS GETTING OFF.\"", slow: true, sfx: "sting", shake: true, fear: 26 },
       { t: "text", s: "The old woman looks at you and mouths, very carefully: say her name.", fear: 20 },
       { t: "text", s: "You realise you have never asked her name. You also realise she has been saying yours all night.", fear: 22, hold: 800 },
