@@ -100,6 +100,11 @@
   --glow: oklch(0.74 0.13 270);
   --shadow-glow: 0 0 0 1px oklch(0.51 0.23 277 / 40%), 0 12px 40px -12px oklch(0.51 0.23 277 / 55%);
   --grid-line: oklch(0.51 0.23 277 / 8%);
+
+  /* arcade signal colors */
+  --game-go: oklch(0.78 0.2 150);
+  --game-go-foreground: oklch(0.18 0.05 160);
+  --game-warn: oklch(0.82 0.17 85);
 }
 
 .dark {
@@ -111,7 +116,11 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-surface-raised: var(--surface-raised);
   --color-glow: var(--glow);
+  --color-game-go: var(--game-go);
+  --color-game-go-foreground: var(--game-go-foreground);
+  --color-game-warn: var(--game-warn);
 }
+
 
 @layer base {
   * {
