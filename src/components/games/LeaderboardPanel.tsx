@@ -4,13 +4,14 @@ import { Trophy, Loader2, AlertCircle } from "lucide-react";
 import { leaderboardQuery } from "@/lib/queries";
 import { GAMES, type GameId, formatScore } from "@/lib/games";
 import { submitScore } from "@/lib/games.functions";
+import { SUBMIT_TAUNTS, pick } from "@/lib/taunts";
 
 export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastScore?: number | undefined }) {
   const { data, isLoading, error, refetch } = useQuery(leaderboardQuery(gameId));
   const [nickname, setNickname] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   const game = GAMES.find((g) => g.id === gameId)!;
 
@@ -21,7 +22,7 @@ export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastSc
     setSubmitError(null);
     try {
       await submitScore({ data: { game: gameId, nickname: nickname.trim(), score: lastScore } });
-      setSubmitted(true);
+      setSubmitted(pick(SUBMIT_TAUNTS));
       setNickname("");
       refetch();
     } catch (err) {
@@ -110,7 +111,7 @@ export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastSc
       )}
 
       {submitted && (
-        <p className="mt-2 font-mono text-xs text-accent">Score submitted! 🎉</p>
+        <p className="mt-2 animate-fade-in font-mono text-xs text-accent">Score saved. {submitted}</p>
       )}
     </div>
   );
