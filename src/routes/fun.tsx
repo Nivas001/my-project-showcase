@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Bug, Gamepad2, Ghost, Keyboard, Timer, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bug, Gamepad2, Ghost, Keyboard, Skull, Timer, Zap } from "lucide-react";
 import { GAMES, type GameId } from "@/lib/games";
 import { BugHunt } from "@/components/games/BugHunt";
 import { SnakeByte } from "@/components/games/SnakeByte";
@@ -8,7 +8,10 @@ import { MemoryStack } from "@/components/games/MemoryStack";
 import { CodeSprint } from "@/components/games/CodeSprint";
 import { ReactionTime } from "@/components/games/ReactionTime";
 import { LeaderboardPanel } from "@/components/games/LeaderboardPanel";
+import { RoastBot } from "@/components/games/RoastBot";
+import { roastScore, IDLE_TAUNTS, pick } from "@/lib/taunts";
 import { Reveal } from "@/components/Reveal";
+
 
 export const Route = createFileRoute("/fun")({
   head: () => ({
@@ -34,15 +37,26 @@ const GAME_ICONS: Record<GameId, typeof Bug> = {
 export function FunPage() {
   const [active, setActive] = useState<GameId>("bug-hunt");
   const [lastScore, setLastScore] = useState<number | undefined>(undefined);
+  const [roast, setRoast] = useState<{ tier: string; line: string } | null>(null);
+  const [idle, setIdle] = useState<string>(IDLE_TAUNTS[0]!);
+
+  useEffect(() => {
+    setIdle(pick(IDLE_TAUNTS));
+    const id = window.setInterval(() => setIdle(pick(IDLE_TAUNTS)), 9000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const handleGameOver = (score: number) => {
     setLastScore(score);
+    setRoast(roastScore(active, score));
   };
 
   const handleTabChange = (gameId: GameId) => {
     setActive(gameId);
     setLastScore(undefined);
+    setRoast(null);
   };
+
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 sm:py-20">
@@ -101,13 +115,52 @@ export function FunPage() {
             </div>
           </div>
 
+          <p key={idle} className="mb-6 animate-fade-in font-mono text-[11px] italic text-muted-foreground">
+            glitch-9000 says: “{idle}”
+          </p>
+
           {active === "bug-hunt" && <BugHunt onGameOver={handleGameOver} />}
           {active === "snake-byte" && <SnakeByte onGameOver={handleGameOver} />}
           {active === "memory-stack" && <MemoryStack onGameOver={handleGameOver} />}
           {active === "code-sprint" && <CodeSprint onGameOver={handleGameOver} />}
           {active === "reaction-time" && <ReactionTime onGameOver={handleGameOver} />}
 
+          {roast && (
+            <div
+              key={roast.line}
+              className={`mt-6 flex animate-scale-in items-start gap-3 rounded-md border p-4 ${
+                roast.tier === "good"
+                  ? "border-game-go/40 bg-game-go/10"
+                  : roast.tier === "mid"
+                    ? "border-game-warn/40 bg-game-warn/10"
+                    : "border-destructive/40 bg-destructive/10"
+              }`}
+            >
+              <Skull className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <p className="font-mono text-xs leading-relaxed text-foreground">{roast.line}</p>
+            </div>
+          )}
+
           <LeaderboardPanel gameId={active} lastScore={lastScore} />
+        </div>
+      </Reveal>
+
+      <Reveal delay={250}>
+        <div className="mt-12">
+          <div className="mb-4 text-center">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">// talk to the machine</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight">GLITCH-9000 will judge you</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+              An AI robot with zero manners and strong opinions about your reflexes. Ask it anything. Regret it.
+            </p>
+          </div>
+          <RoastBot
+            context={
+              lastScore !== undefined
+                ? `context: the user just scored ${lastScore} in ${GAMES.find((g) => g.id === active)?.label}`
+                : undefined
+            }
+          />
         </div>
       </Reveal>
 
@@ -119,6 +172,7 @@ export function FunPage() {
           </p>
         </div>
       </Reveal>
+
     </div>
   );
 }

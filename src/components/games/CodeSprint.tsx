@@ -21,6 +21,7 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [stats, setStats] = useState({ correct: 0, total: 0, wpm: 0 });
   const startTimeRef = useRef<number | null>(null);
+  const wpmRef = useRef(0);
   const timerRef = useRef<number | null>(null);
 
   const start = () => {
@@ -29,6 +30,7 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
     setTarget(randomSentence);
     setInput("");
     setStats({ correct: 0, total: 0, wpm: 0 });
+    wpmRef.current = 0;
     setTimeLeft(GAME_DURATION);
     startTimeRef.current = performance.now();
     timerRef.current = window.setInterval(() => {
@@ -46,7 +48,7 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
   const finish = () => {
     if (timerRef.current) window.clearInterval(timerRef.current);
     setStatus("over");
-    onGameOver(stats.wpm);
+    onGameOver(wpmRef.current);
   };
 
   const nextSentence = () => {
@@ -72,6 +74,7 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
       const grossWpm = elapsed > 0 ? total / 5 / elapsed : 0;
       const accuracy = total > 0 ? correctCount / total : 0;
       const wpm = Math.round(grossWpm * accuracy);
+      wpmRef.current = wpm;
       setStats({ correct: correctCount, total, wpm });
 
       if (next.length === target.length) {
