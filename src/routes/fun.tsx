@@ -115,13 +115,52 @@ export function FunPage() {
             </div>
           </div>
 
+          <p key={idle} className="mb-6 animate-fade-in font-mono text-[11px] italic text-muted-foreground">
+            glitch-9000 says: “{idle}”
+          </p>
+
           {active === "bug-hunt" && <BugHunt onGameOver={handleGameOver} />}
           {active === "snake-byte" && <SnakeByte onGameOver={handleGameOver} />}
           {active === "memory-stack" && <MemoryStack onGameOver={handleGameOver} />}
           {active === "code-sprint" && <CodeSprint onGameOver={handleGameOver} />}
           {active === "reaction-time" && <ReactionTime onGameOver={handleGameOver} />}
 
+          {roast && (
+            <div
+              key={roast.line}
+              className={`mt-6 flex animate-scale-in items-start gap-3 rounded-md border p-4 ${
+                roast.tier === "good"
+                  ? "border-game-go/40 bg-game-go/10"
+                  : roast.tier === "mid"
+                    ? "border-game-warn/40 bg-game-warn/10"
+                    : "border-destructive/40 bg-destructive/10"
+              }`}
+            >
+              <Skull className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <p className="font-mono text-xs leading-relaxed text-foreground">{roast.line}</p>
+            </div>
+          )}
+
           <LeaderboardPanel gameId={active} lastScore={lastScore} />
+        </div>
+      </Reveal>
+
+      <Reveal delay={250}>
+        <div className="mt-12">
+          <div className="mb-4 text-center">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">// talk to the machine</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight">GLITCH-9000 will judge you</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+              An AI robot with zero manners and strong opinions about your reflexes. Ask it anything. Regret it.
+            </p>
+          </div>
+          <RoastBot
+            context={
+              lastScore !== undefined
+                ? `context: the user just scored ${lastScore} in ${GAMES.find((g) => g.id === active)?.label}`
+                : undefined
+            }
+          />
         </div>
       </Reveal>
 
@@ -133,6 +172,7 @@ export function FunPage() {
           </p>
         </div>
       </Reveal>
+
     </div>
   );
 }
