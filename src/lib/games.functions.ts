@@ -1,18 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestIP } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { isGameId, GAME_CONFIG, type GameScore } from "@/lib/games";
 import type { Database } from "@/integrations/supabase/types";
 
 const MAX_NICKNAME_LENGTH = 20;
-const SUBMISSIONS_PER_IP_PER_DAY = 5;
 
 function validateNickname(nickname: string) {
   const trimmed = nickname.trim();
   if (!trimmed) return { valid: false, error: "Enter a nickname." } as const;
   if (trimmed.length > MAX_NICKNAME_LENGTH)
     return { valid: false, error: "Nickname must be 20 characters or fewer." } as const;
-  if (!/^[^\n\r\t<>]{1,20}$/.test(trimmed))
+  if (!/^[\p{L}\p{N}_\- ]{1,20}$/u.test(trimmed))
     return { valid: false, error: "Nickname contains invalid characters." } as const;
   return { valid: true, nickname: trimmed } as const;
 }
@@ -61,22 +59,7 @@ export const submitScore = createServerFn({ method: "POST" })
       throw new Error("Score looks invalid.");
     }
 
-    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-    const day = new Date().toISOString().slice(0, 10);
-    const rateKey = `${ip}:${data.game}:${day}`;
-
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { count: recentCount, error: countError } = await supabaseAdmin
-      .from("game_scores")
-      .select("id", { count: "exact", head: true })
-      .eq("game", data.game)
-      .gte("created_at", `${day}T00:00:00Z`);
-
-    if (countError) throw new Error(countError.message);
-    if ((recentCount ?? 0) >= SUBMISSIONS_PER_IP_PER_DAY) {
-      throw new Error("Daily score limit reached for this game. Try again tomorrow.");
-    }
 
     const { data: inserted, error } = await supabaseAdmin
       .from("game_scores")
