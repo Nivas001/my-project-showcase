@@ -8,7 +8,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
   const [round, setRound] = useState(1);
   const [times, setTimes] = useState<number[]>([]);
   const [currentTime, setCurrentTime] = useState(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
 
   const reset = () => {
@@ -16,7 +16,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
     setTimes([]);
     setCurrentTime(0);
     setStatus("idle");
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
   };
 
   const start = () => {
@@ -31,7 +31,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
 
   const handleClick = () => {
     if (status === "waiting") {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
       setStatus("tooSoon");
       return;
     }
@@ -60,7 +60,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
   }, []);
 

@@ -10,7 +10,7 @@ export function MemoryStack({ onGameOver }: { onGameOver: (score: number) => voi
   const [sequence, setSequence] = useState<number[]>([]);
   const [flash, setFlash] = useState<number | null>(null);
   const [inputIndex, setInputIndex] = useState(0);
-  const timeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const timeouts = useRef<number[]>([]);
 
   const clearTimeouts = () => {
     timeouts.current.forEach((t) => clearTimeout(t));

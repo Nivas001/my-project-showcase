@@ -18,7 +18,7 @@ export function SnakeByte({ onGameOver }: { onGameOver: (score: number) => void 
     score: 0,
     speed: INITIAL_SPEED,
   });
-  const loopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loopRef = useRef<number | null>(null);
 
   const reset = () => {
     stateRef.current = {
