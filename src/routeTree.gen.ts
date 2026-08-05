@@ -17,6 +17,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FunRouteImport } from './routes/fun'
 import { Route as SurpriseRouteImport } from './routes/surprise'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiRoastRouteImport } from './routes/api/roast'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as ApiPublicProjectDocRouteImport } from './routes/api/public/project-doc'
@@ -61,6 +62,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiRoastRoute = ApiRoastRouteImport.update({
+  id: '/api/roast',
+  path: '/api/roast',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/fun': typeof FunRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/roast': typeof ApiRoastRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/fun': typeof FunRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/roast': typeof ApiRoastRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/fun': typeof FunRoute
   '/surprise': typeof SurpriseRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/api/roast': typeof ApiRoastRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/fun'
     | '/surprise'
     | '/admin'
+    | '/api/roast'
     | '/projects/$slug'
     | '/projects/'
     | '/api/public/project-doc'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/fun'
     | '/surprise'
     | '/admin'
+    | '/api/roast'
     | '/projects/$slug'
     | '/projects'
     | '/api/public/project-doc'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/fun'
     | '/surprise'
     | '/_authenticated/admin'
+    | '/api/roast'
     | '/projects/$slug'
     | '/projects/'
     | '/api/public/project-doc'
@@ -175,6 +187,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FunRoute: typeof FunRoute
   SurpriseRoute: typeof SurpriseRoute
+  ApiRoastRoute: typeof ApiRoastRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   ApiPublicProjectDocRoute: typeof ApiPublicProjectDocRoute
@@ -239,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/roast': {
+      id: '/api/roast'
+      path: '/api/roast'
+      fullPath: '/api/roast'
+      preLoaderRoute: typeof ApiRoastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/': {
       id: '/projects/'
       path: '/projects'
@@ -289,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FunRoute: FunRoute,
   SurpriseRoute: SurpriseRoute,
+  ApiRoastRoute: ApiRoastRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   ApiPublicProjectDocRoute: ApiPublicProjectDocRoute,
@@ -297,13 +318,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
