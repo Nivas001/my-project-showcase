@@ -107,7 +107,7 @@ export function FunPage() {
           {active === "code-sprint" && <CodeSprint onGameOver={handleGameOver} />}
           {active === "reaction-time" && <ReactionTime onGameOver={handleGameOver} />}
 
-          <LeaderboardPanel gameId={active} />
+          <LeaderboardPanel gameId={active} lastScore={lastScore} />
         </div>
       </Reveal>
 
