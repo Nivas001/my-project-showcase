@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Bug, Gamepad2, Ghost, Keyboard, Timer, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bug, Gamepad2, Ghost, Keyboard, Skull, Timer, Zap } from "lucide-react";
 import { GAMES, type GameId } from "@/lib/games";
 import { BugHunt } from "@/components/games/BugHunt";
 import { SnakeByte } from "@/components/games/SnakeByte";
@@ -8,7 +8,10 @@ import { MemoryStack } from "@/components/games/MemoryStack";
 import { CodeSprint } from "@/components/games/CodeSprint";
 import { ReactionTime } from "@/components/games/ReactionTime";
 import { LeaderboardPanel } from "@/components/games/LeaderboardPanel";
+import { RoastBot } from "@/components/games/RoastBot";
+import { roastScore, IDLE_TAUNTS, pick } from "@/lib/taunts";
 import { Reveal } from "@/components/Reveal";
+
 
 export const Route = createFileRoute("/fun")({
   head: () => ({
