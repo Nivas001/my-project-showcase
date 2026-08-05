@@ -104,6 +104,30 @@ export type Database = {
         }
         Relationships: []
       }
+      game_scores: {
+        Row: {
+          created_at: string
+          game: string
+          id: string
+          nickname: string
+          score: number
+        }
+        Insert: {
+          created_at?: string
+          game: string
+          id?: string
+          nickname: string
+          score: number
+        }
+        Update: {
+          created_at?: string
+          game?: string
+          id?: string
+          nickname?: string
+          score?: number
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category: string
