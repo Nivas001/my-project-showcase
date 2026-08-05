@@ -20,6 +20,7 @@ import { Route as SurpriseRouteImport } from './routes/surprise'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiRoastRouteImport } from './routes/api/roast'
 import { Route as HorrorIndexRouteImport } from './routes/horror.index'
+import { Route as HorrorSlugRouteImport } from './routes/horror.$slug'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as ApiPublicProjectDocRouteImport } from './routes/api/public/project-doc'
@@ -79,6 +80,11 @@ const HorrorIndexRoute = HorrorIndexRouteImport.update({
   path: '/horror/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HorrorSlugRoute = HorrorSlugRouteImport.update({
+  id: '/horror/$slug',
+  path: '/horror/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
+  '/horror/$slug': typeof HorrorSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
+  '/horror/$slug': typeof HorrorSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror': typeof HorrorIndexRoute
   '/projects': typeof ProjectsIndexRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/surprise': typeof SurpriseRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
+  '/horror/$slug': typeof HorrorSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -163,6 +172,7 @@ export interface FileRouteTypes {
     | '/surprise'
     | '/admin'
     | '/api/roast'
+    | '/horror/$slug'
     | '/projects/$slug'
     | '/horror/'
     | '/projects/'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/surprise'
     | '/admin'
     | '/api/roast'
+    | '/horror/$slug'
     | '/projects/$slug'
     | '/horror'
     | '/projects'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/surprise'
     | '/_authenticated/admin'
     | '/api/roast'
+    | '/horror/$slug'
     | '/projects/$slug'
     | '/horror/'
     | '/projects/'
@@ -213,6 +225,7 @@ export interface RootRouteChildren {
   HowToBeSmarterThanAnAiRoute: typeof HowToBeSmarterThanAnAiRoute
   SurpriseRoute: typeof SurpriseRoute
   ApiRoastRoute: typeof ApiRoastRoute
+  HorrorSlugRoute: typeof HorrorSlugRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   HorrorIndexRoute: typeof HorrorIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
@@ -299,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HorrorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/horror/$slug': {
+      id: '/horror/$slug'
+      path: '/horror/$slug'
+      fullPath: '/horror/$slug'
+      preLoaderRoute: typeof HorrorSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/': {
       id: '/projects/'
       path: '/projects'
@@ -351,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowToBeSmarterThanAnAiRoute: HowToBeSmarterThanAnAiRoute,
   SurpriseRoute: SurpriseRoute,
   ApiRoastRoute: ApiRoastRoute,
+  HorrorSlugRoute: HorrorSlugRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   HorrorIndexRoute: HorrorIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
