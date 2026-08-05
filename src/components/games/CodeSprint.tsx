@@ -25,7 +25,8 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
 
   const start = () => {
     setStatus("playing");
-    setTarget(SENTENCES[Math.floor(Math.random() * SENTENCES.length)]);
+    const randomSentence = SENTENCES[Math.floor(Math.random() * SENTENCES.length)] ?? SENTENCES[0];
+    setTarget(randomSentence);
     setInput("");
     setStats({ correct: 0, total: 0, wpm: 0 });
     setTimeLeft(GAME_DURATION);
@@ -50,7 +51,8 @@ export function CodeSprint({ onGameOver }: { onGameOver: (score: number) => void
 
   const nextSentence = () => {
     setInput("");
-    setTarget(SENTENCES[Math.floor(Math.random() * SENTENCES.length)]);
+    const next = SENTENCES[Math.floor(Math.random() * SENTENCES.length)] ?? SENTENCES[0];
+    setTarget(next);
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
