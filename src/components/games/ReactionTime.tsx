@@ -96,7 +96,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
       <button
         type="button"
         onClick={status === "idle" || status === "over" ? start : status === "tooSoon" ? nextRound : handleClick}
-        disabled={status === "waiting" || status === "roundDone"}
+        disabled={status === "roundDone"}
         className={`mt-4 flex h-64 w-full flex-col items-center justify-center rounded-md border transition-colors duration-100 active:scale-[0.99] ${bgColor}`}
       >
         <span
