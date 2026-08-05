@@ -3,6 +3,7 @@ import { listProjects, getProjectBySlug } from "@/lib/projects.functions";
 import { listCertificates } from "@/lib/certificates.functions";
 import { listSkillGroups } from "@/lib/skills.functions";
 import { listExperiences } from "@/lib/experiences.functions";
+import { getLeaderboard } from "@/lib/games.functions";
 
 export const skillGroupsQuery = queryOptions({
   queryKey: ["skill-groups"],
@@ -29,3 +30,11 @@ export const experiencesQuery = queryOptions({
   queryKey: ["experiences"],
   queryFn: () => listExperiences(),
 });
+
+export const leaderboardQuery = (game: string) =>
+  queryOptions({
+    queryKey: ["leaderboard", game],
+    queryFn: () => getLeaderboard({ data: { game } }),
+    staleTime: 60 * 1000,
+  });
+

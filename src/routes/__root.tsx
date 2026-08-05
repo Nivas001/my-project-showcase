@@ -132,6 +132,7 @@ const navLinks = [
   { to: "/" as const, label: "home" },
   { to: "/projects" as const, label: "projects" },
   { to: "/about" as const, label: "about" },
+  { to: "/fun" as const, label: "fun" },
   { to: "/contact" as const, label: "contact" },
 ];
 
