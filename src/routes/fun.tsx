@@ -37,15 +37,26 @@ const GAME_ICONS: Record<GameId, typeof Bug> = {
 export function FunPage() {
   const [active, setActive] = useState<GameId>("bug-hunt");
   const [lastScore, setLastScore] = useState<number | undefined>(undefined);
+  const [roast, setRoast] = useState<{ tier: string; line: string } | null>(null);
+  const [idle, setIdle] = useState<string>(IDLE_TAUNTS[0]!);
+
+  useEffect(() => {
+    setIdle(pick(IDLE_TAUNTS));
+    const id = window.setInterval(() => setIdle(pick(IDLE_TAUNTS)), 9000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const handleGameOver = (score: number) => {
     setLastScore(score);
+    setRoast(roastScore(active, score));
   };
 
   const handleTabChange = (gameId: GameId) => {
     setActive(gameId);
     setLastScore(undefined);
+    setRoast(null);
   };
+
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 sm:py-20">
