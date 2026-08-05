@@ -168,6 +168,26 @@ export function RoastBot({ context }: { context?: string | undefined }) {
         )}
 
         {error && <p className="font-mono text-xs text-destructive">{error}</p>}
+
+        {graduated && (
+          <div className="animate-scale-in rounded-md border border-accent/40 bg-accent/10 p-4">
+            <p className="font-mono text-[13px] leading-relaxed">
+              <span className="mr-1.5 text-accent">glitch&gt;</span>
+              ten questions. TEN. bestie you've been losing an argument to a toaster for 10 rounds straight. i've enrolled you
+              in a course. attendance mandatory. 💀
+            </p>
+            <Link
+              to="/how-to-be-smarter-than-an-ai"
+              className="mt-3 inline-flex items-center gap-2 rounded-sm bg-primary px-3.5 py-2 font-mono text-[11px] text-primary-foreground transition-transform hover:-translate-y-0.5"
+            >
+              <GraduationCap className="h-3.5 w-3.5" />
+              how to be smarter than an AI
+            </Link>
+            <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+              dragging you there in 6 seconds anyway. resistance is mid.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* quick prompts */}
@@ -176,7 +196,7 @@ export function RoastBot({ context }: { context?: string | undefined }) {
           <button
             key={q}
             type="button"
-            disabled={streaming}
+            disabled={streaming || graduated}
             onClick={() => send(q)}
             className="rounded-full border border-border px-3 py-1 font-mono text-[11px] text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent disabled:opacity-40"
           >
@@ -197,19 +217,20 @@ export function RoastBot({ context }: { context?: string | undefined }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           maxLength={500}
-          disabled={streaming}
-          placeholder="say something you'll regret..."
+          disabled={streaming || graduated}
+          placeholder={graduated ? "class is in session. go read." : "say something you'll regret..."}
           className="flex-1 rounded-sm border border-border bg-background px-3 py-2.5 font-mono text-xs outline-none transition-colors focus:border-accent disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={streaming || !input.trim()}
+          disabled={streaming || graduated || !input.trim()}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-40"
           aria-label="Send message"
         >
           {streaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </button>
       </form>
+
     </div>
   );
 }
