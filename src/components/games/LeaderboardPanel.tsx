@@ -5,7 +5,7 @@ import { leaderboardQuery } from "@/lib/queries";
 import { GAMES, type GameId, formatScore } from "@/lib/games";
 import { submitScore } from "@/lib/games.functions";
 
-export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastScore?: number }) {
+export function LeaderboardPanel({ gameId, lastScore }: { gameId: GameId; lastScore?: number | undefined }) {
   const { data, isLoading, error, refetch } = useQuery(leaderboardQuery(gameId));
   const [nickname, setNickname] = useState("");
   const [submitting, setSubmitting] = useState(false);
