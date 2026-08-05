@@ -118,7 +118,9 @@ export function RoastBot({ context }: { context?: string | undefined }) {
       setError(err instanceof Error ? err.message : "something broke.");
     } finally {
       setStreaming(false);
+      if (count >= LIMIT) setGraduated(true);
     }
+
   };
 
   return (
