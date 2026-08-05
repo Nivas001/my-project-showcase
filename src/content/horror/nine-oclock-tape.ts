@@ -14,7 +14,7 @@ export const nineOclockTape: Story = {
       { t: "text", s: "House clearance. Your mother's place. Forty years of things in eleven bin bags.", amb: "static", fear: 5 },
       { t: "text", s: "At the back of the airing cupboard: a VHS in a sleeve, labelled in biro. 9:00.", fear: 12 },
       { t: "text", s: "You borrow a player from a man on the internet for twelve pounds and set it up in the empty living room.", fear: 10 },
-      { t: "text", s: "The tape is your childhood living room, filmed from the corner by the door, at night.", slow: true, sfx: "static", fear: 20 },
+      { t: "text", s: "The tape is your childhood living room, filmed from the corner by the door, at night.", slow: true, sfx: "scrape", fear: 20 },
       { t: "text", s: "The timestamp reads 21:00. Nothing happens for six minutes.", fear: 16 },
       {
         t: "choice",
