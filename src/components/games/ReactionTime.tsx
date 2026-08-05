@@ -65,17 +65,21 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
   }, []);
 
   const bgColor =
-    status === "ready" ? "bg-accent/20" : status === "tooSoon" ? "bg-destructive/20" : "bg-surface-raised";
+    status === "ready"
+      ? "bg-game-go border-game-go"
+      : status === "tooSoon"
+        ? "bg-destructive/25 border-destructive"
+        : "bg-surface-raised";
 
   const label =
     status === "idle"
-      ? "Click Start, then tap when green."
+      ? "Click Start, then tap when it turns green."
       : status === "waiting"
       ? "Wait for green..."
       : status === "tooSoon"
-      ? "Too soon! Click to retry this round."
+      ? "Too soon! Itchy fingers. Click to retry this round."
       : status === "ready"
-      ? "Tap now!"
+      ? "TAP NOW!"
       : status === "roundDone"
       ? `${currentTime} ms — click to continue.`
       : `Average: ${Math.round(times.reduce((a, b) => a + b, 0) / (times.length || 1))} ms`;
@@ -93,13 +97,18 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
         type="button"
         onClick={status === "idle" || status === "over" ? start : status === "tooSoon" ? nextRound : handleClick}
         disabled={status === "waiting" || status === "roundDone"}
-        className={`mt-4 flex h-64 w-full flex-col items-center justify-center rounded-md border border-border transition-colors active:scale-[0.99] ${bgColor}`}
+        className={`mt-4 flex h-64 w-full flex-col items-center justify-center rounded-md border transition-colors duration-100 active:scale-[0.99] ${bgColor}`}
       >
-        <span className="font-mono text-sm text-foreground">{label}</span>
+        <span
+          className={`font-mono text-sm ${status === "ready" ? "text-2xl font-bold text-game-go-foreground" : "text-foreground"}`}
+        >
+          {label}
+        </span>
         {status === "ready" && (
-          <span className="mt-2 font-mono text-xs text-accent">tap anywhere</span>
+          <span className="mt-2 font-mono text-xs text-game-go-foreground/80">tap anywhere</span>
         )}
       </button>
+
 
       {status === "roundDone" && (
         <div className="mt-4 text-center">
