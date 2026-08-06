@@ -50,6 +50,15 @@ function Fallback({ title }: { title: string }) {
 
 type Shown = { key: string; beat: TextBeat };
 
+/** Every timed choice gets three minutes, regardless of the story's own value. */
+const CHOICE_SECONDS = 180;
+
+function fmt(s: number) {
+  const t = Math.max(0, Math.ceil(s));
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
+
+
 function StoryReader() {
   const { story } = Route.useLoaderData();
   const [started, setStarted] = useState(false);
