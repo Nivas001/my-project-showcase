@@ -50,6 +50,15 @@ function Fallback({ title }: { title: string }) {
 
 type Shown = { key: string; beat: TextBeat };
 
+/** Every timed choice gets three minutes, regardless of the story's own value. */
+const CHOICE_SECONDS = 180;
+
+function fmt(s: number) {
+  const t = Math.max(0, Math.ceil(s));
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
+
+
 function StoryReader() {
   const { story } = Route.useLoaderData();
   const [started, setStarted] = useState(false);
@@ -203,13 +212,13 @@ function Player({ story }: { story: Story }) {
     [bump, runNode],
   );
 
-  // choice countdown
+  // choice countdown — every timed choice gets a full 3 minutes
   useEffect(() => {
     if (!choice?.timer) return;
-    setTimeLeft(choice.timer);
+    setTimeLeft(CHOICE_SECONDS);
     const started = Date.now();
     const id = window.setInterval(() => {
-      const left = choice.timer! - (Date.now() - started) / 1000;
+      const left = CHOICE_SECONDS - (Date.now() - started) / 1000;
       if (left <= 0) {
         window.clearInterval(id);
         const first = choice.options[0]!;
@@ -219,9 +228,10 @@ function Player({ story }: { story: Story }) {
       } else {
         setTimeLeft(left);
       }
-    }, 100);
+    }, 200);
     return () => window.clearInterval(id);
   }, [choice, bump, pick]);
+
 
   const toggleMute = () => {
     const next = !muted;
@@ -282,13 +292,19 @@ function Player({ story }: { story: Story }) {
             {choice.prompt && <p className="mb-4 text-sm italic opacity-70">{choice.prompt}</p>}
 
             {timeLeft !== null && choice.timer && (
-              <div className="mb-4 h-0.5 w-full overflow-hidden bg-white/10">
-                <div
-                  className="h-full bg-[color:var(--horror-blood)]"
-                  style={{ width: `${(timeLeft / choice.timer) * 100}%`, transition: "width 100ms linear" }}
-                />
+              <div className="mb-4">
+                <div className="h-0.5 w-full overflow-hidden bg-white/10">
+                  <div
+                    className="h-full bg-[color:var(--horror-blood)]"
+                    style={{ width: `${(timeLeft / CHOICE_SECONDS) * 100}%`, transition: "width 200ms linear" }}
+                  />
+                </div>
+                <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.3em] opacity-40">
+                  {fmt(timeLeft)} left
+                </p>
               </div>
             )}
+
 
             <div className="space-y-2">
               {choice.options.map((opt) => (
