@@ -139,6 +139,8 @@ const navLinks = [
 
 function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -146,6 +148,20 @@ function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => setOpen(false), [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   return (
     <header
@@ -156,13 +172,13 @@ function SiteHeader() {
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link to="/" className="group flex items-center gap-2 font-mono text-sm">
+        <Link to="/" className="group flex min-w-0 items-center gap-2 font-mono text-sm">
           <span className="text-primary">$</span>
-          <span className="font-semibold tracking-tight">srinivas</span>
-          <span className="inline-block h-3.5 w-1.5 animate-pulse bg-accent align-middle" />
+          <span className="truncate font-semibold tracking-tight">srinivas</span>
+          <span className="inline-block h-3.5 w-1.5 shrink-0 animate-pulse bg-accent align-middle" />
         </Link>
 
-        <nav className="flex items-center gap-1 font-mono text-xs sm:gap-3 sm:text-sm">
+        <nav className="hidden items-center gap-3 font-mono text-sm lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -176,10 +192,62 @@ function SiteHeader() {
           ))}
           <CommandPalette />
         </nav>
+
+        <div className="flex shrink-0 items-center gap-1 lg:hidden">
+          <CommandPalette />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "close menu" : "open menu"}
+            aria-expanded={open}
+            className="relative grid h-9 w-9 place-items-center rounded-sm border border-border/70 text-foreground transition-colors hover:border-primary/60"
+          >
+            <span
+              className={`absolute h-px w-4 bg-current transition-transform duration-300 ${
+                open ? "rotate-45" : "-translate-y-1.5"
+              }`}
+            />
+            <span
+              className={`absolute h-px w-4 bg-current transition-opacity duration-200 ${
+                open ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`absolute h-px w-4 bg-current transition-transform duration-300 ${
+                open ? "-rotate-45" : "translate-y-1.5"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={`overflow-hidden border-t border-border/50 bg-background/95 backdrop-blur transition-[max-height,opacity] duration-300 ease-out lg:hidden ${
+          open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-4 font-mono text-base">
+          {navLinks.map((link, i) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              activeOptions={{ exact: link.to === "/" }}
+              onClick={() => setOpen(false)}
+              style={{ animationDelay: open ? `${i * 45}ms` : "0ms" }}
+              className={`nav-link rounded-sm px-2 py-3 text-muted-foreground transition-colors hover:text-foreground ${
+                open ? "animate-fade-in" : ""
+              }`}
+              activeProps={{ className: "nav-link-active text-accent" }}
+            >
+              <span className="text-primary/60">/</span> {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </header>
   );
 }
+
 
 
 function SiteFooter() {
