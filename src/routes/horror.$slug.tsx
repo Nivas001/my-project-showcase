@@ -292,13 +292,19 @@ function Player({ story }: { story: Story }) {
             {choice.prompt && <p className="mb-4 text-sm italic opacity-70">{choice.prompt}</p>}
 
             {timeLeft !== null && choice.timer && (
-              <div className="mb-4 h-0.5 w-full overflow-hidden bg-white/10">
-                <div
-                  className="h-full bg-[color:var(--horror-blood)]"
-                  style={{ width: `${(timeLeft / choice.timer) * 100}%`, transition: "width 100ms linear" }}
-                />
+              <div className="mb-4">
+                <div className="h-0.5 w-full overflow-hidden bg-white/10">
+                  <div
+                    className="h-full bg-[color:var(--horror-blood)]"
+                    style={{ width: `${(timeLeft / CHOICE_SECONDS) * 100}%`, transition: "width 200ms linear" }}
+                  />
+                </div>
+                <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.3em] opacity-40">
+                  {fmt(timeLeft)} left
+                </p>
               </div>
             )}
+
 
             <div className="space-y-2">
               {choice.options.map((opt) => (
