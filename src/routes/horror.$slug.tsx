@@ -203,13 +203,13 @@ function Player({ story }: { story: Story }) {
     [bump, runNode],
   );
 
-  // choice countdown
+  // choice countdown — every timed choice gets a full 3 minutes
   useEffect(() => {
     if (!choice?.timer) return;
-    setTimeLeft(choice.timer);
+    setTimeLeft(CHOICE_SECONDS);
     const started = Date.now();
     const id = window.setInterval(() => {
-      const left = choice.timer! - (Date.now() - started) / 1000;
+      const left = CHOICE_SECONDS - (Date.now() - started) / 1000;
       if (left <= 0) {
         window.clearInterval(id);
         const first = choice.options[0]!;
@@ -219,9 +219,10 @@ function Player({ story }: { story: Story }) {
       } else {
         setTimeLeft(left);
       }
-    }, 100);
+    }, 200);
     return () => window.clearInterval(id);
   }, [choice, bump, pick]);
+
 
   const toggleMute = () => {
     const next = !muted;
