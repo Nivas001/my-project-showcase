@@ -217,6 +217,8 @@ export function DocViewer({
             <Eye className="h-3.5 w-3.5" /> show {label}
           </button>
         </div>
+      ) : isMarkdown ? (
+        <MarkdownDoc src={url} />
       ) : isSlides ? (
         <>
           <div className="aspect-video w-full animate-in fade-in duration-300">
