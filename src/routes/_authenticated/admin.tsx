@@ -219,10 +219,11 @@ function AdminPage() {
     setCertUploading(true);
     const uploaded: string[] = [];
     for (const file of Array.from(files)) {
-      const path = `certificates/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      if (!withinSizeLimit(file)) continue;
+      const path = `certificates/${Date.now()}-${safeFileName(file.name)}`;
       const { error } = await supabase.storage
         .from(SCREENSHOT_BUCKET)
-        .upload(path, file, { upsert: true });
+        .upload(path, file, { upsert: true, contentType: file.type || "application/octet-stream" });
       if (error) {
         toast.error(`Upload failed: ${error.message}`);
         continue;
