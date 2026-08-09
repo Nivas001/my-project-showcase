@@ -128,8 +128,9 @@ export function DocViewer({
       ? new URL(url, publicOrigin()).toString()
       : url;
   const detected = toResource(absolute);
+  const isMarkdown = MARKDOWN_EXT.test(url.trim());
   const resolvedKind = kind ?? detected.kind;
-  const isSlides = resolvedKind === "slides";
+  const isSlides = !isMarkdown && resolvedKind === "slides";
   // A Google Slides / Drive embed is already an iframe-ready URL; only raw
   // office files need to go through a remote rendering service.
   const isHostedEmbed = /docs\.google\.com|drive\.google\.com/.test(detected.src);
