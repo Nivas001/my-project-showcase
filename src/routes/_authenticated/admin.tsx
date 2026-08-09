@@ -38,7 +38,36 @@ import {
   type ProjectInput,
 } from "@/lib/projects";
 
+/** Max upload size for images and documents. */
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+/**
+ * Storage keys only accept a safe ASCII subset — em dashes, ampersands and
+ * other characters from the original file name make the API reject the upload.
+ */
+function safeFileName(name: string) {
+  const dot = name.lastIndexOf(".");
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "";
+  const cleanBase =
+    base
+      .normalize("NFKD")
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60)
+      .toLowerCase() || "file";
+  return ext ? `${cleanBase}.${ext}` : cleanBase;
+}
+
+/** Rejects oversized files with a toast; returns true when the file is fine. */
+function withinSizeLimit(file: File) {
+  if (file.size <= MAX_UPLOAD_BYTES) return true;
+  toast.error(`${file.name} is ${(file.size / 1024 / 1024).toFixed(1)}MB — the limit is 10MB`);
+  return false;
+}
+
 /** Move an item within a list so the admin controls display order. */
+
 function move<T>(list: T[], index: number, direction: -1 | 1): T[] {
   const target = index + direction;
   if (target < 0 || target >= list.length) return list;
