@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SortableMediaList } from "@/components/admin/SortableMediaList";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
 import {
   saveCertificate,
