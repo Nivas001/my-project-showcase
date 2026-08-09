@@ -286,8 +286,9 @@ function AdminPage() {
   async function uploadFiles(files: FileList, folder: string) {
     const uploaded: string[] = [];
     for (const file of Array.from(files)) {
-      const base = draft?.slug || "draft";
-      const path = `${base}/${folder}${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      if (!withinSizeLimit(file)) continue;
+      const base = safeFileName(draft?.slug || "draft");
+      const path = `${base}/${folder}${Date.now()}-${safeFileName(file.name)}`;
       const { error } = await supabase.storage.from(SCREENSHOT_BUCKET).upload(path, file, {
         upsert: true,
         contentType: file.type || "application/octet-stream",
