@@ -3,6 +3,9 @@ import { SCREENSHOT_BUCKET } from "@/lib/projects";
 
 const TYPES: Record<string, string> = {
   pdf: "application/pdf",
+  md: "text/markdown; charset=utf-8",
+  markdown: "text/markdown; charset=utf-8",
+  txt: "text/plain; charset=utf-8",
   ppt: "application/vnd.ms-powerpoint",
   pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   odp: "application/vnd.oasis.opendocument.presentation",

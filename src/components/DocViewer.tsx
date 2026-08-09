@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalLink, Eye, FileText, Presentation } from "lucide-react";
 
 type Resource = {
@@ -9,6 +9,56 @@ type Resource = {
 };
 
 const SLIDE_EXT = /(\.(ppt|pptx|key|odp)(\?|$)|[?&]ext=(ppt|pptx|key|odp)(&|$))/i;
+const MARKDOWN_EXT = /(\.(md|markdown|txt)(\?|$)|[?&]ext=(md|markdown|txt)(&|$))/i;
+
+/** Renders an uploaded markdown/plain-text document inline. */
+function MarkdownDoc({ src }: { src: string }) {
+  const [html, setHtml] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [{ marked }, DOMPurify, response] = await Promise.all([
+          import("marked"),
+          import("dompurify").then((m) => m.default),
+          fetch(src),
+        ]);
+        if (!response.ok) throw new Error(String(response.status));
+        const text = await response.text();
+        const rendered = await marked.parse(text, { async: true });
+        if (!cancelled) setHtml(DOMPurify.sanitize(rendered));
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  if (failed)
+    return (
+      <p className="px-4 py-8 text-center font-mono text-xs text-muted-foreground">
+        {"// could not load this document"}
+      </p>
+    );
+  if (html === null)
+    return (
+      <p className="px-4 py-8 text-center font-mono text-xs text-muted-foreground">
+        {"// loading document…"}
+      </p>
+    );
+
+  return (
+    <div
+      className="markdown-doc max-h-[820px] overflow-auto px-5 py-6 text-sm leading-relaxed animate-in fade-in duration-300"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
 
 /** Work out how a documentation link should be embedded (PDF reader vs slide deck). */
 export function toResource(url: string): Resource {
@@ -78,8 +128,9 @@ export function DocViewer({
       ? new URL(url, publicOrigin()).toString()
       : url;
   const detected = toResource(absolute);
+  const isMarkdown = MARKDOWN_EXT.test(url.trim());
   const resolvedKind = kind ?? detected.kind;
-  const isSlides = resolvedKind === "slides";
+  const isSlides = !isMarkdown && resolvedKind === "slides";
   // A Google Slides / Drive embed is already an iframe-ready URL; only raw
   // office files need to go through a remote rendering service.
   const isHostedEmbed = /docs\.google\.com|drive\.google\.com/.test(detected.src);
@@ -166,6 +217,8 @@ export function DocViewer({
             <Eye className="h-3.5 w-3.5" /> show {label}
           </button>
         </div>
+      ) : isMarkdown ? (
+        <MarkdownDoc src={url} />
       ) : isSlides ? (
         <>
           <div className="aspect-video w-full animate-in fade-in duration-300">

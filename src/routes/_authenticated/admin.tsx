@@ -729,10 +729,10 @@ function AdminPage() {
               ) : null}
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
                 <Upload className="h-4 w-4" />
-                {uploadingDoc ? "Uploading…" : "Upload documentation PDF"}
+                {uploadingDoc ? "Uploading…" : "Upload documentation (PDF or Markdown)"}
                 <input
                   type="file"
-                  accept=".pdf,application/pdf"
+                  accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain"
                   className="hidden"
                   onChange={(e) => handleDocUpload(e.target.files)}
                 />
