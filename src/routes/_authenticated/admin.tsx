@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SortableMediaList } from "@/components/admin/SortableMediaList";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
 import {
   saveCertificate,
@@ -600,49 +601,13 @@ function AdminPage() {
           <div className="mt-5">
             <span className="font-mono text-xs text-muted-foreground">screenshots</span>
             <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-              order below is the order shown on the project page
+              drag to reorder — order below is the order shown on the project page
             </p>
-            <div className="mt-2 space-y-1.5">
-              {draft.screenshots.map((path, index) => (
-                <div
-                  key={path}
-                  className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
-                >
-                  <span className="text-muted-foreground">{index + 1}.</span>
-                  <span className="flex-1 truncate">{path.split("/").pop()}</span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDraft({ ...draft, screenshots: move(draft.screenshots, index, -1) })
-                    }
-                    aria-label="Move screenshot up"
-                  >
-                    <ArrowUp className="h-3 w-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDraft({ ...draft, screenshots: move(draft.screenshots, index, 1) })
-                    }
-                    aria-label="Move screenshot down"
-                  >
-                    <ArrowDown className="h-3 w-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDraft({
-                        ...draft,
-                        screenshots: draft.screenshots.filter((p) => p !== path),
-                      })
-                    }
-                    aria-label="Remove screenshot"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <SortableMediaList
+              items={draft.screenshots}
+              onChange={(screenshots) => setDraft({ ...draft, screenshots })}
+              labelPrefix="screenshot"
+            />
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
               <Upload className="h-4 w-4" />
               {uploading ? "Uploading…" : "Upload images"}
@@ -661,42 +626,14 @@ function AdminPage() {
               design pages (shown as a zoomable board)
             </span>
             <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-              order below is the left-to-right order on the design board
+              drag to reorder — order below is the left-to-right order on the design board
             </p>
-            <div className="mt-2 space-y-1.5">
-              {draft.designs.map((path, index) => (
-                <div
-                  key={path}
-                  className="flex items-center gap-2 rounded-sm bg-secondary px-2 py-1 font-mono text-[11px]"
-                >
-                  <span className="text-muted-foreground">{index + 1}.</span>
-                  <span className="flex-1 truncate">{path.split("/").pop()}</span>
-                  <button
-                    type="button"
-                    onClick={() => setDraft({ ...draft, designs: move(draft.designs, index, -1) })}
-                    aria-label="Move design page up"
-                  >
-                    <ArrowUp className="h-3 w-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDraft({ ...draft, designs: move(draft.designs, index, 1) })}
-                    aria-label="Move design page down"
-                  >
-                    <ArrowDown className="h-3 w-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDraft({ ...draft, designs: draft.designs.filter((p) => p !== path) })
-                    }
-                    aria-label="Remove design page"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <SortableMediaList
+              items={draft.designs}
+              onChange={(designs) => setDraft({ ...draft, designs })}
+              labelPrefix="design page"
+            />
+
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary">
               <Upload className="h-4 w-4" />
               {uploadingDesigns ? "Uploading…" : "Upload design pages"}
