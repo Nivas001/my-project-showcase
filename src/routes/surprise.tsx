@@ -14,12 +14,16 @@ export const Route = createFileRoute("/surprise")({
 
 function Surprise() {
   return (
-    <div className="scanlines mx-auto max-w-3xl px-5 py-16 sm:py-24">
-      <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.35em] text-muted-foreground">
-        // access: restricted
-      </p>
-      <h1 className="sr-only">Secret frame</h1>
-      <SmashFrame />
-    </div>
+    <section
+      data-act="noir"
+      className="act-noir grain scanlines relative min-h-svh overflow-hidden"
+    >
+      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+      <div className="relative mx-auto max-w-3xl px-5 py-28 sm:py-32">
+        <p className="micro mb-10 text-center text-muted-foreground">Access: restricted</p>
+        <h1 className="sr-only">Secret frame</h1>
+        <SmashFrame />
+      </div>
+    </section>
   );
 }

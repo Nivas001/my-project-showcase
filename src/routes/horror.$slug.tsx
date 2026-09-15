@@ -15,7 +15,12 @@ export const Route = createFileRoute("/horror/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Story not found — The Dark Room" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Story not found — The Dark Room" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const s = loaderData.story;
     return {
@@ -36,11 +41,14 @@ export const Route = createFileRoute("/horror/$slug")({
 
 function Fallback({ title }: { title: string }) {
   return (
-    <div className="horror-scope film-grain horror-vignette flex min-h-screen items-center justify-center px-6">
+    <div className="act-noir grain read-vignette flex min-h-screen items-center justify-center px-6">
       <div className="relative z-10 text-center">
-        <Skull className="mx-auto h-10 w-10 blood" />
+        <Skull className="mx-auto h-10 w-10 text-hog-red" />
         <h1 className="mt-4 text-2xl font-semibold">{title}</h1>
-        <Link to="/horror" className="mt-6 inline-block border-b border-current font-mono text-sm opacity-70 hover:opacity-100">
+        <Link
+          to="/horror"
+          className="mt-6 inline-block border-b border-current font-mono text-sm opacity-70 hover:opacity-100"
+        >
           back to the dark room
         </Link>
       </div>
@@ -58,7 +66,6 @@ function fmt(s: number) {
   return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
 }
 
-
 function StoryReader() {
   const { story } = Route.useLoaderData();
   const [started, setStarted] = useState(false);
@@ -69,7 +76,7 @@ function StoryReader() {
 
 function EntryGate({ story, onEnter }: { story: Story; onEnter: () => void }) {
   return (
-    <div className="horror-scope film-grain horror-vignette flex min-h-screen items-center justify-center px-6">
+    <div className="act-noir grain read-vignette flex min-h-screen items-center justify-center px-6">
       <div className="relative z-10 w-full max-w-lg text-center">
         <Link
           to="/horror"
@@ -78,23 +85,27 @@ function EntryGate({ story, onEnter }: { story: Story; onEnter: () => void }) {
           <ArrowLeft className="h-3.5 w-3.5" /> the dark room
         </Link>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.4em] blood">
+        <p className="font-mono text-[11px] uppercase tracking-[0.4em] text-hog-red">
           {"▮".repeat(story.fear)}
           {"▯".repeat(5 - story.fear)} fear rating
         </p>
-        <h1 className="flicker mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">{story.title}</h1>
+        <h1 className="flicker mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+          {story.title}
+        </h1>
         <p className="mt-5 text-sm leading-relaxed opacity-70">{story.hook}</p>
 
         <ul className="mx-auto mt-8 max-w-sm space-y-2 text-left font-mono text-[11px] opacity-55">
           <li>— choices are timed. hesitate and the story decides for you.</li>
           <li>— sound is generated live. headphones are strongly recommended.</li>
-          <li>— {story.endings} endings. this one takes {story.minutes}.</li>
+          <li>
+            — {story.endings} endings. this one takes {story.minutes}.
+          </li>
         </ul>
 
         <button
           type="button"
           onClick={onEnter}
-          className="heart-pulse mt-10 w-full rounded-sm border border-[color:var(--horror-blood)] bg-[color:var(--horror-blood)]/10 px-6 py-4 font-mono text-sm uppercase tracking-[0.3em] transition-colors hover:bg-[color:var(--horror-blood)]/25"
+          className="mt-10 w-full rounded-sm border border-hog-red bg-hog-red/10 px-6 py-4 font-mono text-sm uppercase tracking-[0.3em] transition-colors hover:bg-hog-red/25"
         >
           enter
         </button>
@@ -165,7 +176,10 @@ function Player({ story }: { story: Story }) {
           }
           setShown((prev) => [...prev, { key: `${nodeId}-${prev.length}`, beat }]);
           const base = beat.slow ? 60 : 34;
-          await wait(Math.min(9000, 900 + beat.s.length * base * (beat.slow ? 0.55 : 0.4)) + (beat.hold ?? 0));
+          await wait(
+            Math.min(9000, 900 + beat.s.length * base * (beat.slow ? 0.55 : 0.4)) +
+              (beat.hold ?? 0),
+          );
           continue;
         }
 
@@ -232,7 +246,6 @@ function Player({ story }: { story: Story }) {
     return () => window.clearInterval(id);
   }, [choice, bump, pick]);
 
-
   const toggleMute = () => {
     const next = !muted;
     setMuted(next);
@@ -245,41 +258,56 @@ function Player({ story }: { story: Story }) {
   };
 
   return (
-    <div className={`horror-scope film-grain horror-vignette min-h-screen ${shake ? "fear-shake" : ""}`}>
+    <div className={`act-noir grain read-vignette min-h-screen ${shake ? "fear-shake" : ""}`}>
       <div className="relative z-10 mx-auto max-w-2xl px-5 pb-32 pt-6">
-        <div className="sticky top-0 z-20 -mx-5 flex items-center justify-between gap-3 bg-[color:var(--horror-bg)]/90 px-5 py-3 backdrop-blur">
-          <Link to="/horror" className="inline-flex items-center gap-2 font-mono text-[11px] opacity-50 hover:opacity-100">
+        <div className="sticky top-0 z-20 -mx-5 flex items-center justify-between gap-3 bg-background/90 px-5 py-3 backdrop-blur">
+          <Link
+            to="/horror"
+            className="inline-flex items-center gap-2 font-mono text-[11px] opacity-50 hover:opacity-100"
+          >
             <ArrowLeft className="h-3.5 w-3.5" /> leave
           </Link>
 
           <div className="flex flex-1 items-center gap-2">
-            <Heart className={`h-3.5 w-3.5 blood ${fear > 45 ? "animate-pulse" : ""}`} />
-            <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+            <Heart className={`h-3.5 w-3.5 text-hog-red ${fear > 45 ? "animate-pulse" : ""}`} />
+            <div className="h-1 flex-1 overflow-hidden rounded-full bg-secondary">
               <div
-                className="h-full rounded-full bg-[color:var(--horror-blood)] transition-[width] duration-700"
+                className="h-full rounded-full bg-hog-red transition-[width] duration-700"
                 style={{ width: `${fear}%` }}
               />
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <button type="button" onClick={toggleMute} aria-label={muted ? "unmute" : "mute"} className="opacity-50 hover:opacity-100">
+            <button
+              type="button"
+              onClick={toggleMute}
+              aria-label={muted ? "unmute" : "mute"}
+              className="opacity-50 hover:opacity-100"
+            >
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </button>
-            <button type="button" onClick={restart} aria-label="restart" className="opacity-50 hover:opacity-100">
+            <button
+              type="button"
+              onClick={restart}
+              aria-label="restart"
+              className="opacity-50 hover:opacity-100"
+            >
               <RotateCcw className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        <h1 className="mt-6 font-mono text-[11px] uppercase tracking-[0.4em] opacity-40">{story.title}</h1>
+        <h1 className="mt-6 font-mono text-[11px] uppercase tracking-[0.4em] opacity-40">
+          {story.title}
+        </h1>
 
         <div className="mt-8 space-y-6">
           {shown.map(({ key, beat }) => (
             <p
               key={key}
               className={`beat-in text-[15px] leading-8 sm:text-base ${
-                beat.slow ? "bone text-lg leading-9 tracking-wide" : "opacity-85"
+                beat.slow ? "text-foreground text-lg leading-9 tracking-wide" : "opacity-85"
               }`}
             >
               {beat.s}
@@ -288,15 +316,18 @@ function Player({ story }: { story: Story }) {
         </div>
 
         {choice && !ending && (
-          <div className="beat-in mt-10 rounded-md border border-white/10 bg-black/50 p-5">
+          <div className="beat-in mt-10 rounded-md border border-border bg-card p-5">
             {choice.prompt && <p className="mb-4 text-sm italic opacity-70">{choice.prompt}</p>}
 
             {timeLeft !== null && choice.timer && (
               <div className="mb-4">
-                <div className="h-0.5 w-full overflow-hidden bg-white/10">
+                <div className="h-0.5 w-full overflow-hidden bg-secondary">
                   <div
-                    className="h-full bg-[color:var(--horror-blood)]"
-                    style={{ width: `${(timeLeft / CHOICE_SECONDS) * 100}%`, transition: "width 200ms linear" }}
+                    className="h-full bg-hog-red"
+                    style={{
+                      width: `${(timeLeft / CHOICE_SECONDS) * 100}%`,
+                      transition: "width 200ms linear",
+                    }}
                   />
                 </div>
                 <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.3em] opacity-40">
@@ -305,23 +336,24 @@ function Player({ story }: { story: Story }) {
               </div>
             )}
 
-
             <div className="space-y-2">
               {choice.options.map((opt) => (
                 <button
                   key={opt.go + opt.label}
                   type="button"
                   onClick={() => pick(opt.go, opt.label, opt.fear)}
-                  className="block w-full rounded-sm border border-white/10 px-4 py-3 text-left text-sm transition-all hover:translate-x-1 hover:border-[color:var(--horror-blood)] hover:bg-[color:var(--horror-blood)]/10"
+                  className="block w-full rounded-sm border border-border px-4 py-3 text-left text-sm transition-all hover:translate-x-1 hover:border-hog-red hover:bg-hog-red/10"
                 >
-                  <span className="mr-2 font-mono text-[11px] blood">&gt;</span>
+                  <span className="mr-2 font-mono text-[11px] text-hog-red">&gt;</span>
                   {opt.label}
                 </button>
               ))}
             </div>
 
             {timeLeft !== null && (
-              <p className="mt-3 font-mono text-[10px] opacity-40">{timeLeft.toFixed(1)}s — silence is also a choice</p>
+              <p className="mt-3 font-mono text-[10px] opacity-40">
+                {timeLeft.toFixed(1)}s — silence is also a choice
+              </p>
             )}
           </div>
         )}
@@ -364,9 +396,12 @@ function EndingCard({
       ? "border-emerald-500/30 bg-emerald-500/5"
       : ending.outcome === "doomed"
         ? "border-amber-600/30 bg-amber-600/5"
-        : "border-[color:var(--horror-blood)]/50 bg-[color:var(--horror-blood)]/10";
+        : "border-hog-red/50 bg-hog-red/10";
 
-  const others = useMemo(() => STORIES.filter((s) => s.slug !== story.slug).slice(0, 3), [story.slug]);
+  const others = useMemo(
+    () => STORIES.filter((s) => s.slug !== story.slug).slice(0, 3),
+    [story.slug],
+  );
 
   const submit = async () => {
     setState("saving");
@@ -391,7 +426,11 @@ function EndingCard({
   return (
     <div className={`beat-in mt-14 rounded-md border p-6 sm:p-8 ${tone}`}>
       <p className="font-mono text-[11px] uppercase tracking-[0.4em] opacity-60">
-        {ending.outcome === "survived" ? "you got out" : ending.outcome === "doomed" ? "you did not get out" : "worst ending"}
+        {ending.outcome === "survived"
+          ? "you got out"
+          : ending.outcome === "doomed"
+            ? "you did not get out"
+            : "worst ending"}
       </p>
       <h2 className="mt-3 text-2xl font-semibold tracking-tight">{ending.title}</h2>
 
@@ -407,9 +446,11 @@ function EndingCard({
         {path.length} choices · {Math.floor(seconds / 60)}m {seconds % 60}s in the dark
       </p>
 
-      <div className="mt-6 border-t border-white/10 pt-6">
+      <div className="mt-6 border-t border-border pt-6">
         {state === "done" ? (
-          <p className="font-mono text-xs bone">recorded. your ending is part of the archive now.</p>
+          <p className="font-mono text-xs text-foreground">
+            recorded. your ending is part of the archive now.
+          </p>
         ) : (
           <>
             <label htmlFor="horror-nick" className="font-mono text-[11px] opacity-60">
@@ -422,18 +463,22 @@ function EndingCard({
                 maxLength={20}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="nickname"
-                className="flex-1 rounded-sm border border-white/15 bg-black/40 px-3 py-2 font-mono text-sm outline-none focus:border-[color:var(--horror-blood)]"
+                className="flex-1 rounded-sm border border-border bg-input px-3 py-2 font-mono text-sm outline-none focus:border-hog-red"
               />
               <button
                 type="button"
                 onClick={() => void submit()}
                 disabled={state === "saving"}
-                className="rounded-sm border border-[color:var(--horror-blood)] px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] transition-colors hover:bg-[color:var(--horror-blood)]/20 disabled:opacity-40"
+                className="rounded-sm border border-hog-red px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] transition-colors hover:bg-hog-red/20 disabled:opacity-40"
               >
                 {state === "saving" ? "saving…" : "record"}
               </button>
             </div>
-            {state === "error" && <p className="mt-2 font-mono text-[11px] blood">couldn't save that. the dark ate it.</p>}
+            {state === "error" && (
+              <p className="mt-2 font-mono text-[11px] text-hog-red">
+                couldn't save that. the dark ate it.
+              </p>
+            )}
           </>
         )}
       </div>
@@ -442,13 +487,13 @@ function EndingCard({
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="rounded-sm border border-white/15 px-4 py-2 font-mono text-xs transition-colors hover:border-[color:var(--horror-blood)]"
+          className="rounded-sm border border-border px-4 py-2 font-mono text-xs transition-colors hover:border-hog-red"
         >
           try a different path
         </button>
         <Link
           to="/horror"
-          className="rounded-sm border border-white/15 px-4 py-2 font-mono text-xs transition-colors hover:border-[color:var(--horror-blood)]"
+          className="rounded-sm border border-border px-4 py-2 font-mono text-xs transition-colors hover:border-hog-red"
         >
           back to the dark room
         </Link>
@@ -462,7 +507,7 @@ function EndingCard({
               key={s.slug}
               to="/horror/$slug"
               params={{ slug: s.slug }}
-              className="rounded-sm border border-white/10 px-3 py-1.5 font-mono text-[11px] opacity-70 hover:opacity-100"
+              className="rounded-sm border border-border px-3 py-1.5 font-mono text-[11px] opacity-70 hover:opacity-100"
             >
               {s.title}
             </Link>

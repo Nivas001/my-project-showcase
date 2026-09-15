@@ -5,17 +5,26 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
+ * ============================================================================
+ * TWO-ACT DESIGN SYSTEM
+ * ============================================================================
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
+ * The site is one story told in two visual registers:
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
+ *   ACT I  — "noir"  Near-black canvas, enormous tight grotesk, extreme
+ *                    restraint. Slow, cinematic, confident.
  *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ *   ACT II — "hog"   Cream canvas, 2px hard black borders, solid offset
+ *                    shadows, bright accents. Playful, product-like, loud.
+ *
+ * Both acts redefine the SAME semantic custom properties, so every component
+ * written against `bg-card` / `text-foreground` / `border-border` works in
+ * either act with zero conditional styling. Put `.act-noir` or `.act-hog` on
+ * any wrapper to switch the world inside it.
+ *
+ * To add a semantic colour:
+ *   1. Define it in `.act-noir` AND `.act-hog`
+ *   2. Register it in `@theme inline` as `--color-<name>: var(--<name>)`
  */
 
 @theme inline {
@@ -26,6 +35,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -59,105 +69,913 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Cross-act brand constants — these never change between acts. */
+  --color-hog-red: var(--hog-red);
+  --color-hog-red-deep: var(--hog-red-deep);
+  --color-hog-orange: var(--hog-orange);
+  --color-hog-blue: var(--hog-blue);
+  --color-hog-yellow: var(--hog-yellow);
+  --color-hog-green: var(--hog-green);
+  --color-hog-purple: var(--hog-purple);
+  --color-ink: var(--ink);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+
+  /* Arcade signal colours — go / caution, reused by the games for state. */
+  --color-game-go: var(--game-go);
+  --color-game-go-foreground: var(--game-go-foreground);
+  --color-game-warn: var(--game-warn);
+
+  --font-display: var(--ui-display);
+  --font-sans: var(--ui-sans);
+  --font-mono: var(--ui-mono);
+  --font-hand: var(--ui-hand);
 }
 
+/* ---------------------------------------------------------------------------
+ * Brand constants — identical in both acts.
+ *
+ * Everything here is a plain custom property, not a `@theme` entry. Tailwind
+ * drops `@theme inline` variables that no generated utility references, so a
+ * token used only from an inline `style` would silently resolve to nothing.
+ * Hand-written CSS and JSX inline styles must therefore point at THESE, and
+ * `@theme inline` above just re-exports them for utility class generation.
+ * ------------------------------------------------------------------------- */
 :root {
-  --radius: 0.375rem;
-  --background: oklch(0.13 0.035 285);
-  --foreground: oklch(0.93 0.02 275);
-  --card: oklch(0.19 0.05 283);
-  --card-foreground: oklch(0.94 0.02 275);
-  --popover: oklch(0.17 0.045 283);
-  --popover-foreground: oklch(0.94 0.02 275);
-  --primary: oklch(0.51 0.23 277);
-  --primary-foreground: oklch(0.98 0.01 275);
-  --secondary: oklch(0.25 0.06 283);
-  --secondary-foreground: oklch(0.93 0.02 275);
-  --muted: oklch(0.22 0.05 283);
-  --muted-foreground: oklch(0.72 0.04 275);
-  --accent: oklch(0.74 0.13 270);
-  --accent-foreground: oklch(0.15 0.04 285);
-  --destructive: oklch(0.6 0.23 20);
-  --destructive-foreground: oklch(0.98 0.01 275);
-  --border: oklch(0.31 0.08 283);
-  --input: oklch(0.27 0.07 283);
-  --ring: oklch(0.51 0.23 277);
-  --chart-1: oklch(0.51 0.23 277);
-  --chart-2: oklch(0.74 0.13 270);
-  --chart-3: oklch(0.85 0.05 275);
-  --chart-4: oklch(0.62 0.16 255);
-  --chart-5: oklch(0.42 0.15 283);
-  --sidebar: oklch(0.17 0.045 283);
-  --sidebar-foreground: oklch(0.93 0.02 275);
-  --sidebar-primary: oklch(0.51 0.23 277);
-  --sidebar-primary-foreground: oklch(0.98 0.01 275);
-  --sidebar-accent: oklch(0.25 0.06 283);
-  --sidebar-accent-foreground: oklch(0.93 0.02 275);
-  --sidebar-border: oklch(0.31 0.08 283);
-  --sidebar-ring: oklch(0.51 0.23 277);
+  --radius: 0.25rem;
 
-  --surface-raised: oklch(0.22 0.055 283);
-  --glow: oklch(0.74 0.13 270);
-  --shadow-glow: 0 0 0 1px oklch(0.51 0.23 277 / 40%), 0 12px 40px -12px oklch(0.51 0.23 277 / 55%);
-  --grid-line: oklch(0.51 0.23 277 / 8%);
+  --ui-display: "Inter Tight", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --ui-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --ui-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --ui-hand: "Caveat", "Comic Sans MS", cursive;
 
-  /* arcade signal colors */
-  --game-go: oklch(0.78 0.2 150);
+  --hog-red: oklch(0.63 0.225 33);
+  /* Same red, dropped in lightness until white text clears 4.5:1 on it. Use
+     this wherever the colour is a SURFACE carrying text, not a mark. */
+  --hog-red-deep: oklch(0.55 0.215 31);
+  --hog-orange: oklch(0.76 0.16 68);
+  --hog-blue: oklch(0.51 0.26 266);
+  --hog-yellow: oklch(0.81 0.15 78);
+  --hog-green: oklch(0.7 0.17 152);
+  --hog-purple: oklch(0.58 0.22 305);
+
+  /* The PostHog near-black. Used for hard borders and hard shadows. */
+  --ink: oklch(0.18 0 0);
+  --cream: oklch(0.945 0.006 120);
+
+  /* Arcade signal colours, borrowed from the brand set so /fun stays in key. */
+  --game-go: var(--hog-green);
   --game-go-foreground: oklch(0.18 0.05 160);
-  --game-warn: oklch(0.82 0.17 85);
+  --game-warn: var(--hog-yellow);
+
+  /* Emissive accent for the arcade and the /surprise frame — the one place
+     the site still uses a soft blurred glow rather than a hard shadow. */
+  --glow: var(--hog-red);
+  --shadow-glow: 0 0 0 1px oklch(0.63 0.225 33 / 35%), 0 12px 40px -12px oklch(0.63 0.225 33 / 55%);
 }
 
+/* ---------------------------------------------------------------------------
+ * ACT I — noir. Also the document default, so any unscoped surface is dark.
+ * ------------------------------------------------------------------------- */
+:root,
+.act-noir {
+  --background: oklch(0.135 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.175 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.175 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.97 0 0);
+  --primary-foreground: oklch(0.135 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.2 0 0);
+  --muted-foreground: oklch(0.63 0 0);
+  --accent: oklch(0.63 0.225 33);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.23 22);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.27 0 0);
+  --input: oklch(0.24 0 0);
+  --ring: oklch(0.63 0.225 33);
+
+  --surface-raised: oklch(0.21 0 0);
+  --hairline: oklch(1 0 0 / 12%);
+  --shadow-hard: 3px 3px 0 oklch(0 0 0 / 55%);
+  --shadow-hard-lg: 6px 6px 0 oklch(0 0 0 / 55%);
+
+  --chart-1: oklch(0.63 0.225 33);
+  --chart-2: oklch(0.51 0.26 266);
+  --chart-3: oklch(0.81 0.15 78);
+  --chart-4: oklch(0.7 0.17 152);
+  --chart-5: oklch(0.58 0.22 305);
+
+  --sidebar: oklch(0.175 0 0);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.63 0.225 33);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.27 0 0);
+  --sidebar-ring: oklch(0.63 0.225 33);
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+ * ACT II — hog. Borders are the ink colour at 2px; shadows are solid offsets
+ * with no blur. That pairing is what reads as "PostHog" more than the palette.
+ * ------------------------------------------------------------------------- */
+.act-hog {
+  --background: oklch(0.945 0.006 120);
+  --foreground: oklch(0.18 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0 0);
+  --primary: var(--hog-red-deep);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.905 0.008 120);
+  --secondary-foreground: oklch(0.18 0 0);
+  --muted: oklch(0.905 0.008 120);
+  --muted-foreground: oklch(0.44 0 0);
+  --accent: oklch(0.51 0.26 266);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.55 0.23 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.18 0 0);
+  --ring: oklch(0.63 0.225 33);
+
+  --surface-raised: oklch(0.905 0.008 120);
+  --hairline: oklch(0.18 0 0 / 16%);
+  --shadow-hard: 3px 3px 0 var(--ink);
+  --shadow-hard-lg: 6px 6px 0 var(--ink);
+
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.18 0 0);
+  --sidebar-primary: oklch(0.63 0.225 33);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.905 0.008 120);
+  --sidebar-accent-foreground: oklch(0.18 0 0);
+  --sidebar-border: oklch(0.18 0 0);
+  --sidebar-ring: oklch(0.63 0.225 33);
+
+  color-scheme: light;
+}
+
+/* Radix portals (dialogs, popovers, dropdowns) mount at <body>, outside any
+   act wrapper. Keep them on the noir palette so they never render unstyled. */
 .dark {
   color-scheme: dark;
 }
 
-@theme inline {
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-surface-raised: var(--surface-raised);
-  --color-glow: var(--glow);
-  --color-game-go: var(--game-go);
-  --color-game-go-foreground: var(--game-go-foreground);
-  --color-game-warn: var(--game-warn);
-}
-
-
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--border);
   }
 
   html {
     color-scheme: dark;
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    background-image:
-      linear-gradient(var(--grid-line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 56px 56px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--ui-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Act wrappers repaint their own ground so a section never borrows the
+     colour of the one above it. */
+  .act-noir,
+  .act-hog {
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   ::selection {
-    background: oklch(0.51 0.23 277 / 45%);
+    background: var(--hog-red);
+    color: oklch(0.99 0 0);
+  }
+
+  .act-hog ::selection {
+    background: var(--hog-yellow);
+    color: var(--ink);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--ui-display);
   }
 }
 
-@utility glow-card {
+/* ===========================================================================
+ * DISPLAY TYPE — the y-n10 register.
+ * Enormous, tight, stacked. Tracking tightens as size grows.
+ * ========================================================================= */
+
+@utility display-xl {
+  font-family: var(--ui-display);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  font-size: clamp(2.75rem, 11vw, 9.5rem);
+}
+
+@utility display-lg {
+  font-family: var(--ui-display);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.038em;
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+}
+
+@utility display-md {
+  font-family: var(--ui-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+}
+
+@utility display-sm {
+  font-family: var(--ui-display);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+}
+
+/* Tiny letterspaced monospace label — the connective tissue of both acts. */
+@utility micro {
+  font-family: var(--ui-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+@utility hand {
+  font-family: var(--ui-hand);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* ===========================================================================
+ * HOG SURFACES — hard borders, solid shadows.
+ * ========================================================================= */
+
+@utility hard-shadow {
+  box-shadow: var(--shadow-hard);
+}
+
+@utility hard-shadow-lg {
+  box-shadow: var(--shadow-hard-lg);
+}
+
+/* A card that lifts INTO its shadow on hover — the shadow grows as the card
+   moves up-left, so the piece feels physically picked up off the page. */
+@utility hog-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-hard);
   transition:
-    box-shadow 220ms ease,
-    transform 220ms ease,
-    border-color 220ms ease;
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+@utility hog-card-hover {
   &:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-hard-lg);
   }
 }
+
+@utility hog-press {
+  transition:
+    transform 110ms ease,
+    box-shadow 110ms ease;
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-hard-lg);
+  }
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+}
+
+/* Rotated badge that sits on a card corner like a sticker. */
+@utility sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--ui-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--border);
+  transform: rotate(-3deg);
+}
+
+/* ===========================================================================
+ * TEXTURE
+ * ========================================================================= */
+
+/* Fine film grain. Sits above the background, below content. Act I only —
+   it's what stops a flat black from looking like an unloaded page. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image:
+      repeating-radial-gradient(circle at 13% 27%, oklch(1 0 0 / 3.5%) 0 1px, transparent 1px 3px),
+      repeating-radial-gradient(circle at 67% 71%, oklch(1 0 0 / 2.5%) 0 1px, transparent 1px 4px);
+    background-size:
+      180px 180px,
+      240px 240px;
+  }
+}
+
+@utility hairline-grid {
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Dotted ground for hog sections — PostHog's graph-paper feel. */
+@utility dot-grid {
+  background-image: radial-gradient(var(--hairline) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+/* ===========================================================================
+ * MOTION
+ * ========================================================================= */
+
+@keyframes line-rise {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* One line of display type rising out of an overflow-hidden mask. Set
+   --line-delay per line to stagger a stacked headline. */
+@utility line-mask {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+
+@utility line-rise {
+  display: block;
+  animation: line-rise 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility fade-rise {
+  animation: fade-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@keyframes marquee-track {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-track var(--marquee-duration, 38s) linear infinite;
+}
+
+@utility marquee-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@utility caret {
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+
+@keyframes status-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@utility status-ping {
+  animation: status-ping 1.9s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes route-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* `backwards`, not `both`, on purpose: a filled animation leaves its transform
+   applied forever, and a transformed element becomes the containing block for
+   every `position: fixed` descendant. With `both` this wrapper silently broke
+   fixed positioning for all page content (desktop windows, the horror reading
+   vignette). `backwards` keeps the entrance and releases the transform after. */
+@utility route-fade {
+  animation: route-fade 380ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* Scroll-triggered reveal, driven by the IntersectionObserver in Reveal.tsx. */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+@utility reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Underline that draws in from the left on hover. */
+@utility nav-link {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@utility nav-link-active {
+  &::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* Light sweeping across a solid button. */
+@utility glare-swipe {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(1 0 0 / 14%),
+      oklch(1 0 0 / 26%),
+      oklch(1 0 0 / 14%),
+      transparent
+    );
+    transform: skewX(-22deg);
+    transition: left 0.72s ease;
+  }
+  &:hover::before {
+    left: 150%;
+  }
+}
+
+@utility lift {
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    background-color 220ms ease;
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+  }
+}
+
+@keyframes timeline-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@utility timeline-draw {
+  transform-origin: top;
+  animation: timeline-draw 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ===========================================================================
+ * ARCADE — /fun keeps signal colours for game state, on the noir ground.
+ * ========================================================================= */
+
+@keyframes game-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes game-flash {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes game-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes game-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ===========================================================================
+ * HORROR — folded into the noir act. No separate palette; the atmosphere now
+ * comes from motion and a single deep-red accent rather than a colour scope.
+ * ========================================================================= */
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0.45;
+  }
+  9% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 0.72;
+  }
+  33% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 0.38;
+  }
+  72% {
+    opacity: 1;
+  }
+}
+
+@utility flicker {
+  animation: flicker 5s linear infinite;
+}
+
+@keyframes fear-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-3px, 2px);
+  }
+  40% {
+    transform: translate(3px, -2px);
+  }
+  60% {
+    transform: translate(-2px, -3px);
+  }
+  80% {
+    transform: translate(2px, 3px);
+  }
+}
+
+@utility fear-shake {
+  animation: fear-shake 380ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes beat-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@utility beat-in {
+  animation: beat-in 700ms ease-out both;
+}
+
+@keyframes glitch-slip {
+  0%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(0);
+  }
+  20% {
+    clip-path: inset(18% 0 62% 0);
+    transform: translate(-4px);
+  }
+  40% {
+    clip-path: inset(62% 0 12% 0);
+    transform: translate(4px);
+  }
+  60% {
+    clip-path: inset(38% 0 44% 0);
+    transform: translate(-2px);
+  }
+}
+
+@utility glitch-slip {
+  animation: glitch-slip 260ms steps(2) 1;
+}
+
+@keyframes vignette-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Reading vignette for story pages — pulls the eye to the centre column. */
+@utility read-vignette {
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    background: radial-gradient(ellipse at center, transparent 38%, oklch(0 0 0 / 78%) 100%);
+    animation: vignette-breathe 7s ease-in-out infinite;
+  }
+}
+
+/* ===========================================================================
+ * REDUCED MOTION — everything decorative stops; nothing disappears.
+ * ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .line-rise,
+  .fade-rise,
+  .marquee-track,
+  .caret,
+  .status-ping,
+  .route-fade,
+  .timeline-draw,
+  .flicker,
+  .fear-shake,
+  .beat-in,
+  .glitch-slip,
+  .read-vignette::before {
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .glare-swipe::before {
+    display: none !important;
+  }
+
+  .hog-card,
+  .hog-card-hover,
+  .hog-press,
+  .lift {
+    transition: none !important;
+  }
+}
+
+/* ===========================================================================
+ * MARKDOWN — uploaded project documentation, rendered inline.
+ * Inherits whichever act it is dropped into.
+ * ========================================================================= */
+
+.markdown-doc {
+  color: var(--foreground);
+}
+.markdown-doc h1,
+.markdown-doc h2,
+.markdown-doc h3,
+.markdown-doc h4 {
+  font-family: var(--ui-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 1.5em 0 0.6em;
+}
+.markdown-doc h1 {
+  font-size: 1.6rem;
+}
+.markdown-doc h2 {
+  font-size: 1.3rem;
+}
+.markdown-doc h3 {
+  font-size: 1.08rem;
+}
+.markdown-doc p,
+.markdown-doc ul,
+.markdown-doc ol,
+.markdown-doc blockquote,
+.markdown-doc pre,
+.markdown-doc table {
+  margin: 0.9em 0;
+}
+.markdown-doc p {
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+.markdown-doc ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+}
+.markdown-doc ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+}
+.markdown-doc li {
+  margin: 0.3em 0;
+  color: var(--muted-foreground);
+}
+.markdown-doc a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.markdown-doc code {
+  font-family: var(--ui-mono);
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+.markdown-doc pre {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+}
+.markdown-doc pre code {
+  background: none;
+  padding: 0;
+}
+.markdown-doc blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.9rem;
+  color: var(--muted-foreground);
+}
+.markdown-doc hr {
+  border-color: var(--border);
+  margin: 1.6em 0;
+}
+.markdown-doc img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.markdown-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.markdown-doc th,
+.markdown-doc td {
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+}
+.markdown-doc th {
+  background: var(--muted);
+  font-family: var(--ui-mono);
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ===========================================================================
+ * SMASH FRAME — the /surprise easter egg. Self-contained: a framed panel the
+ * visitor can break, with shards, sparks and a shockwave.
+ * ========================================================================= */
 
 @utility scanlines {
   position: relative;
@@ -178,403 +996,266 @@
 }
 
 @utility text-glow {
-  text-shadow: 0 0 24px oklch(0.74 0.13 270 / 45%);
-}
-
-
-@keyframes hero-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes hero-wave {
-  0%, 60%, 100% { transform: rotate(0deg); }
-  10% { transform: rotate(16deg); }
-  20% { transform: rotate(-12deg); }
-  30% { transform: rotate(16deg); }
-  40% { transform: rotate(-8deg); }
-  50% { transform: rotate(12deg); }
-}
-
-@keyframes hero-pop {
-  0% { opacity: 0; transform: scale(0.6) translateY(10px); }
-  70% { opacity: 1; transform: scale(1.06) translateY(0); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-@keyframes hero-bubble-bob {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-6px) rotate(1deg); }
-}
-
-@keyframes hero-caret {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-anim, .hero-anim * { animation: none !important; }
+  text-shadow: 0 0 24px oklch(0.63 0.225 33 / 45%);
 }
 
 @keyframes smash-shake {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-7px, 4px) rotate(-0.8deg); }
-  40% { transform: translate(6px, -5px) rotate(0.7deg); }
-  60% { transform: translate(-4px, 3px) rotate(-0.4deg); }
-  80% { transform: translate(3px, -2px) rotate(0.3deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-7px, 4px) rotate(-0.8deg);
+  }
+  40% {
+    transform: translate(6px, -5px) rotate(0.7deg);
+  }
+  60% {
+    transform: translate(-4px, 3px) rotate(-0.4deg);
+  }
+  80% {
+    transform: translate(3px, -2px) rotate(0.3deg);
+  }
 }
 
 @keyframes smash-crack {
-  from { stroke-dasharray: 200; stroke-dashoffset: 200; opacity: 0; }
-  to { stroke-dasharray: 200; stroke-dashoffset: 0; opacity: 1; }
+  from {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    opacity: 0;
+  }
+  to {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
 }
 
 @keyframes smash-shard {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  100% { transform: translate(var(--sx), calc(var(--sy) + 420px)) rotate(var(--sr)); opacity: 0; }
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sx), calc(var(--sy) + 420px)) rotate(var(--sr));
+    opacity: 0;
+  }
 }
 
 @keyframes smash-spark {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--sx), var(--sy)) scale(0.2); opacity: 0; }
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sx), var(--sy)) scale(0.2);
+    opacity: 0;
+  }
 }
 
 @keyframes smash-shock {
-  0% { transform: scale(0.2); opacity: 0.9; }
-  100% { transform: scale(9); opacity: 0; }
+  0% {
+    transform: scale(0.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(9);
+    opacity: 0;
+  }
 }
 
 @keyframes smash-swing {
-  0% { transform: translate(-10%, -70%) rotate(-40deg); }
-  45% { transform: translate(-10%, -70%) rotate(35deg); }
-  100% { transform: translate(-10%, -70%) rotate(0deg); }
+  0% {
+    transform: translate(-10%, -70%) rotate(-40deg);
+  }
+  45% {
+    transform: translate(-10%, -70%) rotate(35deg);
+  }
+  100% {
+    transform: translate(-10%, -70%) rotate(0deg);
+  }
 }
 
 @keyframes smash-hold {
-  0%, 100% { transform: translate(-10%, -70%) rotate(-8deg); }
-  50% { transform: translate(-10%, -74%) rotate(4deg); }
+  0%,
+  100% {
+    transform: translate(-10%, -70%) rotate(-8deg);
+  }
+  50% {
+    transform: translate(-10%, -74%) rotate(4deg);
+  }
 }
 
 @keyframes smash-idle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-@keyframes cyber-bg-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(15px, -15px) scale(1.05); }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  to {
-    opacity: 1;
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smash,
+  .smash * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===========================================================================
+ * OS LAYER
+ *
+ * The site wears a desktop on top of the two acts: a translucent menu bar, a
+ * magnifying dock, desktop icons and draggable windows on large screens, and
+ * a home-screen grid on phones.
+ *
+ * Everything here is chrome. It sits above the acts and reads its colour from
+ * whichever act is underneath, so the same bar works over black and cream.
+ * ========================================================================= */
+
+:root {
+  /* Traffic lights. Fixed hues — these are the one thing that must not drift
+     with the act, or they stop reading as window controls. */
+  --mac-close: oklch(0.68 0.19 25);
+  --mac-min: oklch(0.81 0.15 82);
+  --mac-max: oklch(0.73 0.19 145);
+}
+
+/* Frosted panel: menu bar, dock, windows. The tint is act-aware, so the same
+   utility gives dark vibrancy over the wallpaper and light vibrancy over cream. */
+@utility vibrancy {
+  background: color-mix(in oklab, var(--background) 62%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 10%, transparent) inset,
+    0 18px 50px -18px oklch(0 0 0 / 65%);
+}
+
+@utility vibrancy-strong {
+  background: color-mix(in oklab, var(--background) 80%, transparent);
+  backdrop-filter: blur(34px) saturate(180%);
+  -webkit-backdrop-filter: blur(34px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 12%, transparent) inset,
+    0 30px 70px -20px oklch(0 0 0 / 72%);
+}
+
+/* iOS / macOS app tile. 23% is the ratio Apple's squircle approximates to at
+   icon sizes; a true superellipse mask would fight the gradient and shadow. */
+@utility squircle {
+  border-radius: 23%;
+}
+
+/* The glossy top highlight every Apple icon has. */
+@utility icon-gloss {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      oklch(1 0 0 / 28%) 0%,
+      oklch(1 0 0 / 6%) 42%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+}
+
+/* Dock tiles lift and the label pops. Scale itself is driven per-icon in JS so
+   neighbours magnify too, the way the real dock does. */
+@utility dock-item {
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    filter 180ms ease;
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+@keyframes dock-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-38%);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-14%);
+  }
+  100% {
     transform: translateY(0);
   }
 }
 
-@utility cyber-drift {
-  animation: cyber-bg-drift 24s ease-in-out infinite;
+@utility dock-bounce {
+  animation: dock-bounce 700ms cubic-bezier(0.28, 0.84, 0.42, 1);
 }
 
-@utility animate-fade-in-up {
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@utility glare-swipe {
-  position: relative;
-  overflow: hidden;
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.07),
-      rgba(255, 255, 255, 0.15),
-      rgba(255, 255, 255, 0.07),
-      transparent
-    );
-    transform: skewX(-25deg);
-    transition: left 0.75s ease;
+@keyframes window-open {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(18px);
   }
-  &:hover::before {
-    left: 150%;
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
-@utility reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+/* `backwards`, not `both`: a CSS animation outranks inline styles, so a filled
+   one would pin the window at its opening transform and the drag handler's
+   `style.transform` would never take effect. */
+@utility window-open {
+  animation: window-open 320ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
-@utility reveal-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@utility nav-link {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0.15rem;
-    height: 1px;
-    background: var(--color-accent);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+/* The desktop ground. A slow aurora behind the grain, so the wallpaper is not
+   a flat black rectangle. */
+@keyframes wallpaper-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
   }
-  &:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
+  50% {
+    transform: translate3d(3%, -4%, 0) scale(1.12);
   }
 }
 
-@utility nav-link-active {
-  &::after {
-    transform: scaleX(1);
-    transform-origin: left;
+@utility wallpaper-drift {
+  animation: wallpaper-drift 26s ease-in-out infinite;
+}
+
+/* Selection marquee look for a focused desktop icon. */
+@utility desktop-icon {
+  &:hover .desktop-icon-label,
+  &:focus-visible .desktop-icon-label {
+    background: color-mix(in oklab, var(--foreground) 22%, transparent);
   }
-}
-
-@utility lift {
-  transition:
-    transform 220ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease;
-  &:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-glow);
+  &:focus-visible {
+    outline: none;
   }
-}
-
-@keyframes route-fade {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@utility route-fade {
-  animation: route-fade 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes status-ping {
-  0% { transform: scale(1); opacity: 0.7; }
-  80%, 100% { transform: scale(2.4); opacity: 0; }
-}
-
-@utility status-ping {
-  animation: status-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes timeline-draw {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
-}
-
-@utility timeline-draw {
-  transform-origin: top;
-  animation: timeline-draw 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  &:focus-visible .desktop-icon-tile {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--foreground) 45%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .smash, .smash * { animation: none !important; transition: none !important; }
-  .cyber-drift, .animate-fade-in-up, .route-fade, .status-ping, .timeline-draw {
+  .dock-bounce,
+  .window-open,
+  .wallpaper-drift {
     animation: none !important;
   }
-  .glare-swipe::before { display: none !important; }
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-}
-
-/* Game keyframes */
-@keyframes game-pop {
-  0% { transform: scale(0.4); opacity: 0; }
-  60% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes game-flash {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-@keyframes game-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
-}
-
-@keyframes game-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.15); opacity: 1; }
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(120px) rotate(360deg); opacity: 0; }
-}
-
-
-
-/* ---------- Horror section (scoped) ---------- */
-.horror-scope {
-  --horror-bg: oklch(0.11 0.012 20);
-  --horror-ink: oklch(0.86 0.012 40);
-  --horror-blood: oklch(0.52 0.19 25);
-  --horror-bone: oklch(0.78 0.03 70);
-  background: var(--horror-bg);
-  color: var(--horror-ink);
-  font-family: var(--font-mono, ui-monospace), monospace;
-}
-
-.horror-scope .blood { color: var(--horror-blood); }
-.horror-scope .bone { color: var(--horror-bone); }
-
-@keyframes grain-shift {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(-3%, 2%); }
-  40% { transform: translate(2%, -3%); }
-  60% { transform: translate(-2%, -2%); }
-  80% { transform: translate(3%, 1%); }
-  100% { transform: translate(0, 0); }
-}
-
-@utility film-grain {
-  position: relative;
-  &::after {
-    content: "";
-    position: fixed;
-    inset: -50%;
-    pointer-events: none;
-    z-index: 30;
-    opacity: 0.22;
-    background-image: repeating-radial-gradient(circle at 17% 31%, rgba(255,255,255,0.09) 0 1px, transparent 1px 3px),
-      repeating-radial-gradient(circle at 71% 62%, rgba(255,255,255,0.07) 0 1px, transparent 1px 4px);
-    animation: grain-shift 0.5s steps(3) infinite;
+  .dock-item {
+    transition: none !important;
   }
 }
-
-@keyframes vignette-breathe {
-  0%, 100% { opacity: 0.72; }
-  50% { opacity: 0.94; }
-}
-
-@utility horror-vignette {
-  &::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-    background: radial-gradient(ellipse at center, transparent 34%, rgba(0,0,0,0.82) 100%);
-    animation: vignette-breathe 6s ease-in-out infinite;
-  }
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  8% { opacity: 0.42; }
-  9% { opacity: 1; }
-  32% { opacity: 0.7; }
-  33% { opacity: 1; }
-  71% { opacity: 0.35; }
-  72% { opacity: 1; }
-}
-
-@utility flicker {
-  animation: flicker 5s linear infinite;
-}
-
-@keyframes fear-shake {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-3px, 2px); }
-  40% { transform: translate(3px, -2px); }
-  60% { transform: translate(-2px, -3px); }
-  80% { transform: translate(2px, 3px); }
-}
-
-@utility fear-shake {
-  animation: fear-shake 380ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-
-@keyframes beat-in {
-  from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-
-@utility beat-in {
-  animation: beat-in 700ms ease-out both;
-}
-
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(190, 40, 40, 0); }
-  50% { box-shadow: 0 0 42px 6px rgba(190, 40, 40, 0.22); }
-}
-
-@utility heart-pulse {
-  animation: pulse-red 1s ease-in-out infinite;
-}
-
-@keyframes glitch-slip {
-  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
-  20% { clip-path: inset(18% 0 62% 0); transform: translate(-4px); }
-  40% { clip-path: inset(62% 0 12% 0); transform: translate(4px); }
-  60% { clip-path: inset(38% 0 44% 0); transform: translate(-2px); }
-}
-
-@utility glitch-slip {
-  animation: glitch-slip 260ms steps(2) 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .film-grain::after, .horror-vignette::before, .flicker, .fear-shake, .beat-in, .heart-pulse, .glitch-slip {
-    animation: none !important;
-  }
-}
-
-/* Inline rendering for uploaded markdown documentation */
-.markdown-doc { color: hsl(var(--foreground)); }
-.markdown-doc h1, .markdown-doc h2, .markdown-doc h3, .markdown-doc h4 {
-  font-weight: 700; line-height: 1.25; margin: 1.4em 0 0.6em;
-}
-.markdown-doc h1 { font-size: 1.5rem; }
-.markdown-doc h2 { font-size: 1.25rem; }
-.markdown-doc h3 { font-size: 1.05rem; }
-.markdown-doc p, .markdown-doc ul, .markdown-doc ol, .markdown-doc blockquote, .markdown-doc pre, .markdown-doc table {
-  margin: 0.85em 0;
-}
-.markdown-doc ul { list-style: disc; padding-left: 1.4rem; }
-.markdown-doc ol { list-style: decimal; padding-left: 1.4rem; }
-.markdown-doc li { margin: 0.3em 0; }
-.markdown-doc a { color: hsl(var(--accent)); text-decoration: underline; }
-.markdown-doc code {
-  font-family: var(--font-mono, monospace); font-size: 0.85em;
-  background: hsl(var(--muted) / 0.4); padding: 0.15em 0.4em; border-radius: 3px;
-}
-.markdown-doc pre {
-  background: hsl(var(--muted) / 0.35); border: 1px solid hsl(var(--border));
-  border-radius: 6px; padding: 0.9rem 1rem; overflow-x: auto;
-}
-.markdown-doc pre code { background: none; padding: 0; }
-.markdown-doc blockquote {
-  border-left: 2px solid hsl(var(--primary)); padding-left: 0.9rem; color: hsl(var(--muted-foreground));
-}
-.markdown-doc hr { border-color: hsl(var(--border)); margin: 1.5em 0; }
-.markdown-doc img { max-width: 100%; border-radius: 6px; }
-.markdown-doc table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-.markdown-doc th, .markdown-doc td { border: 1px solid hsl(var(--border)); padding: 0.45rem 0.6rem; text-align: left; }
-.markdown-doc th { background: hsl(var(--muted) / 0.3); }

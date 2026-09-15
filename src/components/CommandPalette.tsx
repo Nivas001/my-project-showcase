@@ -13,13 +13,14 @@ import { projectsQuery } from "@/lib/queries";
 
 const pages = [
   { label: "Home", to: "/" as const },
-  { label: "Projects", to: "/projects" as const },
+  { label: "Work", to: "/projects" as const },
   { label: "About", to: "/about" as const },
-  { label: "Fun", to: "/fun" as const },
   { label: "Contact", to: "/contact" as const },
+  { label: "The arcade", to: "/fun" as const },
+  { label: "Horror stories", to: "/horror" as const },
 ];
 
-export function CommandPalette() {
+export function CommandPalette({ trigger = true }: { trigger?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { data: projects } = useQuery({ ...projectsQuery, enabled: open });
@@ -32,20 +33,29 @@ export function CommandPalette() {
       }
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    // The macOS menu bar's search button opens the palette through this event,
+    // so the two stay decoupled.
+    const onOpen = () => setOpen(true);
+    document.addEventListener("open-command-palette", onOpen);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("open-command-palette", onOpen);
+    };
   }, []);
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="hidden items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-foreground md:flex"
-        aria-label="Open command palette"
-      >
-        <span>Search</span>
-        <kbd className="rounded-sm border border-border px-1 py-0.5 text-[10px]">Ctrl K</kbd>
-      </button>
+      {trigger ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="hidden items-center gap-2 rounded-md border-2 border-border/50 bg-card/60 px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground md:flex"
+          aria-label="Open command palette"
+        >
+          <span>Search</span>
+          <kbd className="rounded border border-border/50 px-1 py-0.5 text-[10px]">Ctrl K</kbd>
+        </button>
+      ) : null}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Jump to a page or project…" />

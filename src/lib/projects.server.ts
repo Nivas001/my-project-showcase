@@ -46,12 +46,20 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
 
   const map = new Map<string, string>();
   if (paths.length > 0) {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin.storage
-      .from(SCREENSHOT_BUCKET)
-      .createSignedUrls(paths, 60 * 60 * 6);
-    for (const item of data ?? []) {
-      if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
+    // Signing needs the service-role key. If it is missing (local dev without
+    // the full env) or storage is unreachable, fall through with unsigned
+    // paths: the images won't resolve, but the page still renders instead of
+    // failing the whole route.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data } = await supabaseAdmin.storage
+        .from(SCREENSHOT_BUCKET)
+        .createSignedUrls(paths, 60 * 60 * 6);
+      for (const item of data ?? []) {
+        if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
+      }
+    } catch (error) {
+      console.error("[projects] could not sign storage URLs:", error);
     }
   }
 
@@ -77,4 +85,3 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     slides_signed_url: row.slides_path ? proxy(row, "slides", row.slides_path) : null,
   }));
 }
-

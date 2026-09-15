@@ -8,94 +8,44 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
-
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { ArrowUpRight, Mail } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
-import { site } from "@/lib/site";
+import { shippingNow, site } from "@/lib/site";
 import { CommandPalette } from "@/components/CommandPalette";
+import { MenuBar } from "@/components/os/MenuBar";
+import { Dock } from "@/components/os/Dock";
+import { MobileDock, StatusBar } from "@/components/os/MobileShell";
+import { HardLink, HardRouteLink, LocalClock, StatusDot } from "@/components/kit";
 import { Toaster } from "@/components/ui/sonner";
 
-function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <h1 className="font-mono text-7xl font-bold text-primary">404</h1>
-        <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          That route doesn&apos;t exist. Try the projects index instead.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/projects"
-            className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Browse projects
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
-  const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-
-  return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight">This page didn&apos;t load</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong. Try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-sm border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/10"
-          >
-            Go home
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
+const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
+const DESCRIPTION =
+  "Full-stack engineer in Pondicherry with three products live in production and a published Tamil NLP summarisation model. React, TanStack, Python, Flutter, PostgreSQL.";
+const OG_IMAGE =
+  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Srinivas M — Python, Full Stack & Flutter Developer" },
-      {
-        name: "description",
-        content:
-          "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos.",
-      },
-      { name: "author", content: "Srinivas" },
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { name: "author", content: "Srinivas M" },
+      { name: "theme-color", content: "#141414" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Srinivas M" },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "Srinivas M — Python, Full Stack & Flutter Developer" },
-      { name: "twitter:title", content: "Srinivas M — Python, Full Stack & Flutter Developer" },
-      { property: "og:description", content: "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos." },
-      { name: "twitter:description", content: "MCA graduate building NLP research, React web apps and Flutter mobile products. Watch the video resume, browse live projects and open-source repos." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -104,7 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600;700&display=swap",
       },
     ],
   }),
@@ -128,152 +78,310 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const navLinks = [
-  { to: "/" as const, label: "home" },
-  { to: "/projects" as const, label: "projects" },
-  { to: "/about" as const, label: "about" },
-  { to: "/fun" as const, label: "fun" },
-  { to: "/horror" as const, label: "horror" },
-  { to: "/contact" as const, label: "contact" },
-];
+/* ==========================================================================
+ * Act detection
+ *
+ * The header floats over the page, so it has to invert as the ground beneath
+ * it changes. Every section declares `data-act="noir" | "hog"`; this probes a
+ * point just under the header and reports whichever act is painted there.
+ *
+ * Last match wins on purpose: the homepage's act wipe layers a cream sheet
+ * over a black field, and the sheet is later in DOM order.
+ * ======================================================================== */
 
-function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+type Act = "noir" | "hog";
+
+function useSectionAct(pathname: string): Act {
+  const [act, setAct] = useState<Act>("noir");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    let frame = 0;
+    const PROBE_Y = 36;
+
+    const measure = () => {
+      const sections = document.querySelectorAll<HTMLElement>("[data-act]");
+
+      let covering: Act | null = null;
+      let nextDown: Act | null = null;
+      let nextDownGap = Infinity;
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.height <= 0) continue;
+        const act: Act = section.dataset["act"] === "hog" ? "hog" : "noir";
+
+        if (rect.top <= PROBE_Y && rect.bottom >= PROBE_Y) {
+          // Last match wins: the homepage's act wipe layers a cream sheet over a
+          // black field, and the sheet is later in DOM order.
+          covering = act;
+        } else if (rect.top > PROBE_Y && rect.top - PROBE_Y < nextDownGap) {
+          nextDownGap = rect.top - PROBE_Y;
+          nextDown = act;
+        }
+      }
+
+      // Anchor jumps can park the probe in a gap — a wrapper that carries no act
+      // of its own, such as the scroll-length behind the wipe. Fall forward to
+      // whatever section is arriving rather than snapping back to the default.
+      setAct(covering ?? nextDown ?? "noir");
+    };
+
+    // Two passes, a frame apart. Scroll-linked transforms (the act wipe's cream
+    // sheet) are written in Motion's own rAF pass, which may land after ours —
+    // so a single read taken right after an anchor jump that stops instantly
+    // would see the previous frame's position and leave the header stale.
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        measure();
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          measure();
+        });
+      });
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [pathname]);
+
+  return act;
+}
+
+/* ==========================================================================
+ * OS chrome
+ *
+ * The site wears a desktop. On large screens that is a macOS menu bar and a
+ * magnifying dock; on phones it is an iOS status bar and dock. Both read their
+ * colour from whichever act is painted beneath them.
+ *
+ * `display: contents` on the wrapper means the act class supplies custom
+ * properties without generating a box, so the fixed children still position
+ * against the viewport.
+ * ======================================================================== */
+
+function OsChrome() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const act = useSectionAct(pathname);
+
+  const openSearch = useCallback(() => {
+    document.dispatchEvent(new CustomEvent("open-command-palette"));
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
   return (
-    <header
-      className={`sticky top-0 z-40 border-b bg-background/80 backdrop-blur transition-[border-color,box-shadow,background-color] duration-300 ${
-        scrolled
-          ? "border-primary/40 bg-background/95 shadow-[0_8px_30px_-18px_var(--glow)]"
-          : "border-border/70"
-      }`}
-    >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link to="/" className="group flex min-w-0 items-center gap-2 font-mono text-sm">
-          <span className="text-primary">$</span>
-          <span className="truncate font-semibold tracking-tight">srinivas</span>
-          <span className="inline-block h-3.5 w-1.5 shrink-0 animate-pulse bg-accent align-middle" />
-        </Link>
-
-        <nav className="hidden items-center gap-3 font-mono text-sm lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              activeOptions={{ exact: link.to === "/" }}
-              className="nav-link rounded-sm px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "nav-link-active text-accent" }}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <CommandPalette />
-        </nav>
-
-        <div className="flex shrink-0 items-center gap-1 lg:hidden">
-          <CommandPalette />
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "close menu" : "open menu"}
-            aria-expanded={open}
-            className="relative grid h-9 w-9 place-items-center rounded-sm border border-border/70 text-foreground transition-colors hover:border-primary/60"
-          >
-            <span
-              className={`absolute h-px w-4 bg-current transition-transform duration-300 ${
-                open ? "rotate-45" : "-translate-y-1.5"
-              }`}
-            />
-            <span
-              className={`absolute h-px w-4 bg-current transition-opacity duration-200 ${
-                open ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`absolute h-px w-4 bg-current transition-transform duration-300 ${
-                open ? "-rotate-45" : "translate-y-1.5"
-              }`}
-            />
-          </button>
-        </div>
-      </div>
-
-      <div
-        className={`overflow-hidden border-t border-border/50 bg-background/95 backdrop-blur transition-[max-height,opacity] duration-300 ease-out lg:hidden ${
-          open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-4 font-mono text-base">
-          {navLinks.map((link, i) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              activeOptions={{ exact: link.to === "/" }}
-              onClick={() => setOpen(false)}
-              style={{ animationDelay: open ? `${i * 45}ms` : "0ms" }}
-              className={`nav-link rounded-sm px-2 py-3 text-muted-foreground transition-colors hover:text-foreground ${
-                open ? "animate-fade-in" : ""
-              }`}
-              activeProps={{ className: "nav-link-active text-accent" }}
-            >
-              <span className="text-primary/60">/</span> {link.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </header>
+    <div className={`act-${act} contents`}>
+      <MenuBar onOpenSearch={openSearch} nowShipping={shippingNow} />
+      <StatusBar />
+      <Dock />
+      <MobileDock />
+    </div>
   );
 }
 
+/* ==========================================================================
+ * Footer — always cream. It is the ground floor of every page.
+ * ======================================================================== */
 
+const FOOTER_COLUMNS = [
+  {
+    title: "Work",
+    links: [
+      { label: "All projects", to: "/projects" as const },
+      { label: "Ani Bakes", to: "/projects/$slug" as const, params: { slug: "anibakes" } },
+      {
+        label: "AARRKKAA",
+        to: "/projects/$slug" as const,
+        params: { slug: "aarrkkaa-international" },
+      },
+      {
+        label: "Tamil summariser",
+        to: "/projects/$slug" as const,
+        params: { slug: "tamil-ner-summarizer" },
+      },
+    ],
+  },
+  {
+    title: "Me",
+    links: [
+      { label: "About", to: "/about" as const },
+      { label: "Contact", to: "/contact" as const },
+      { label: "Résumé", to: "/about" as const },
+    ],
+  },
+  {
+    title: "Detours",
+    links: [
+      { label: "The arcade", to: "/fun" as const },
+      { label: "Horror stories", to: "/horror" as const },
+      { label: "Beat an AI", to: "/how-to-be-smarter-than-an-ai" as const },
+      { label: "???", to: "/surprise" as const },
+    ],
+  },
+];
 
 function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border/70">
-      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <span>© {new Date().getFullYear()} Srinivas — {site.location}</span>
-        <span className="flex flex-wrap items-center gap-4">
-          <Link
-            to="/surprise"
-            title="something is sealed behind a frame…"
-            className="text-muted-foreground/40 transition-colors hover:text-accent"
-          >
-            {"// ???"}
-          </Link>
-          <a href={`mailto:${site.email}`} className="hover:text-accent">
-            {site.email}
-          </a>
-          <Link to="/auth" className="hover:text-accent">
-            admin
-          </Link>
-        </span>
+    <footer data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+      <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
+
+      <div className="relative mx-auto max-w-7xl px-5 py-14 sm:px-8">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <p className="display-sm text-foreground">
+              {site.fullName}
+              <span className="text-hog-red">.</span>
+            </p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {site.tagline}
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2.5">
+              <HardLink
+                href={site.github}
+                target="_blank"
+                rel="noreferrer"
+                variant="secondary"
+                size="sm"
+              >
+                GitHub
+              </HardLink>
+              <HardLink
+                href={site.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                variant="secondary"
+                size="sm"
+              >
+                LinkedIn
+              </HardLink>
+              <HardLink href={`mailto:${site.email}`} variant="secondary" size="sm">
+                Email
+              </HardLink>
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((column) => (
+            <div key={column.title}>
+              <h2 className="micro text-muted-foreground">{column.title}</h2>
+              <ul className="mt-4 space-y-2.5">
+                {column.links.map((link) => (
+                  <li key={`${column.title}-${link.label}`}>
+                    <Link
+                      to={link.to}
+                      {...("params" in link ? { params: link.params } : {})}
+                      className="nav-link text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col gap-3 border-t-2 border-border/15 pt-6 font-mono text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            © {new Date().getFullYear()} {site.fullName} — {site.location}
+          </span>
+          <span className="flex flex-wrap items-center gap-5">
+            <span className="inline-flex items-center gap-2">
+              <StatusDot />
+              Available for work
+            </span>
+            <span className="hidden sm:inline">Built with TanStack Start</span>
+            <Link to="/auth" className="transition-colors hover:text-foreground">
+              Admin
+            </Link>
+          </span>
+        </div>
       </div>
     </footer>
   );
 }
+
+/* ==========================================================================
+ * Error states
+ * ======================================================================== */
+
+function NotFoundComponent() {
+  return (
+    <section
+      data-act="noir"
+      className="act-noir grain flex min-h-svh flex-col items-center justify-center px-5 text-center"
+    >
+      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+      <p className="micro relative text-hog-red">Error 404</p>
+      <h1 className="display-xl relative mt-4 text-foreground">
+        Nothing here<span className="text-hog-red">.</span>
+      </h1>
+      <p className="relative mt-5 max-w-sm text-base leading-relaxed text-muted-foreground">
+        That route doesn't exist — or it did once and doesn't any more.
+      </p>
+      <div className="relative mt-8 flex flex-wrap justify-center gap-3">
+        <HardRouteLink to="/projects" variant="invert" size="md">
+          Browse the work
+        </HardRouteLink>
+        <HardRouteLink to="/" variant="ghost" size="md">
+          Back home
+        </HardRouteLink>
+      </div>
+    </section>
+  );
+}
+
+function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  console.error(error);
+  const router = useRouter();
+
+  useEffect(() => {
+    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
+
+  const retry = useCallback(() => {
+    router.invalidate();
+    reset();
+  }, [router, reset]);
+
+  return (
+    <section
+      data-act="noir"
+      className="act-noir grain flex min-h-svh flex-col items-center justify-center px-5 text-center"
+    >
+      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+      <p className="micro relative text-hog-red">Something broke</p>
+      <h1 className="display-lg relative mt-4 max-w-2xl text-foreground">
+        This page didn't load<span className="text-hog-red">.</span>
+      </h1>
+      <p className="relative mt-5 max-w-sm text-base leading-relaxed text-muted-foreground">
+        Not your fault. Try again, or head somewhere that works.
+      </p>
+      <div className="relative mt-8 flex flex-wrap justify-center gap-3">
+        <button
+          onClick={retry}
+          className="hog-press inline-flex items-center gap-2 rounded-md border-2 border-foreground bg-foreground px-5 py-2.5 text-sm font-medium text-background hard-shadow"
+        >
+          Try again
+        </button>
+        <a
+          href="/"
+          className="inline-flex items-center gap-2 rounded-md border-2 border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+        >
+          Go home
+        </a>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+ * Root
+ * ======================================================================== */
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -291,8 +399,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
+      <div className="flex min-h-svh flex-col">
+        <OsChrome />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <main key={pathname} className="route-fade flex-1">
           <Outlet />
@@ -300,6 +408,7 @@ function RootComponent() {
         <SiteFooter />
       </div>
 
+      <CommandPalette trigger={false} />
       <Toaster />
     </QueryClientProvider>
   );

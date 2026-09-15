@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Bug, Gamepad2, Ghost, Keyboard, Skull, Timer, Zap } from "lucide-react";
 import { GAMES, type GameId } from "@/lib/games";
+import { PageHero, SectionLabel, SplitLines, Sticker } from "@/components/kit";
 import { BugHunt } from "@/components/games/BugHunt";
 import { SnakeByte } from "@/components/games/SnakeByte";
 import { MemoryStack } from "@/components/games/MemoryStack";
@@ -12,15 +13,20 @@ import { RoastBot } from "@/components/games/RoastBot";
 import { roastScore, IDLE_TAUNTS, pick } from "@/lib/taunts";
 import { Reveal } from "@/components/Reveal";
 
-
 export const Route = createFileRoute("/fun")({
   head: () => ({
     meta: [
-      { title: "Fun & Games — Srinivas M" },
-      { name: "description", content: "Take a break with browser mini-games: Bug Hunt, Snake Byte, Memory Stack, Code Sprint and Reaction Time." },
-      { property: "og:title", content: "Fun & Games — Srinivas M" },
-      { property: "og:description", content: "Take a break with browser mini-games built by a developer, for developers." },
-      { name: "twitter:card", content: "summary" },
+      { title: "The Arcade — Srinivas M" },
+      {
+        name: "description",
+        content:
+          "Five browser mini-games with a public leaderboard: Bug Hunt, Snake Byte, Memory Stack, Code Sprint and Reaction Time.",
+      },
+      { property: "og:title", content: "The Arcade — Srinivas M" },
+      {
+        property: "og:description",
+        content: "Five browser mini-games with a public leaderboard, built for no good reason.",
+      },
     ],
   }),
   component: FunPage,
@@ -57,122 +63,144 @@ export function FunPage() {
     setRoast(null);
   };
 
-
   return (
-    <div className="mx-auto max-w-5xl px-5 py-12 sm:py-20">
-      <Reveal>
-        <div className="text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">// break time</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Have some fun</h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-            A tiny arcade built into the portfolio. Pick a mini-game, chase a high score, and add your name to the leaderboard.
-          </p>
-        </div>
-      </Reveal>
+    <>
+      <PageHero
+        index="01"
+        label="The arcade"
+        lines={["Five games.", "One leaderboard."]}
+        lede="A tiny arcade wired into the portfolio, because a CV should be able to waste your time too. Pick a game, chase a score, put your name up."
+      >
+        <Sticker tone="hog-red" rotate={-3}>
+          Scores are public
+        </Sticker>
+      </PageHero>
 
-      <Reveal delay={100}>
-        <div className="mt-12 flex flex-wrap justify-center gap-2">
-          {GAMES.map((game, i) => {
-            const Icon = GAME_ICONS[game.id];
-            const isActive = active === game.id;
-            return (
-              <button
-                key={game.id}
-                type="button"
-                onClick={() => handleTabChange(game.id)}
-                className={`inline-flex items-center gap-2 rounded-sm border px-4 py-2 font-mono text-xs transition-all hover:-translate-y-0.5 ${
-                  isActive
-                    ? "border-accent bg-accent/10 text-accent"
-                    : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
-                }`}
-                style={{ transitionDelay: `${i * 60}ms` }}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{game.label}</span>
-                <span className="sm:hidden">{game.label.split(" ")[0]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </Reveal>
+      <section
+        data-act="noir"
+        className="act-noir grain relative overflow-hidden border-t border-border"
+      >
+        <div
+          aria-hidden
+          className="hairline-grid pointer-events-none absolute inset-0 opacity-40"
+        />
 
-      <Reveal delay={200}>
-        <div className="mt-8 rounded-md border border-border bg-card p-6 sm:p-10">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-surface-raised">
-              {(() => {
-                const Icon = GAME_ICONS[active];
-                return <Icon className="h-5 w-5 text-accent" />;
-              })()}
+        <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-16">
+          <Reveal>
+            <div className="flex flex-wrap justify-center gap-2">
+              {GAMES.map((game, i) => {
+                const Icon = GAME_ICONS[game.id];
+                const isActive = active === game.id;
+                return (
+                  <button
+                    key={game.id}
+                    type="button"
+                    onClick={() => handleTabChange(game.id)}
+                    className={`inline-flex items-center gap-2 rounded-md border-2 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-all hover:-translate-y-0.5 ${
+                      isActive
+                        ? "border-hog-red-deep bg-hog-red-deep text-white"
+                        : "border-border bg-card text-muted-foreground hover:border-foreground hover:text-foreground"
+                    }`}
+                    style={{ transitionDelay: `${i * 60}ms` }}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{game.label}</span>
+                    <span className="sm:hidden">{game.label.split(" ")[0]}</span>
+                  </button>
+                );
+              })}
             </div>
-            <div>
-              <h2 className="text-lg font-semibold tracking-tight">
-                {GAMES.find((g) => g.id === active)?.label}
-              </h2>
-              <p className="font-mono text-xs text-muted-foreground">
-                {GAMES.find((g) => g.id === active)?.description}
+          </Reveal>
+
+          <Reveal delay={200}>
+            <div className="mt-8 rounded-lg border border-border bg-card/70 p-6 sm:p-10">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="grid h-11 w-11 place-items-center rounded-md border-2 border-border bg-hog-red-deep">
+                  {(() => {
+                    const Icon = GAME_ICONS[active];
+                    return <Icon className="h-5 w-5 text-white" />;
+                  })()}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="display-sm text-foreground">
+                    {GAMES.find((g) => g.id === active)?.label}
+                  </h2>
+                  <p className="font-mono text-xs text-muted-foreground">
+                    {GAMES.find((g) => g.id === active)?.description}
+                  </p>
+                </div>
+              </div>
+
+              <p
+                key={idle}
+                className="mb-6 animate-fade-in font-mono text-[11px] italic text-muted-foreground"
+              >
+                glitch-9000 says: “{idle}”
+              </p>
+
+              {active === "bug-hunt" && <BugHunt onGameOver={handleGameOver} />}
+              {active === "snake-byte" && <SnakeByte onGameOver={handleGameOver} />}
+              {active === "memory-stack" && <MemoryStack onGameOver={handleGameOver} />}
+              {active === "code-sprint" && <CodeSprint onGameOver={handleGameOver} />}
+              {active === "reaction-time" && <ReactionTime onGameOver={handleGameOver} />}
+
+              {roast && (
+                <div
+                  key={roast.line}
+                  className={`mt-6 flex animate-scale-in items-start gap-3 rounded-md border p-4 ${
+                    roast.tier === "good"
+                      ? "border-game-go/40 bg-game-go/10"
+                      : roast.tier === "mid"
+                        ? "border-game-warn/40 bg-game-warn/10"
+                        : "border-destructive/40 bg-destructive/10"
+                  }`}
+                >
+                  <Skull className="mt-0.5 h-4 w-4 shrink-0 text-hog-red" />
+                  <p className="font-mono text-xs leading-relaxed text-foreground">{roast.line}</p>
+                </div>
+              )}
+
+              <LeaderboardPanel gameId={active} lastScore={lastScore} />
+            </div>
+          </Reveal>
+
+          <Reveal delay={250}>
+            <div className="mt-12">
+              <div className="mb-6 text-center">
+                <SectionLabel index="02" rule={false} className="justify-center">
+                  Talk to the machine
+                </SectionLabel>
+                <SplitLines
+                  as="h2"
+                  onView
+                  lines={["GLITCH-9000 will", "judge you."]}
+                  className="display-md mt-4 text-foreground"
+                />
+                <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+                  A bot with zero manners and strong opinions about your reflexes. Ask it anything.
+                  Regret it.
+                </p>
+              </div>
+              <RoastBot
+                context={
+                  lastScore !== undefined
+                    ? `context: the user just scored ${lastScore} in ${GAMES.find((g) => g.id === active)?.label}`
+                    : undefined
+                }
+              />
+            </div>
+          </Reveal>
+
+          <Reveal delay={300}>
+            <div className="mt-14 text-center font-mono text-xs text-muted-foreground">
+              <p className="inline-flex items-center gap-2">
+                <Gamepad2 className="h-4 w-4 text-hog-red" />
+                Scores are public. Come back any time to beat your best.
               </p>
             </div>
-          </div>
-
-          <p key={idle} className="mb-6 animate-fade-in font-mono text-[11px] italic text-muted-foreground">
-            glitch-9000 says: “{idle}”
-          </p>
-
-          {active === "bug-hunt" && <BugHunt onGameOver={handleGameOver} />}
-          {active === "snake-byte" && <SnakeByte onGameOver={handleGameOver} />}
-          {active === "memory-stack" && <MemoryStack onGameOver={handleGameOver} />}
-          {active === "code-sprint" && <CodeSprint onGameOver={handleGameOver} />}
-          {active === "reaction-time" && <ReactionTime onGameOver={handleGameOver} />}
-
-          {roast && (
-            <div
-              key={roast.line}
-              className={`mt-6 flex animate-scale-in items-start gap-3 rounded-md border p-4 ${
-                roast.tier === "good"
-                  ? "border-game-go/40 bg-game-go/10"
-                  : roast.tier === "mid"
-                    ? "border-game-warn/40 bg-game-warn/10"
-                    : "border-destructive/40 bg-destructive/10"
-              }`}
-            >
-              <Skull className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-              <p className="font-mono text-xs leading-relaxed text-foreground">{roast.line}</p>
-            </div>
-          )}
-
-          <LeaderboardPanel gameId={active} lastScore={lastScore} />
+          </Reveal>
         </div>
-      </Reveal>
-
-      <Reveal delay={250}>
-        <div className="mt-12">
-          <div className="mb-4 text-center">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">// talk to the machine</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">GLITCH-9000 will judge you</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-              An AI robot with zero manners and strong opinions about your reflexes. Ask it anything. Regret it.
-            </p>
-          </div>
-          <RoastBot
-            context={
-              lastScore !== undefined
-                ? `context: the user just scored ${lastScore} in ${GAMES.find((g) => g.id === active)?.label}`
-                : undefined
-            }
-          />
-        </div>
-      </Reveal>
-
-      <Reveal delay={300}>
-        <div className="mt-12 text-center font-mono text-xs text-muted-foreground">
-          <p className="inline-flex items-center gap-2">
-            <Gamepad2 className="h-4 w-4 text-accent" />
-            Scores are public. Come back any time to beat your best.
-          </p>
-        </div>
-      </Reveal>
-
-    </div>
+      </section>
+    </>
   );
 }

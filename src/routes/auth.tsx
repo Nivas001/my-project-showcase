@@ -54,66 +54,70 @@ function AuthPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col justify-center px-5 py-24">
-      <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        // sudo login
-      </p>
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">Admin access</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Private area for managing projects. Visitors can head back to the{" "}
-        <Link to="/projects" className="text-accent hover:underline">
-          projects page
-        </Link>
-        .
-      </p>
+    <section
+      data-act="noir"
+      className="act-noir grain relative flex min-h-svh flex-col justify-center overflow-hidden"
+    >
+      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+      <div className="relative mx-auto w-full max-w-md px-5 py-28">
+        <p className="micro text-muted-foreground">Sudo login</p>
+        <h1 className="display-md mt-4 text-foreground">Admin access</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Private area for managing projects. Visitors can head back to the{" "}
+          <Link to="/projects" className="nav-link text-foreground">
+            projects page
+          </Link>
+          .
+        </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        <div>
-          <label htmlFor="email" className="font-mono text-xs text-muted-foreground">
-            email
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
-          />
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <div>
+            <label htmlFor="email" className="font-mono text-xs text-muted-foreground">
+              email
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="mt-1.5 w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="font-mono text-xs text-muted-foreground">
+              password
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="mt-1.5 w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-sm bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+
+        <div className="my-6 flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
+          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
         </div>
-        <div>
-          <label htmlFor="password" className="font-mono text-xs text-muted-foreground">
-            password
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
-          />
-        </div>
+
         <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-sm bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+          type="button"
+          onClick={handleGoogle}
+          className="w-full rounded-sm border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary"
         >
-          {loading ? "Signing in…" : "Sign in"}
+          Continue with Google
         </button>
-      </form>
-
-      <div className="my-6 flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
-        <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
       </div>
-
-      <button
-        type="button"
-        onClick={handleGoogle}
-        className="w-full rounded-sm border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary"
-      >
-        Continue with Google
-      </button>
-    </div>
+    </section>
   );
 }
