@@ -1,11 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import {
-  SCREENSHOT_BUCKET,
-  normaliseDownloads,
-  type Project,
-  type SignedProject,
-} from "@/lib/projects";
+import { normaliseDownloads, type Project, type SignedProject } from "@/lib/projects";
 
 function isOpaqueKey(value: string) {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -31,39 +26,22 @@ export function createPublicServerClient() {
 
 /**
  * Screenshots, design pages and documentation files are stored as object paths
- * in a private bucket. Turn them into temporary readable URLs so public pages
- * can display them, while keeping the raw paths for the admin editor.
+ * in the `project-screenshots` bucket. Turn them into URLs a browser can load,
+ * while keeping the raw paths for the admin editor.
+ *
+ * See storage.server.ts for why these are public URLs rather than signed ones.
  */
 export async function signScreenshots(rows: Project[]): Promise<SignedProject[]> {
-  const paths = [
-    ...new Set([
-      ...rows.flatMap((row) => row.screenshots ?? []),
-      ...rows.flatMap((row) => row.designs ?? []),
-      ...rows.map((row) => row.doc_path ?? ""),
-      ...rows.map((row) => row.slides_path ?? ""),
-    ]),
-  ].filter((path) => path && !path.startsWith("http"));
+  const { resolveStorageUrls } = await import("@/lib/storage.server");
 
-  const map = new Map<string, string>();
-  if (paths.length > 0) {
-    // Signing needs the service-role key. If it is missing (local dev without
-    // the full env) or storage is unreachable, fall through with unsigned
-    // paths: the images won't resolve, but the page still renders instead of
-    // failing the whole route.
-    try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data } = await supabaseAdmin.storage
-        .from(SCREENSHOT_BUCKET)
-        .createSignedUrls(paths, 60 * 60 * 6);
-      for (const item of data ?? []) {
-        if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
-      }
-    } catch (error) {
-      console.error("[projects] could not sign storage URLs:", error);
-    }
-  }
+  const map = await resolveStorageUrls([
+    ...rows.flatMap((row) => row.screenshots ?? []),
+    ...rows.flatMap((row) => row.designs ?? []),
+    ...rows.map((row) => row.doc_path ?? ""),
+    ...rows.map((row) => row.slides_path ?? ""),
+  ]);
 
-  const sign = (path: string) => (path.startsWith("http") ? path : (map.get(path) ?? path));
+  const resolve = (path: string) => map.get(path) ?? path;
 
   // Real file extension in the path — Office Online / Google viewers reject
   // query-string-only URLs when embedding .pptx decks.
@@ -76,8 +54,8 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     ...row,
     screenshot_paths: row.screenshots ?? [],
     design_paths: row.designs ?? [],
-    screenshots: (row.screenshots ?? []).map(sign),
-    designs: (row.designs ?? []).map(sign),
+    screenshots: (row.screenshots ?? []).map(resolve),
+    designs: (row.designs ?? []).map(resolve),
     downloads: normaliseDownloads(row.downloads),
     // Served through a proxy so the file renders inline; ext lets the viewer
     // pick a PDF reader or a slide-deck embed.

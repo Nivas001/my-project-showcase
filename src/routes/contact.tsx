@@ -14,18 +14,25 @@ import {
 } from "lucide-react";
 import { site } from "@/lib/site";
 import {
-  Annotation,
-  DoodleArrow,
+  CheckMark,
+  HandNote,
   HardLink,
-  PageHero,
+  Highlight,
+  LocalClock,
+  Marked,
+  ScribbleArrow,
   SectionLabel,
   SplitLines,
   Squiggle,
+  StarMark,
   StatusDot,
   Sticker,
+  TiltCard,
 } from "@/components/kit";
 import { accentSurface } from "@/lib/accents";
 import { Reveal } from "@/components/Reveal";
+import { ContactForm } from "@/components/contact/ContactForm";
+import { ContactHero } from "@/components/contact/ContactHero";
 
 const TITLE = "Contact — Srinivas M";
 const DESCRIPTION =
@@ -378,64 +385,63 @@ function ContactPage() {
 
   return (
     <>
-      <PageHero
-        index="01"
-        label="Contact"
-        lines={["Let's talk."]}
-        lede="Open to full-stack, Python and Flutter roles, plus contract work. Email is the fastest route — I usually reply the same day."
-      >
-        <div className="flex flex-wrap items-center gap-3">
-          <HardLink href={`mailto:${site.email}`} variant="invert" size="md">
-            <Mail className="h-4 w-4" />
-            Email me
-          </HardLink>
-          <HardLink href={site.resumeUrl} download variant="ghost" size="md">
-            <Download className="h-4 w-4" />
-            Résumé
-          </HardLink>
+      <ContactHero />
+
+      {/* The composer --------------------------------------------------- */}
+      <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+        <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
+        <div className="relative mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-20">
+          <Reveal>
+            <SectionLabel index="02">Write it here</SectionLabel>
+          </Reveal>
+          <div className="mt-8">
+            <ContactForm />
+          </div>
         </div>
-      </PageHero>
+      </section>
 
       {/* Channels ------------------------------------------------------- */}
-      <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+      <section data-act="hog" className="act-hog relative border-t-2 border-border/20">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 
         <div className="relative mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-20">
           <Reveal>
-            <SectionLabel index="02">Pick a channel</SectionLabel>
+            <SectionLabel index="03">Or pick a channel</SectionLabel>
           </Reveal>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
             {CHANNELS.map((channel, i) => (
               <Reveal key={channel.label} delay={i * 80}>
-                <a
-                  href={channel.href}
-                  onClick={() => triggerRef.current?.(channel.label)}
-                  {...(channel.href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer" }
-                    : {})}
-                  className="hog-card hog-card-hover group flex h-full items-start gap-4 p-5"
-                >
-                  <span
-                    aria-hidden
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-md border-2 border-border"
-                    style={accentSurface(channel.accent)}
+                <TiltCard max={5} lift={8} className="h-full">
+                  <a
+                    href={channel.href}
+                    onClick={() => triggerRef.current?.(channel.label)}
+                    {...(channel.href.startsWith("http")
+                      ? { target: "_blank", rel: "noreferrer" }
+                      : {})}
+                    className="hog-card hog-card-hover group flex h-full items-start gap-4 p-5"
                   >
-                    <channel.icon className="h-5 w-5" strokeWidth={2.2} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      {channel.label}
+                    <span
+                      aria-hidden
+                      className="grid h-11 w-11 shrink-0 place-items-center rounded-md border-2 border-border"
+                      style={accentSurface(channel.accent)}
+                    >
+                      <channel.icon className="h-5 w-5" strokeWidth={2.2} />
                     </span>
-                    <span className="mt-0.5 block truncate text-[15px] font-semibold text-foreground">
-                      {channel.value}
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        {channel.label}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[15px] font-semibold text-foreground">
+                        {channel.value}
+                      </span>
+                      <span className="mt-1.5 block text-[13px] text-muted-foreground">
+                        {channel.note}
+                      </span>
                     </span>
-                    <span className="mt-1.5 block text-[13px] text-muted-foreground">
-                      {channel.note}
-                    </span>
-                  </span>
-                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1" />
-                </a>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1" />
+                  </a>
+                </TiltCard>
               </Reveal>
             ))}
           </div>
@@ -452,7 +458,16 @@ function ContactPage() {
               <div className="hog-card grid gap-6 p-6 pt-9 sm:grid-cols-3 sm:p-8 sm:pt-10">
                 {[
                   { icon: MapPin, label: "Based in", value: site.location },
-                  { icon: Clock, label: "Timezone", value: "IST (UTC+5:30)" },
+                  {
+                    icon: Clock,
+                    label: "My local time",
+                    value: (
+                      <LocalClock
+                        timeZone={site.timezone}
+                        className="font-mono tabular-nums text-foreground"
+                      />
+                    ),
+                  },
                   { icon: Mail, label: "Response time", value: "Within a day" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-3">
@@ -499,7 +514,7 @@ function ContactPage() {
         <div className="relative mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <SectionLabel index="03" rule={false}>
+              <SectionLabel index="04" rule={false}>
                 <span className="inline-flex items-center gap-2">
                   <TerminalIcon className="h-3 w-3" />
                   For the curious
@@ -513,10 +528,16 @@ function ContactPage() {
               />
             </div>
             <div className="hidden items-end gap-1 sm:flex">
-              <Annotation tone="hog-red" rotate={-6} className="pb-2">
+              <HandNote
+                tone="hog-red"
+                rotate={-6}
+                size="md"
+                className="pb-2"
+                arrow="curve"
+                arrowClassName="h-11 w-12"
+              >
                 try /hire
-              </Annotation>
-              <DoodleArrow tone="hog-red" className="h-12 w-14" />
+              </HandNote>
             </div>
           </div>
 

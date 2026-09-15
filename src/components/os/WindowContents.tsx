@@ -1,7 +1,27 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Download, FileText, Folder, Github, Globe } from "lucide-react";
+import {
+  Award,
+  ArrowUpRight,
+  Download,
+  FileText,
+  Folder,
+  Github,
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 import type { Project } from "@/lib/projects";
-import { education, site, toAbsoluteUrl, prettyUrl } from "@/lib/site";
+import {
+  certifications,
+  changelog,
+  education,
+  site,
+  skills,
+  toAbsoluteUrl,
+  prettyUrl,
+} from "@/lib/site";
 import { StatusDot } from "@/components/kit";
 
 /* ==========================================================================
@@ -199,6 +219,182 @@ export function ReadmeWindow({ projects }: { projects: Project[] }) {
         >
           Browse the work
         </Link>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * changelog.log — the shipping history, rehomed off the front page.
+ *
+ * It used to be a homepage section, where it re-listed the same projects a
+ * third time. As a file you choose to open it earns its length back.
+ * ======================================================================== */
+
+export function ChangelogWindow() {
+  return (
+    <div className="px-6 py-5 font-mono text-[12px] leading-relaxed">
+      <p className="micro mb-4 text-muted-foreground">{changelog.length} entries · newest first</p>
+      <ol className="space-y-4">
+        {changelog.map((entry) => (
+          <li
+            key={entry.title}
+            className="border-l-2 pl-3.5"
+            style={{ borderColor: `var(--${entry.accent})` }}
+          >
+            <p className="flex flex-wrap items-baseline gap-x-2.5">
+              <span className="text-muted-foreground">{entry.date}</span>
+              <span
+                className="uppercase tracking-widest"
+                style={{ color: `var(--${entry.accent})` }}
+              >
+                {entry.tag}
+              </span>
+            </p>
+            <p className="mt-1 font-sans text-[13px] font-semibold text-foreground">
+              {entry.title}
+            </p>
+            <p className="mt-1 font-sans text-[12px] text-muted-foreground">{entry.body}</p>
+            {/* Not every entry is about a project — some are milestones with
+                nowhere to link to. */}
+            {entry.slug ? (
+              <Link
+                to="/projects/$slug"
+                params={{ slug: entry.slug }}
+                className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-foreground underline underline-offset-4"
+              >
+                Open case study <ArrowUpRight className="h-3 w-3" />
+              </Link>
+            ) : null}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * certificates — a folder of them.
+ * ======================================================================== */
+
+export function CertificatesWindow() {
+  return (
+    <div className="px-6 py-5">
+      <p className="micro mb-4 text-muted-foreground">{certifications.length} items</p>
+      <ul className="space-y-1">
+        {certifications.map((cert) => (
+          <li
+            key={cert.title}
+            className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-foreground/8"
+          >
+            <Award className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13px] text-foreground">{cert.title}</span>
+              <span className="block font-mono text-[11px] text-muted-foreground">
+                {cert.issuer}
+              </span>
+            </span>
+            <span className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground">
+              {cert.year}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * education.txt
+ * ======================================================================== */
+
+export function EducationWindow() {
+  return (
+    <div className="space-y-4 px-6 py-5 font-mono text-[12px] leading-relaxed text-muted-foreground">
+      {education.map((entry) => (
+        <div
+          key={entry.degree}
+          className="border-t border-foreground/10 pt-3 first:border-0 first:pt-0"
+        >
+          <p className="font-sans text-[13px] font-semibold text-foreground">{entry.degree}</p>
+          <p className="mt-0.5">{entry.school}</p>
+          <p className="mt-0.5 flex flex-wrap gap-x-3">
+            <span>{entry.period}</span>
+            <span className="text-foreground">{entry.score}</span>
+          </p>
+          {entry.note ? <p className="mt-1 opacity-80">{entry.note}</p> : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * stack.app — everything, grouped.
+ * ======================================================================== */
+
+export function StackWindow() {
+  return (
+    <div className="space-y-5 px-6 py-5">
+      {skills.map((group) => (
+        <div key={group.group}>
+          <p className="micro mb-2.5 text-muted-foreground">{group.group}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {group.items.map((item) => (
+              <span
+                key={item}
+                className="rounded-md border border-foreground/15 bg-foreground/5 px-2 py-1 font-mono text-[11px] text-foreground"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * contact.card — a vCard.
+ * ======================================================================== */
+
+export function ContactWindow() {
+  const rows: { icon: typeof Mail; label: string; href: string; external?: boolean }[] = [
+    { icon: Mail, label: site.email, href: `mailto:${site.email}` },
+    { icon: Phone, label: site.phone, href: `tel:${site.phone}` },
+    { icon: Github, label: "GitHub", href: site.github, external: true },
+    { icon: Linkedin, label: "LinkedIn", href: site.linkedin, external: true },
+  ];
+
+  return (
+    <div className="px-6 py-5">
+      <div className="rounded-lg border border-foreground/12 bg-foreground/5 p-5">
+        <p className="text-base font-semibold text-foreground">{site.fullName}</p>
+        <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">Full-stack engineer</p>
+        <p className="mt-2.5 flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5" />
+          {site.location}
+        </p>
+        <p className="mt-1.5 flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
+          <StatusDot />
+          Available for work
+        </p>
+      </div>
+
+      <div className="mt-4 space-y-1">
+        {rows.map((row) => (
+          <a
+            key={row.label}
+            href={row.href}
+            {...(row.external ? { target: "_blank", rel: "noreferrer" } : {})}
+            className="flex items-center gap-3 rounded-lg px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-foreground/8"
+          >
+            <row.icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 flex-1 truncate">{row.label}</span>
+            {row.external ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0 opacity-50" /> : null}
+          </a>
+        ))}
       </div>
     </div>
   );

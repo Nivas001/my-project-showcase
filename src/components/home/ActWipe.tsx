@@ -61,7 +61,7 @@ export function ActWipe() {
             className="relative flex h-full flex-col items-center justify-center px-5 text-center"
           >
             <p className="micro text-accent">Act II</p>
-            <h2 className="display-xl mt-4 text-foreground">
+            <h2 className="hero-xl mt-4 text-foreground">
               The work<span className="text-hog-red">.</span>
             </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
@@ -91,7 +91,7 @@ function StaticTurn() {
       <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
       <div className="relative mx-auto max-w-3xl px-5 py-28 text-center">
         <p className="micro text-accent">Act II</p>
-        <h2 className="display-lg mt-4 text-foreground">
+        <h2 className="hero-lg mt-4 text-foreground">
           The work<span className="text-hog-red">.</span>
         </h2>
         <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted-foreground">

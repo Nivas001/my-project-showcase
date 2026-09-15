@@ -69,6 +69,21 @@ export const SCREENSHOT_BUCKET = "project-screenshots";
 export const PROJECT_COLUMNS =
   "id, slug, title, summary, description, highlights, tech, category, period, role, live_url, github_url, github_visibility, downloads, video_url, doc_url, doc_path, slides_url, slides_path, screenshots, designs, featured, sort_order";
 
+/**
+ * The one project that leads the homepage, shown running in a browser frame.
+ *
+ * Lives here because two sections need to agree on it: Opener puts it in the
+ * frame, and SelectedWork has to lead with something else — otherwise the same
+ * project headlines the page twice in a row.
+ */
+export function heroProject<T extends Project>(projects: T[]): T | undefined {
+  return (
+    projects.find((p) => p.featured && p.live_url && p.screenshots.length > 0) ??
+    projects.find((p) => p.screenshots.length > 0) ??
+    projects[0]
+  );
+}
+
 export function slugify(value: string): string {
   return value
     .toLowerCase()

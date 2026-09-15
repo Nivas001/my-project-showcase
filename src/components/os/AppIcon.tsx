@@ -19,6 +19,7 @@ export function AppIcon({
   className?: string;
 }) {
   const Glyph = app.glyph;
+  const Face = app.face;
   const dark = app.ink === "dark";
 
   return (
@@ -34,16 +35,24 @@ export function AppIcon({
         boxShadow: `0 0 0 0.5px oklch(0 0 0 / 35%), 0 ${size * 0.06}px ${size * 0.18}px -${size * 0.06}px oklch(0 0 0 / 55%)`,
       }}
     >
-      <Glyph
-        className="relative z-10"
-        style={{
-          width: size * 0.48,
-          height: size * 0.48,
-          color: dark ? "oklch(0.24 0 0)" : "oklch(0.99 0 0)",
-        }}
-        strokeWidth={dark ? 1.9 : 1.8}
-        aria-hidden
-      />
+      {Face ? (
+        // Widgets draw their own face because they show a live value — a date
+        // or a clock hand — that a static glyph cannot carry.
+        <span className="relative z-10 grid place-items-center">
+          <Face size={size} />
+        </span>
+      ) : (
+        <Glyph
+          className="relative z-10"
+          style={{
+            width: size * 0.48,
+            height: size * 0.48,
+            color: dark ? "oklch(0.24 0 0)" : "oklch(0.99 0 0)",
+          }}
+          strokeWidth={dark ? 1.9 : 1.8}
+          aria-hidden
+        />
+      )}
     </span>
   );
 }
@@ -60,17 +69,28 @@ export function AppTarget({
   children,
   className,
   onOpenWindow,
+  onClick,
   ...rest
 }: {
   app: AppSpec;
   children: ReactNode;
   className?: string;
   onOpenWindow?: (id: NonNullable<AppSpec["window"]>) => void;
+  /** Fired in addition to the destination — used to close a stack or menu. */
+  onClick?: () => void;
 } & { "aria-label"?: string; title?: string }) {
   if (app.window && onOpenWindow) {
     const id = app.window;
     return (
-      <button type="button" className={className} onClick={() => onOpenWindow(id)} {...rest}>
+      <button
+        type="button"
+        className={className}
+        onClick={() => {
+          onOpenWindow(id);
+          onClick?.();
+        }}
+        {...rest}
+      >
         {children}
       </button>
     );
@@ -82,6 +102,7 @@ export function AppTarget({
       <a
         href={app.href}
         className={className}
+        onClick={onClick}
         {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
         {...rest}
       >
@@ -92,7 +113,7 @@ export function AppTarget({
 
   if (app.to_) {
     return (
-      <Link to={app.to_} className={className} {...rest}>
+      <Link to={app.to_} className={className} onClick={onClick} {...rest}>
         {children}
       </Link>
     );

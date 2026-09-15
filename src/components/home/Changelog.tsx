@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { changelog } from "@/lib/site";
 import { accentSurface } from "@/lib/accents";
-import { SectionLabel, SplitLines } from "@/components/kit";
+import { HandNote, SectionLabel, SplitLines } from "@/components/kit";
 import { Reveal } from "@/components/Reveal";
 
 /**
@@ -22,12 +22,17 @@ export function Changelog() {
             as="h2"
             onView
             lines={["What shipped,", "and when."]}
-            className="display-md text-foreground"
+            className="hero-md text-foreground"
           />
           <Reveal delay={100}>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Newest first. Every entry links to the thing it's about.
+              Newest first. Every entry links to the thing it&apos;s about.
             </p>
+            <span className="mt-3 inline-flex">
+              <HandNote tone="hog-green" rotate={-4} size="sm">
+                still being added to
+              </HandNote>
+            </span>
           </Reveal>
         </div>
 

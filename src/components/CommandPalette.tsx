@@ -10,15 +10,8 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { projectsQuery } from "@/lib/queries";
-
-const pages = [
-  { label: "Home", to: "/" as const },
-  { label: "Work", to: "/projects" as const },
-  { label: "About", to: "/about" as const },
-  { label: "Contact", to: "/contact" as const },
-  { label: "The arcade", to: "/fun" as const },
-  { label: "Horror stories", to: "/horror" as const },
-];
+// Shared with the dock's Launchpad, which renders the same index as a grid.
+import { NAV_PAGES as pages } from "@/lib/os-apps";
 
 export function CommandPalette({ trigger = true }: { trigger?: boolean } = {}) {
   const [open, setOpen] = useState(false);

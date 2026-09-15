@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
-import type { Project } from "@/lib/projects";
+import { heroProject, type Project } from "@/lib/projects";
 import { toAbsoluteUrl, prettyUrl } from "@/lib/site";
 import {
   BrowserFrame,
+  HandNote,
   HardLink,
   HardRouteLink,
   SectionLabel,
@@ -13,15 +14,20 @@ import {
 } from "@/components/kit";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal } from "@/components/Reveal";
+import { Shot } from "@/components/Shot";
 
 /**
  * The showcase proper. The lead project gets a wide feature card with browser
  * chrome; the rest fall into a standard grid.
  */
 export function SelectedWork({ projects }: { projects: Project[] }) {
-  const featured = projects.filter((p) => p.featured);
-  const ordered =
-    featured.length > 0 ? [...featured, ...projects.filter((p) => !p.featured)] : projects;
+  // Opener already gave this one a browser frame two sections up; leading with
+  // it again makes the page look like it only has one project.
+  const alreadyShown = heroProject(projects)?.id;
+  const pool = projects.filter((p) => p.id !== alreadyShown);
+
+  const featured = pool.filter((p) => p.featured);
+  const ordered = featured.length > 0 ? [...featured, ...pool.filter((p) => !p.featured)] : pool;
   const [lead, ...rest] = ordered;
   const shown = rest.slice(0, 3);
 
@@ -41,13 +47,24 @@ export function SelectedWork({ projects }: { projects: Project[] }) {
             as="h2"
             onView
             lines={["Things I built", "and still maintain."]}
-            className="display-md max-w-2xl text-foreground"
+            className="hero-md max-w-2xl text-foreground"
           />
           <Reveal delay={120}>
-            <HardRouteLink to="/projects" variant="secondary" size="md">
-              All {projects.length} projects
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </HardRouteLink>
+            <span className="flex flex-wrap items-center gap-3">
+              <HandNote
+                tone="hog-blue"
+                rotate={-4}
+                size="sm"
+                arrow="swoop"
+                arrowClassName="h-7 w-12"
+              >
+                and the rest in here
+              </HandNote>
+              <HardRouteLink to="/projects" variant="secondary" size="md">
+                All {projects.length} projects
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </HardRouteLink>
+            </span>
           </Reveal>
         </div>
 
@@ -135,18 +152,7 @@ export function SelectedWork({ projects }: { projects: Project[] }) {
                     className="hard-shadow"
                   >
                     <div className="aspect-[16/10] w-full overflow-hidden bg-card">
-                      {lead.screenshots[0] ? (
-                        <img
-                          src={lead.screenshots[0]}
-                          alt={`${lead.title} screenshot`}
-                          loading="lazy"
-                          className="h-full w-full object-cover object-top"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center font-mono text-xs text-muted-foreground">
-                          {"</>"} no preview yet
-                        </div>
-                      )}
+                      <Shot src={lead.screenshots[0]} alt={`${lead.title} screenshot`} />
                     </div>
                   </BrowserFrame>
                 </Link>

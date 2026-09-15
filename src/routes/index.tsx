@@ -4,14 +4,10 @@ import { site } from "@/lib/site";
 import { projectsQuery, skillGroupsQuery } from "@/lib/queries";
 import { Gate } from "@/components/home/Gate";
 import { Statements } from "@/components/home/Statements";
-import { ActWipe } from "@/components/home/ActWipe";
 import { Opener } from "@/components/home/Opener";
-import { Pillars } from "@/components/home/Pillars";
 import { SelectedWork } from "@/components/home/SelectedWork";
-import { Toolbox } from "@/components/home/Toolbox";
 import { SpecSheet } from "@/components/home/SpecSheet";
 import { HowIWork } from "@/components/home/HowIWork";
-import { Changelog } from "@/components/home/Changelog";
 import { HireCTA } from "@/components/home/HireCTA";
 
 const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
@@ -68,12 +64,20 @@ export const Route = createFileRoute("/")({
 /**
  * The homepage is one story in two acts.
  *
- *   Act I  (noir)  Gate → Statements → the turn
- *   Act II (hog)   Opener → Pillars → Work → Stack → Numbers → Principles →
- *                  Changelog → Close
+ *   Act I  (noir)  Gate → Statements
+ *   Act II (hog)   Opener → Work → Spec sheet → Principles → Close
  *
  * Each section carries `data-act` so the sticky header can invert itself as
  * the ground changes underneath it (see useSectionAct in __root.tsx).
+ *
+ * It ran to eleven sections and roughly thirteen viewports, and said the same
+ * few things repeatedly: "three live, built solo" appeared five times, the
+ * four-capability grid twice, the stack three times. Four sections are gone:
+ *
+ *   ActWipe   1.6 viewports of scroll to deliver one headline
+ *   Pillars   merged into Opener, which had a weaker copy of the same grid
+ *   Toolbox   merged into SpecSheet, which already listed the stack
+ *   Changelog moved to the changelog.log window on the desktop
  */
 function Home() {
   const { data: projects } = useSuspenseQuery(projectsQuery);
@@ -85,15 +89,11 @@ function Home() {
     <>
       <Gate projects={projects} />
       <Statements />
-      <ActWipe />
 
       <Opener projects={projects} />
-      <Pillars />
       <SelectedWork projects={projects} />
-      <Toolbox groups={groups} />
-      <SpecSheet projects={projects} />
+      <SpecSheet projects={projects} groups={groups} />
       <HowIWork />
-      <Changelog />
       <HireCTA />
     </>
   );

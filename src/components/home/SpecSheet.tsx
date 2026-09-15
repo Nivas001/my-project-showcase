@@ -1,13 +1,28 @@
 import type { Project } from "@/lib/projects";
-import { site, toAbsoluteUrl } from "@/lib/site";
+import { site, skills, toAbsoluteUrl } from "@/lib/site";
+import { accentFor } from "@/lib/accents";
 import { Annotation, SectionLabel, SplitLines, StatusDot } from "@/components/kit";
 import { Reveal, CountUp } from "@/components/Reveal";
 
+type Group = { group: string; items: string[] };
+
 /**
- * The hard numbers, as a spec sheet. PostHog leans on tables for exactly this
- * — it signals "here are the facts, check them" better than a row of tiles.
+ * The hard numbers and the stack, as one spec sheet. A table signals "here are
+ * the facts, check them" better than a row of tiles does.
+ *
+ * The stack slab used to be its own Toolbox section. Between the two, the stack
+ * was listed three times on one page — here, in Toolbox, and again inside the
+ * pillar cards — so the two sections became one and the table lost its
+ * "Primary stack" / "Also fluent in" rows, which the slab below states in full.
  */
-export function SpecSheet({ projects }: { projects: Project[] }) {
+export function SpecSheet({
+  projects,
+  groups,
+}: {
+  projects: Project[];
+  groups?: Group[] | undefined;
+}) {
+  const stack = groups && groups.length > 0 ? groups : skills;
   // A research demo on Hugging Face has a live URL but isn't a product in
   // production — counting it would contradict the copy everywhere else.
   const liveProducts = projects.filter(
@@ -27,8 +42,6 @@ export function SpecSheet({ projects }: { projects: Project[] }) {
     ["Working hours", "IST (UTC+5:30) — flexible for overlap"],
     ["Education", "MCA, Pondicherry University · 2023–2025"],
     ["Research", "Tamil abstractive summarisation with NER"],
-    ["Primary stack", "TypeScript · React · TanStack Start · PostgreSQL"],
-    ["Also fluent in", "Python · Flutter · Node.js · Supabase · Firebase"],
     [
       "Status",
       <span key="status" className="inline-flex items-center gap-2">
@@ -50,8 +63,14 @@ export function SpecSheet({ projects }: { projects: Project[] }) {
           as="h2"
           onView
           lines={["The spec sheet."]}
-          className="display-md mt-6 text-foreground"
+          className="hero-md mt-6 text-foreground"
         />
+        <Reveal delay={100}>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+            Every figure here is checkable on the pages behind it, and the stack below is the whole
+            of it — deep in the first two columns, comfortable in the rest.
+          </p>
+        </Reveal>
 
         {/* Headline figures. */}
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -110,6 +129,47 @@ export function SpecSheet({ projects }: { projects: Project[] }) {
                 </tbody>
               </table>
             </div>
+          </div>
+        </Reveal>
+
+        {/* ---- The stack, in full ---- */}
+        <Reveal delay={80}>
+          <p className="micro mt-14 text-muted-foreground">Everything I reach for</p>
+          <div className="hog-card mt-5 grid overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
+            {stack.map((group, gi) => {
+              const accent = accentFor(gi);
+              return (
+                <div
+                  key={group.group}
+                  className="border-border/15 p-5 [&:not(:last-child)]:border-b-2 sm:[&:not(:last-child)]:border-b-0 sm:[&:nth-child(-n+2)]:border-b-2 sm:[&:nth-child(odd)]:border-r-2 lg:[&:nth-child(-n+2)]:border-b-0 lg:[&:nth-child(n)]:border-b-0 lg:[&:not(:last-child)]:border-r-2"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      aria-hidden
+                      className="h-3 w-3 shrink-0 rounded-sm border-2 border-border"
+                      style={{ background: `var(--${accent})` }}
+                    />
+                    <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-foreground">
+                      {group.group}
+                    </h3>
+                  </div>
+
+                  <ul className="mt-4 space-y-1.5">
+                    {group.items.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-baseline gap-2 text-[13px] leading-relaxed text-muted-foreground"
+                      >
+                        <span aria-hidden className="text-foreground/25">
+                          ―
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </Reveal>
       </div>

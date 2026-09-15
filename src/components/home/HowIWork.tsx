@@ -85,7 +85,7 @@ export function HowIWork() {
               as="h2"
               onView
               lines={["I have opinions.", "Here they are."]}
-              className="display-md mt-6 text-foreground"
+              className="hero-md mt-6 text-foreground"
             />
 
             <Reveal delay={120}>

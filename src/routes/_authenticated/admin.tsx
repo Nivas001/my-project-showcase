@@ -782,13 +782,20 @@ function AdminPage() {
             </button>
           </div>
 
-          <label className="mt-5 flex items-center gap-2 text-sm">
+          <label className="mt-5 flex items-start gap-2 text-sm">
             <input
               type="checkbox"
+              className="mt-1"
               checked={draft.featured}
               onChange={(e) => setDraft({ ...draft, featured: e.target.checked })}
             />
-            Feature on the home page
+            <span>
+              Featured
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                Shows on the home page. The featured project with the lowest sort order is also
+                pinned to the top of /projects, above everything else.
+              </span>
+            </span>
           </label>
 
           <div className="mt-6 flex gap-2">

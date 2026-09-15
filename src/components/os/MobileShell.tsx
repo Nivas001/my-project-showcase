@@ -1,5 +1,6 @@
 import { useRouterState } from "@tanstack/react-router";
 import { BatteryMedium, Signal, Wifi } from "lucide-react";
+import { StatusDot } from "@/components/kit";
 import { HOME_APPS, IOS_DOCK } from "@/lib/os-apps";
 import { LocalClock } from "@/components/kit";
 import { site } from "@/lib/site";
@@ -11,15 +12,45 @@ import { AppIcon, AppTarget } from "./AppIcon";
  * It sits above the page rather than inside it, so every route keeps the same
  * "this is a device" framing.
  */
+/** What the island should say for the route currently on screen. */
+const ROUTE_TITLES: [prefix: string, title: string][] = [
+  ["/projects", "Work"],
+  ["/about", "About"],
+  ["/contact", "Contact"],
+  ["/fun", "Arcade"],
+  ["/horror", "Stories"],
+  ["/how-to-be-smarter-than-an-ai", "Beat an AI"],
+  ["/surprise", "???"],
+  ["/auth", "Admin"],
+  ["/admin", "Admin"],
+];
+
 export function StatusBar() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const match = ROUTE_TITLES.find(([prefix]) => pathname.startsWith(prefix));
+
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-50 lg:hidden">
-      <div className="vibrancy flex h-11 items-center justify-between rounded-none border-x-0 border-t-0 px-5">
+      <div className="vibrancy flex h-11 items-center justify-between rounded-none border-x-0 border-t-0 px-4">
         <LocalClock
           timeZone={site.timezone}
-          className="font-mono text-[13px] font-semibold tabular-nums text-foreground"
+          className="shrink-0 whitespace-nowrap font-mono text-[12px] font-semibold tabular-nums text-foreground"
         />
-        <span aria-hidden className="flex items-center gap-1.5 text-foreground">
+
+        {/* The island. Carries the route name so a phone always knows where it
+            is — the menu bar does that job on desktop, and the dock alone does
+            not say which page you are on. */}
+        <span className="mx-2 flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground/10 px-2.5 py-1">
+          <StatusDot tone={match ? "hog-red" : "hog-green"} />
+          <span className="truncate font-mono text-[10px] uppercase tracking-widest text-foreground/90">
+            {match ? match[1] : `${site.name} · Portfolio`}
+          </span>
+        </span>
+
+        <span
+          aria-hidden
+          className="flex shrink-0 items-center justify-end gap-1.5 text-foreground"
+        >
           <Signal className="h-3.5 w-3.5" />
           <Wifi className="h-3.5 w-3.5" />
           <BatteryMedium className="h-4 w-4" />

@@ -1,5 +1,3 @@
-import resumeAsset from "@/assets/resume.pdf.asset.json";
-
 export const site = {
   name: "Srinivas",
   fullName: "Srinivas M",
@@ -16,7 +14,10 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/srinivas-m-734631259",
   videoResumeUrl:
     "https://drive.google.com/file/d/1U5qK7ywjGuswO9rOsc5f5an4AIRFWibx/view?usp=sharing",
-  resumeUrl: resumeAsset.url,
+  /* Served from public/. The previous value was a Lovable-only asset path
+     (/__l5e/assets-v1/...) which 404s anywhere else — every "Download résumé"
+     button on the site was dead outside the Lovable preview. */
+  resumeUrl: "/Srinivas-M-Resume.pdf",
 
   /** One line. Used in the hero, under the name. */
   tagline: "I build production software end to end — and I ship it.",
@@ -66,25 +67,166 @@ export function prettyUrl(url: string | null | undefined): string {
 /* Homepage content                                                            */
 /* -------------------------------------------------------------------------- */
 
-/** Act I statement panels. One per full-height pinned screen. */
+/**
+ * The hero's one-line answer to "who is this?", said four different ways.
+ *
+ * A visitor arrives with a job in mind, not a person in mind. Letting them
+ * pick the job and answering in their own terms beats a single paragraph that
+ * tries to be all four at once.
+ */
+export const needs = [
+  {
+    id: "product",
+    label: "A whole product",
+    answer:
+      "I take it from an empty repo to a live domain — schema, server, interface, payments, admin panel, deploy. No handoffs, no missing half.",
+    proof: "3 live in production",
+    stack: ["TanStack Start", "React 19", "PostgreSQL", "Razorpay", "Vercel"],
+    accent: "hog-red",
+  },
+  {
+    id: "mobile",
+    label: "A mobile app",
+    answer:
+      "Flutter on the front, a real backend behind it: auth, live sync, offline-first storage, and a release pipeline that reaches an actual store build.",
+    proof: "Android released",
+    stack: ["Flutter", "Dart", "Firebase", "Node.js"],
+    accent: "hog-blue",
+  },
+  {
+    id: "nlp",
+    label: "An NLP model",
+    answer:
+      "Postgraduate research on Tamil summarisation: mT5 fine-tuned with PEFT and NER wired in so named entities survive. Public and reproducible.",
+    proof: "Published on Hugging Face",
+    stack: ["Python", "mT5 + PEFT", "spaCy", "TensorFlow", "Hugging Face"],
+    accent: "hog-purple",
+  },
+  {
+    id: "panel",
+    label: "The boring admin panel",
+    answer:
+      "The CMS nobody wants to build and everybody needs: drag-to-reorder media, signed uploads, role-gated access, row-level security. The owner runs it without me.",
+    proof: "Ships with every build",
+    stack: ["Supabase", "Row-level security", "Signed URLs", "Drag & drop"],
+    accent: "hog-green",
+  },
+] as const;
+
+/**
+ * /about's hero is a page being edited: the bio types itself out, line by
+ * line, with notes pinned in the margin. Three drafts of the same person, so
+ * a visitor in a hurry and a visitor who wants the whole thing both get served.
+ *
+ * `lines` are typed in order. A line with a `note` gets a handwritten aside
+ * pinned beside it once it lands.
+ */
+export const aboutDrafts = [
+  {
+    id: "short",
+    label: "30 seconds",
+    stamp: "draft 1",
+    lines: [
+      { text: "Full-stack engineer. Pondicherry, India.", note: null },
+      { text: "Three products live in production.", note: "all shipped solo" },
+      { text: "One published NLP model on Hugging Face.", note: null },
+      { text: "MCA, Pondicherry University — 8.79 / 10.", note: null },
+      { text: "Available for work. Replies within a day.", note: "yes, really" },
+    ],
+  },
+  {
+    id: "long",
+    label: "The long version",
+    stamp: "draft 3",
+    lines: [
+      { text: "I like the whole arc of a product —", note: null },
+      { text: "the schema, the server, the interface,", note: null },
+      { text: "the deploy, and the unglamorous admin", note: "especially this one" },
+      { text: "panel someone has to use every day.", note: null },
+      { text: "Most of it I have built alone, which", note: null },
+      { text: "means being decisive about architecture", note: null },
+      { text: "and honest about the trade-offs.", note: "both are learnable" },
+    ],
+  },
+  {
+    id: "facts",
+    label: "Just the facts",
+    stamp: "final",
+    lines: [
+      { text: "Web:     React 19 · TanStack Start · SSR", note: null },
+      { text: "Mobile:  Flutter · Dart · Firebase", note: null },
+      { text: "Data:    PostgreSQL · Supabase · Prisma", note: null },
+      { text: "ML:      Python · mT5 + PEFT · spaCy", note: "the research half" },
+      { text: "Ship:    Vercel · Cloudflare · GitHub CI", note: null },
+    ],
+  },
+] as const;
+
+/** Pinned to the /about hero like notes stuck to a monitor. */
+export const aboutNotes = [
+  { text: "built the admin panel too", tone: "hog-green", rotate: -4 },
+  { text: "reads the Postgres docs for fun", tone: "hog-blue", rotate: 3 },
+  { text: "will argue about naming", tone: "hog-red", rotate: -2 },
+] as const;
+
+/** Rotates under the name. Short enough to read in one glance. */
+export const roleRotation = [
+  "ships whole products",
+  "writes the schema too",
+  "builds the admin panel",
+  "publishes the research",
+  "deploys it himself",
+];
+
+/**
+ * Act I statement panels. One per full-height pinned screen.
+ *
+ * `evidence` is the part that stops each claim being a slogan: three checkable
+ * facts sitting directly under it. `scene` selects the illustration that plays
+ * behind the panel (see Statements.tsx).
+ */
 export const statements = [
   {
     index: "01",
     kicker: "What I do",
     line: ["I build things", "that ship."],
     body: "Not prototypes. Three products are in production with real users, real payments and real uptime. I own them end to end — schema to deploy.",
+    note: "all three are live right now",
+    accent: "hog-red",
+    scene: "deploy",
+    evidence: [
+      { value: "3", label: "live in production" },
+      { value: "0", label: "handoffs required" },
+      { value: "100%", label: "built solo" },
+    ],
   },
   {
     index: "02",
     kicker: "How I think",
     line: ["Research-grade", "when it earns it."],
     body: "My postgraduate work solved abstractive summarisation for Tamil, a low-resource language. mT5 fine-tuned with PEFT, NER wired in to keep names intact. It's public on Hugging Face.",
+    note: "names survive the summary",
+    accent: "hog-blue",
+    scene: "model",
+    evidence: [
+      { value: "mT5", label: "fine-tuned with PEFT" },
+      { value: "NER", label: "entities preserved" },
+      { value: "8.79", label: "MCA GPA / 10" },
+    ],
   },
   {
     index: "03",
     kicker: "Where I work",
     line: ["Web, mobile,", "and the messy", "bits between."],
     body: "React and TanStack on the front. Node, Postgres, Supabase and Appwrite behind it. Flutter when it needs to be native. Plus every admin panel nobody else wants to build.",
+    note: "including the boring half",
+    accent: "hog-green",
+    scene: "devices",
+    evidence: [
+      { value: "Web", label: "React · TanStack · SSR" },
+      { value: "Mobile", label: "Flutter · Firebase" },
+      { value: "Backend", label: "Postgres · Supabase" },
+    ],
   },
 ] as const;
 

@@ -1,8 +1,8 @@
 import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { site } from "@/lib/site";
 import {
-  Annotation,
   DoodleArrow,
+  HandNote,
   HardLink,
   HardRouteLink,
   SplitLines,
@@ -56,7 +56,7 @@ export function HireCTA() {
                 as="h2"
                 onView
                 lines={["Free to talk."]}
-                className="display-lg mt-3 text-foreground"
+                className="hero-lg mt-3 text-foreground"
               />
               <div className="mx-auto mt-3 w-52">
                 <Squiggle tone="hog-red" />
@@ -126,9 +126,9 @@ export function HireCTA() {
           <Reveal delay={150}>
             <div className="mt-8 flex items-start justify-center gap-2">
               <DoodleArrow tone="hog-blue" flip className="h-12 w-14 -scale-y-100" />
-              <Annotation tone="hog-blue" rotate={-3} className="pt-4">
+              <HandNote tone="hog-blue" rotate={-3} size="md" className="pt-4">
                 or just poke around a bit longer
-              </Annotation>
+              </HandNote>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

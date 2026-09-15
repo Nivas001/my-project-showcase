@@ -555,3 +555,15 @@ export function PageHero({
 
 export { PortraitMatrix, type MatrixMode } from "./PortraitMatrix";
 export { ScrambleText } from "./ScrambleText";
+export {
+  Marked,
+  Highlight,
+  StarMark,
+  CheckMark,
+  ScribbleArrow,
+  HandNote,
+  StickyNote,
+  type MarkKind,
+  type ArrowKind,
+} from "./marks";
+export { CharReveal, TiltCard, useSpecular } from "./motion";

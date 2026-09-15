@@ -25,7 +25,7 @@ export function Toolbox({ groups }: { groups?: Group[] | undefined }) {
             as="h2"
             onView
             lines={["Everything I reach", "for, in one place."]}
-            className="display-md max-w-2xl text-foreground"
+            className="hero-md max-w-2xl text-foreground"
           />
           <Reveal delay={100}>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">

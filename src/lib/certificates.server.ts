@@ -1,30 +1,18 @@
-import { SCREENSHOT_BUCKET } from "@/lib/projects";
 import type { Certificate } from "@/lib/certificates";
 
-/** Certificate images live in the private bucket — sign them for public pages. */
+/**
+ * Certificate images live in the same bucket as project screenshots.
+ * See storage.server.ts for why these resolve to public URLs.
+ */
 export async function signCertificateImages<T extends Pick<Certificate, "images">>(
   rows: T[],
 ): Promise<(T & { image_paths: string[] })[]> {
-  const paths = [...new Set(rows.flatMap((row) => row.images ?? []))].filter(
-    (path) => path && !path.startsWith("http"),
-  );
-  if (paths.length === 0) return rows.map((row) => ({ ...row, image_paths: row.images ?? [] }));
-
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await supabaseAdmin.storage
-    .from(SCREENSHOT_BUCKET)
-    .createSignedUrls(paths, 60 * 60 * 6);
-
-  const map = new Map<string, string>();
-  for (const item of data ?? []) {
-    if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
-  }
+  const { resolveStorageUrls } = await import("@/lib/storage.server");
+  const map = await resolveStorageUrls(rows.flatMap((row) => row.images ?? []));
 
   return rows.map((row) => ({
     ...row,
     image_paths: row.images ?? [],
-    images: (row.images ?? []).map((path) =>
-      path.startsWith("http") ? path : (map.get(path) ?? path),
-    ),
+    images: (row.images ?? []).map((path) => map.get(path) ?? path),
   }));
 }

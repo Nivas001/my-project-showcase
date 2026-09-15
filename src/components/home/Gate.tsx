@@ -1,15 +1,16 @@
-import { Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { ArrowDown, ArrowRight, MousePointer2 } from "lucide-react";
 import type { Project } from "@/lib/projects";
-import { shortTitle, site, tickerItems, toAbsoluteUrl } from "@/lib/site";
+import { needs, shortTitle, site, tickerItems, toAbsoluteUrl } from "@/lib/site";
 import {
-  Annotation,
-  DoodleArrow,
+  HandNote,
+  Highlight,
+  Marked,
   Marquee,
   PortraitMatrix,
   ScrambleText,
+  ScribbleArrow,
   StatusDot,
   type MatrixMode,
 } from "@/components/kit";
@@ -27,11 +28,17 @@ const MODES: { id: MatrixMode; label: string }[] = [
  * Act I opens here: a full-viewport black field with the name set enormous on
  * the left and an interactive portrait on the right.
  *
- * Nothing gates the scroll — the "Enter" button is an anchor into Act II, so
+ * Two jobs, in order. First, say who this is — plainly enough that someone who
+ * reads three lines and leaves still knows. Second, be worth staying for: the
+ * portrait renders three ways, the pitch answers whichever question the visitor
+ * actually arrived with, and the desktop behind it is real.
+ *
+ * Nothing gates the scroll — "Enter the showcase" is an anchor into Act II, so
  * the drama costs a visitor nothing if they just want to keep scrolling.
  */
 export function Gate({ projects = [] }: { projects?: Project[] }) {
   const [mode, setMode] = useState<MatrixMode>("dots");
+  const [need, setNeed] = useState(0);
   const magnet = useMagnetic<HTMLAnchorElement>({ strength: 0.22, radius: 70 });
   const reduced = useReducedMotion();
 
@@ -54,6 +61,8 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
     .filter((p) => toAbsoluteUrl(p.live_url) && p.category !== "Research")
     .map((p) => shortTitle(p.title));
   const phrases = building.length > 0 ? building : ["Ani Bakes", "AARRKKAA", "Velocity"];
+
+  const active = needs[need] ?? needs[0]!;
 
   return (
     <section
@@ -78,6 +87,15 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
           background: "radial-gradient(circle, var(--hog-blue) 0%, transparent 70%)",
           opacity: 0.14,
           animationDelay: "-13s",
+        }}
+      />
+      <div
+        aria-hidden
+        className="wallpaper-drift pointer-events-none absolute left-[38%] top-[-8%] h-[26rem] w-[26rem] rounded-full blur-[120px]"
+        style={{
+          background: "radial-gradient(circle, var(--signature) 0%, transparent 70%)",
+          opacity: 0.1,
+          animationDelay: "-7s",
         }}
       />
 
@@ -105,36 +123,113 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
       <div className="relative z-10 grid flex-1 items-end gap-3 px-5 pb-4 pt-3 sm:gap-8 sm:px-8 sm:pb-10 sm:pt-8 lg:grid-cols-[1.12fr_0.88fr] lg:gap-12 lg:pt-24">
         {/* The name. Bottom-aligned, tight, stacked — the whole point of Act I. */}
         <motion.div style={{ y: nameY, opacity: nameOpacity }} className="order-1 min-w-0">
-          <h1 className="display-lg text-foreground xl:text-[6.5rem]">
-            {site.displayLines.map((line, i) => (
-              <span key={line} className="line-mask">
-                <span
-                  className="line-rise block"
-                  style={{ "--line-delay": `${120 + i * 110}ms` } as React.CSSProperties}
-                >
-                  {line}
-                  {i === site.displayLines.length - 1 ? (
-                    <span className="text-hog-red">.</span>
-                  ) : null}
-                </span>
+          <p
+            className="micro fade-rise mb-3 hidden text-muted-foreground lg:block"
+            style={{ "--line-delay": "80ms" } as React.CSSProperties}
+          >
+            Portfolio <span className="opacity-40">/</span> {site.locationShort}
+          </p>
+
+          <h1 className="hero-lg text-foreground xl:text-[6.8rem]">
+            <span className="line-mask">
+              <span
+                className="line-rise block"
+                style={{ "--line-delay": "120ms" } as React.CSSProperties}
+              >
+                <span className="signature-name">Srinivas</span> M
               </span>
-            ))}
+            </span>
+            {/* No line-mask on this line. The mask clips its overflow, and the
+                hand-drawn circle deliberately overshoots the text box — inside
+                a mask only the bottom arc survives. */}
+            <span
+              className="fade-rise block"
+              style={{ "--line-delay": "300ms" } as React.CSSProperties}
+            >
+              <Marked kind="circle" tone="hog-red" delay={1250} duration={900} immediate>
+                Full-Stack
+              </Marked>
+            </span>
+            <span className="line-mask">
+              <span
+                className="line-rise block"
+                style={{ "--line-delay": "340ms" } as React.CSSProperties}
+              >
+                Engineer<span className="text-hog-red">.</span>
+              </span>
+            </span>
           </h1>
 
+          {/* Who this is, in one sentence, before anything clever happens. */}
           <div
-            className="fade-rise mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2 sm:mt-6"
+            className="fade-rise mt-4 max-w-xl sm:mt-6"
             style={{ "--line-delay": "620ms" } as React.CSSProperties}
           >
-            <p className="micro text-muted-foreground">Est. {site.locationShort}</p>
-            <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {site.tagline}
+            <p className="text-[15px] leading-relaxed text-foreground/90 sm:text-lg">
+              I design, build, secure and ship{" "}
+              <Highlight tone="hog-yellow" delay={900}>
+                <span className="font-semibold text-foreground">complete products on my own</span>
+              </Highlight>{" "}
+              — web, mobile and the research behind them. Based in {site.location}.
             </p>
+          </div>
+
+          {/* What do you actually need? The pitch, answered in the visitor's
+              own terms rather than in one paragraph that covers all four. */}
+          <div
+            className="fade-rise mt-5 max-w-xl sm:mt-7"
+            style={{ "--line-delay": "680ms" } as React.CSSProperties}
+          >
+            <div
+              className="flex flex-wrap items-center gap-1.5"
+              role="tablist"
+              aria-label="What do you need?"
+            >
+              <span className="micro mr-1 hidden text-muted-foreground sm:inline">You need</span>
+              {needs.map((item, i) => {
+                const on = i === need;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    onClick={() => setNeed(i)}
+                    className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-200 ${
+                      on
+                        ? "border-transparent text-background"
+                        : "border-border/70 text-muted-foreground hover:border-foreground/60 hover:text-foreground"
+                    }`}
+                    style={
+                      on
+                        ? { background: `var(--${item.accent})`, color: "oklch(0.99 0 0)" }
+                        : undefined
+                    }
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              key={active.id}
+              className="fade-rise mt-3 rounded-sm border-l-2 pl-3.5"
+              style={{ borderColor: `var(--${active.accent})` }}
+            >
+              <p className="text-sm leading-relaxed text-muted-foreground">{active.answer}</p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] uppercase tracking-widest">
+                <span style={{ color: `var(--${active.accent})` }}>{active.proof}</span>
+                <span className="text-muted-foreground/60">·</span>
+                <span className="text-muted-foreground">{active.stack.join(" · ")}</span>
+              </p>
+            </div>
           </div>
 
           {/* Live status line — the work, cycling. */}
           <div
-            className="fade-rise mt-4 inline-flex items-center gap-3 rounded-sm border border-border/70 bg-card/40 px-3.5 py-2 sm:mt-7"
-            style={{ "--line-delay": "660ms" } as React.CSSProperties}
+            className="fade-rise mt-4 inline-flex items-center gap-3 rounded-sm border border-border/70 bg-card/40 px-3.5 py-2 sm:mt-6"
+            style={{ "--line-delay": "700ms" } as React.CSSProperties}
           >
             <StatusDot tone="hog-red" />
             <span className="micro text-muted-foreground">Now shipping</span>
@@ -146,8 +241,8 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
 
           {/* The flat y-n10 CTA, plus two quiet secondaries. */}
           <div
-            className="fade-rise mt-5 flex flex-col items-stretch gap-2.5 sm:mt-8 sm:flex-row sm:items-center sm:gap-3"
-            style={{ "--line-delay": "700ms" } as React.CSSProperties}
+            className="fade-rise relative mt-5 flex flex-col items-stretch gap-2.5 sm:mt-7 sm:flex-row sm:items-center sm:gap-3"
+            style={{ "--line-delay": "740ms" } as React.CSSProperties}
           >
             <a
               ref={magnet}
@@ -157,22 +252,23 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
               <span className="text-sm font-semibold tracking-tight">Enter the showcase</span>
               <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1.5" />
             </a>
-            <div className="hidden gap-3 sm:flex">
-              <Link
-                to="/projects"
-                className="flex-1 rounded-sm border border-border px-5 py-3 text-center text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
-              >
-                All work
-              </Link>
-              <a
-                href={site.resumeUrl}
-                download
-                className="group flex flex-1 items-center justify-center gap-2 rounded-sm border border-border px-5 py-3 text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
-              >
-                Résumé
-                <ArrowDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
-              </a>
-            </div>
+            {/* One secondary, not two. The dock, the menu bar and the
+                Launchpad all reach /projects already. */}
+            <a
+              href={site.resumeUrl}
+              download
+              className="group hidden items-center justify-center gap-2 rounded-sm border border-border px-5 py-3 text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground sm:flex"
+            >
+              Résumé
+              <ArrowDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+            </a>
+
+            <span className="pointer-events-none absolute -right-4 top-1/2 hidden -translate-y-1/2 translate-x-full items-center gap-1 xl:flex">
+              <ScribbleArrow kind="swoop" tone="hog-red" flipX className="h-8 w-16" delay={1600} />
+              <HandNote tone="hog-red" rotate={-6} size="sm">
+                start here
+              </HandNote>
+            </span>
           </div>
         </motion.div>
 
@@ -195,10 +291,10 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
               ))}
 
               <div className="pointer-events-none absolute -left-2 -top-9 z-10 hidden items-end gap-1 lg:flex">
-                <Annotation tone="hog-blue" rotate={-7} className="text-lg">
+                <HandNote tone="hog-blue" rotate={-7} size="sm">
                   that&apos;s me, in dots
-                </Annotation>
-                <DoodleArrow tone="hog-blue" className="h-9 w-10 -scale-x-100" />
+                </HandNote>
+                <ScribbleArrow kind="curve" tone="hog-blue" className="h-9 w-10" delay={1400} />
               </div>
 
               <PortraitMatrix
@@ -216,15 +312,15 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
                 aria-label="Portrait render mode"
               >
                 {MODES.map((option) => {
-                  const active = mode === option.id;
+                  const active_ = mode === option.id;
                   return (
                     <button
                       key={option.id}
                       type="button"
                       onClick={() => setMode(option.id)}
-                      aria-pressed={active}
+                      aria-pressed={active_}
                       className={`micro rounded-sm px-2.5 py-1.5 transition-colors ${
-                        active
+                        active_
                           ? "bg-foreground text-background"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
@@ -248,12 +344,12 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
         </motion.div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-[8.5rem] left-[37%] z-10 hidden lg:block">
+      <div className="pointer-events-none absolute bottom-[8.5rem] left-1/2 z-10 hidden -translate-x-1/2 lg:block">
         <span className="flex items-end gap-1">
-          <Annotation tone="hog-red" rotate={-4} className="pb-1 text-lg">
+          <HandNote tone="hog-red" rotate={-4} size="sm" className="pb-1">
             the dock is real — try it
-          </Annotation>
-          <DoodleArrow tone="hog-red" className="h-10 w-11 -scale-y-100" />
+          </HandNote>
+          <ScribbleArrow kind="down" tone="hog-red" className="h-10 w-9" delay={1800} />
         </span>
       </div>
 

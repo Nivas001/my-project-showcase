@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Shot } from "@/components/Shot";
 
 type Props = {
   images: string[];
@@ -11,10 +12,7 @@ export function ScreenshotCarousel({ images, title }: Props) {
   const touchStart = useRef<number | null>(null);
   const count = images.length;
 
-  const go = useCallback(
-    (next: number) => setIndex(((next % count) + count) % count),
-    [count],
-  );
+  const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -50,11 +48,12 @@ export function ScreenshotCarousel({ images, title }: Props) {
           {images.map((src, i) => (
             <div key={src} className="w-full shrink-0 grow-0 basis-full">
               <div className="flex aspect-[16/10] items-center justify-center overflow-hidden sm:aspect-[16/9]">
-                <img
+                <Shot
                   src={src}
                   alt={`${title} screenshot ${i + 1}`}
                   loading={i === 0 ? "eager" : "lazy"}
-                  className={`h-full w-full object-contain transition-all duration-700 ${
+                  label="screenshot missing"
+                  imgClassName={`object-contain transition-all duration-700 ${
                     i === index ? "scale-100 opacity-100" : "scale-95 opacity-0"
                   }`}
                 />
@@ -91,7 +90,9 @@ export function ScreenshotCarousel({ images, title }: Props) {
                   aria-current={i === index}
                   onClick={() => go(i)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === index ? "w-5 bg-accent" : "w-1.5 bg-muted-foreground/50 hover:bg-muted-foreground"
+                    i === index
+                      ? "w-5 bg-accent"
+                      : "w-1.5 bg-muted-foreground/50 hover:bg-muted-foreground"
                   }`}
                 />
               ))}

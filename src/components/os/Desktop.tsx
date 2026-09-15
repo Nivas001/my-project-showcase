@@ -4,13 +4,28 @@ import { DESKTOP_FILES, type WindowId } from "@/lib/os-apps";
 import { Annotation, DoodleArrow } from "@/components/kit";
 import { AppIcon, AppTarget } from "./AppIcon";
 import { Window } from "./Window";
-import { AboutWindow, ProjectsWindow, ReadmeWindow, ResumeWindow } from "./WindowContents";
+import {
+  AboutWindow,
+  CertificatesWindow,
+  ChangelogWindow,
+  ContactWindow,
+  EducationWindow,
+  ProjectsWindow,
+  ReadmeWindow,
+  ResumeWindow,
+  StackWindow,
+} from "./WindowContents";
 
 const TITLES: Record<WindowId, { title: string; subtitle: string; width: number }> = {
   about: { title: "about-me.txt", subtitle: "TextEdit", width: 520 },
   resume: { title: "Résumé.pdf", subtitle: "Preview", width: 500 },
   projects: { title: "Projects", subtitle: "Finder", width: 620 },
   readme: { title: "read-me-first.rtf", subtitle: "TextEdit", width: 520 },
+  changelog: { title: "changelog.log", subtitle: "Console", width: 560 },
+  certificates: { title: "certificates", subtitle: "Finder", width: 520 },
+  education: { title: "education.txt", subtitle: "TextEdit", width: 520 },
+  stack: { title: "stack.app", subtitle: "About This Stack", width: 540 },
+  contact: { title: "contact.card", subtitle: "Contacts", width: 440 },
 };
 
 /** Cascade windows so a second one never lands exactly on the first. */
@@ -19,6 +34,11 @@ const OFFSETS: Record<WindowId, { x: number; y: number }> = {
   about: { x: -60, y: 10 },
   resume: { x: 90, y: -20 },
   projects: { x: 40, y: 60 },
+  changelog: { x: -140, y: 70 },
+  certificates: { x: 150, y: 40 },
+  education: { x: -20, y: -70 },
+  stack: { x: 110, y: -60 },
+  contact: { x: -210, y: 20 },
 };
 
 /**
@@ -51,14 +71,27 @@ export function Desktop({ projects }: { projects: Project[] }) {
         return <ProjectsWindow projects={projects} />;
       case "readme":
         return <ReadmeWindow projects={projects} />;
+      case "changelog":
+        return <ChangelogWindow />;
+      case "certificates":
+        return <CertificatesWindow />;
+      case "education":
+        return <EducationWindow />;
+      case "stack":
+        return <StackWindow />;
+      case "contact":
+        return <ContactWindow />;
     }
   };
 
   return (
     <>
       {/* Files, stacked down the right edge exactly where macOS puts them. */}
-      <div className="pointer-events-none absolute right-6 top-24 z-20 hidden flex-col items-center gap-1 lg:flex">
-        <div className="pointer-events-auto flex flex-col items-center gap-1">
+      <div className="pointer-events-none absolute right-6 top-24 z-20 hidden flex-col items-end gap-1 lg:flex">
+        {/* Two columns, filled top-to-bottom then right-to-left, the way macOS
+            wraps a full desktop. One column of nine ran off the bottom of the
+            screen and behind the dock. */}
+        <div className="pointer-events-auto grid grid-flow-col grid-rows-5 gap-x-1 gap-y-1">
           {DESKTOP_FILES.map((file) => (
             <AppTarget
               key={file.id}

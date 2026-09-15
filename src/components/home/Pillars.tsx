@@ -1,6 +1,6 @@
 import { Check, Cpu, LayoutDashboard, Rocket, Smartphone } from "lucide-react";
 import { pillars } from "@/lib/site";
-import { SectionLabel, SplitLines } from "@/components/kit";
+import { HandNote, Marked, SectionLabel, SplitLines } from "@/components/kit";
 import { accentSurface } from "@/lib/accents";
 import { Reveal } from "@/components/Reveal";
 
@@ -27,14 +27,22 @@ export function Pillars() {
           as="h2"
           onView
           lines={["Four things I do", "end to end."]}
-          className="display-md mt-6 max-w-2xl text-foreground"
+          className="hero-md mt-6 max-w-2xl text-foreground"
         />
 
         <Reveal delay={100}>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Not a list of technologies — a list of outcomes I can own from the first commit to the
-            thing running in production.
+            Not a list of technologies — a list of{" "}
+            <Marked kind="underline" tone="hog-red" delay={300}>
+              outcomes I can own
+            </Marked>{" "}
+            from the first commit to the thing running in production.
           </p>
+          <span className="mt-4 hidden lg:inline-flex">
+            <HandNote tone="hog-blue" rotate={-3} size="sm">
+              pick the one you need and ask me about it
+            </HandNote>
+          </span>
         </Reveal>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

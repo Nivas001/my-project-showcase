@@ -79,6 +79,8 @@
   --color-hog-green: var(--hog-green);
   --color-hog-purple: var(--hog-purple);
   --color-ink: var(--ink);
+  --color-signature: var(--signature);
+  --color-signature-deep: var(--signature-deep);
   --color-surface-raised: var(--surface-raised);
   --color-hairline: var(--hairline);
 
@@ -88,9 +90,11 @@
   --color-game-warn: var(--game-warn);
 
   --font-display: var(--ui-display);
+  --font-hero: var(--ui-hero);
   --font-sans: var(--ui-sans);
   --font-mono: var(--ui-mono);
   --font-hand: var(--ui-hand);
+  --font-marker: var(--ui-marker);
 }
 
 /* ---------------------------------------------------------------------------
@@ -106,9 +110,16 @@
   --radius: 0.25rem;
 
   --ui-display: "Inter Tight", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* The hero face. Bricolage Grotesque has the optical-size axis and the wide,
+     slightly odd letterforms that stop a big headline reading as generic Inter. */
+  --ui-hero: "Bricolage Grotesque", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
   --ui-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --ui-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* Two hands, deliberately: Caveat is a pen (margin notes), Kalam is a marker
+     (things circled or struck through). Mixing them is what makes annotations
+     read as several passes over the page rather than one typeset layer. */
   --ui-hand: "Caveat", "Comic Sans MS", cursive;
+  --ui-marker: "Kalam", "Caveat", "Comic Sans MS", cursive;
 
   --hog-red: oklch(0.63 0.225 33);
   /* Same red, dropped in lightness until white text clears 4.5:1 on it. Use
@@ -119,6 +130,11 @@
   --hog-yellow: oklch(0.81 0.15 78);
   --hog-green: oklch(0.7 0.17 152);
   --hog-purple: oklch(0.58 0.22 305);
+
+  /* The signature colour. Only the name wears it, so it reads as a signature
+     rather than another accent in the rotation. */
+  --signature: oklch(0.72 0.18 55);
+  --signature-deep: oklch(0.58 0.17 50);
 
   /* The PostHog near-black. Used for hard borders and hard shadows. */
   --ink: oklch(0.18 0 0);
@@ -326,6 +342,215 @@
   font-family: var(--ui-hand);
   font-weight: 700;
   letter-spacing: 0.01em;
+}
+
+@utility marker {
+  font-family: var(--ui-marker);
+  font-weight: 700;
+  letter-spacing: 0.005em;
+}
+
+/* The hero register. Bricolage at its widest optical size, tracked in hard.
+   Separate from display-* so the rest of the site keeps Inter Tight and only
+   the two or three real headline moments switch face. */
+@utility hero-xl {
+  font-family: var(--ui-hero);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  font-size: clamp(2.9rem, 11.5vw, 10rem);
+}
+
+@utility hero-lg {
+  font-family: var(--ui-hero);
+  font-weight: 800;
+  font-variation-settings: "opsz" 72;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  font-size: clamp(2.4rem, 7.5vw, 6rem);
+}
+
+@utility hero-md {
+  font-family: var(--ui-hero);
+  font-weight: 700;
+  font-variation-settings: "opsz" 48;
+  line-height: 1;
+  letter-spacing: -0.028em;
+  font-size: clamp(1.9rem, 4.6vw, 3.6rem);
+}
+
+/* The name, wherever it is set large. A warm fill plus a faint outline so it
+   separates from the rest of the headline without shouting. */
+@utility signature-name {
+  color: var(--signature);
+}
+
+.act-hog .signature-name {
+  color: var(--signature-deep);
+}
+
+/* ===========================================================================
+ * HAND-DRAWN MARKS
+ *
+ * Circles, underlines, boxes and strikes that draw themselves on scroll, as
+ * if someone went over the page with a pen afterwards. Every mark is an SVG
+ * path animated through stroke-dashoffset; `--mark-len` is the path length
+ * and `--mark-dur` the draw time.
+ * ========================================================================= */
+
+@keyframes mark-draw {
+  from {
+    stroke-dashoffset: var(--mark-len, 400);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility mark-path {
+  stroke-dasharray: var(--mark-len, 400);
+  stroke-dashoffset: var(--mark-len, 400);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+@utility mark-draw {
+  animation: mark-draw var(--mark-dur, 700ms) cubic-bezier(0.32, 0.72, 0.35, 1) forwards;
+  animation-delay: var(--mark-delay, 0ms);
+}
+
+/* Marker highlight that sweeps in behind text. Skewed ends so it reads as a
+   felt-tip stroke rather than a background-color rectangle. */
+@keyframes highlight-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@utility highlight-sweep {
+  animation: highlight-sweep 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--mark-delay, 0ms);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* A sticky-note / torn-paper block for handwritten asides. */
+@utility note-paper {
+  position: relative;
+  border: 2px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow-hard);
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed color-mix(in oklab, var(--foreground) 18%, transparent);
+    pointer-events: none;
+  }
+}
+
+/* ===========================================================================
+ * 3D — the build pipeline and the tilting cards.
+ * ========================================================================= */
+
+@utility scene-3d {
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+}
+
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@utility tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0);
+  }
+}
+
+@utility float-slow {
+  animation: float-slow var(--float-dur, 6s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility orbit-spin {
+  animation: orbit-spin var(--orbit-dur, 18s) linear infinite;
+}
+
+/* A pulse that travels down the pipeline rail, like data moving through it. */
+@keyframes rail-pulse {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(1000%);
+    opacity: 0;
+  }
+}
+
+@utility rail-pulse {
+  animation: rail-pulse var(--pulse-dur, 3.6s) linear infinite;
+  animation-delay: var(--pulse-delay, 0s);
+}
+
+/* Terminal-style character reveal, used for the code that "types itself". */
+@keyframes type-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@utility type-in {
+  animation: type-in var(--type-dur, 900ms) steps(var(--type-steps, 30)) forwards;
+  animation-delay: var(--type-delay, 0ms);
+  clip-path: inset(0 100% 0 0);
+}
+
+/* Per-character headline reveal. The wrapper sets --char-index on each span. */
+@keyframes char-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotate(4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@utility char-in {
+  display: inline-block;
+  animation: char-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--char-index, 0) * 26ms + var(--char-base, 0ms));
 }
 
 /* ===========================================================================
@@ -835,6 +1060,13 @@
 
   .line-rise,
   .fade-rise,
+  .char-in,
+  .mark-draw,
+  .highlight-sweep,
+  .float-slow,
+  .orbit-spin,
+  .rail-pulse,
+  .type-in,
   .marquee-track,
   .caret,
   .status-ping,
@@ -851,6 +1083,26 @@
   .reveal {
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
+  }
+
+  /* Marks still appear, they just do not draw. */
+  .mark-path {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .highlight-sweep {
+    transform: scaleX(1) !important;
+  }
+
+  .char-in,
+  .type-in {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .tilt-card {
     transition: none !important;
   }
 
@@ -1123,26 +1375,203 @@
   --mac-max: oklch(0.73 0.19 145);
 }
 
-/* Frosted panel: menu bar, dock, windows. The tint is act-aware, so the same
-   utility gives dark vibrancy over the wallpaper and light vibrancy over cream. */
+/* ---------------------------------------------------------------------------
+ * LIQUID GLASS
+ *
+ * Tahoe-style glass is four layers, not one tint:
+ *
+ *   1. a blurred, saturated, *brightened* backdrop — the brightness lift is
+ *      what separates liquid glass from a flat 2014 frost;
+ *   2. a lens rim, bright where light enters at the top-left and exits at the
+ *      bottom-right, which is the single strongest cue that the panel has an
+ *      edge with thickness;
+ *   3. a specular sheen that tracks the pointer (--gx / --gy, written by
+ *      useSpecular in kit/motion.tsx);
+ *   4. paired insets — light along the top lip, shadow along the bottom.
+ *
+ * Three variants share the recipe and differ only in the knobs below:
+ *   --glass-tint  how much act background is mixed in (readability)
+ *   --glass-blur  backdrop blur radius
+ *   --glass-rim   rim brightness multiplier
+ *
+ * Everything reads plain `--foo` properties rather than `--color-foo`, per the
+ * note at the top of this file, so the glass stays act-aware: dark over the
+ * noir wallpaper, light over the cream pages.
+ * ------------------------------------------------------------------------- */
+
+/* Menu bar, dock, windows. */
 @utility vibrancy {
-  background: color-mix(in oklab, var(--background) 62%, transparent);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+  --glass-tint: 52%;
+  --glass-blur: 32px;
+  --glass-rim: 45%;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--foreground) 7%, transparent) 0%,
+      transparent 46%
+    ),
+    color-mix(in oklab, var(--background) var(--glass-tint), transparent);
+  backdrop-filter: blur(var(--glass-blur)) saturate(190%) brightness(1.08);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(190%) brightness(1.08);
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
   box-shadow:
-    0 1px 0 0 color-mix(in oklab, var(--foreground) 10%, transparent) inset,
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 20%, transparent) inset,
+    0 -1px 0 0 oklch(0 0 0 / 22%) inset,
     0 18px 50px -18px oklch(0 0 0 / 65%);
 }
 
+/* Menus and popovers. Heavier on purpose: a dropdown has to stay readable over
+   90px display type, and at 80% the headline showed straight through. */
 @utility vibrancy-strong {
-  background: color-mix(in oklab, var(--background) 80%, transparent);
-  backdrop-filter: blur(34px) saturate(180%);
-  -webkit-backdrop-filter: blur(34px) saturate(180%);
-  border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+  --glass-tint: 92%;
+  --glass-blur: 40px;
+  --glass-rim: 38%;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--foreground) 6%, transparent) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, var(--background) var(--glass-tint), transparent);
+  backdrop-filter: blur(var(--glass-blur)) saturate(190%) brightness(1.06);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(190%) brightness(1.06);
+  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
   box-shadow:
-    0 1px 0 0 color-mix(in oklab, var(--foreground) 12%, transparent) inset,
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 22%, transparent) inset,
+    0 -1px 0 0 oklch(0 0 0 / 20%) inset,
     0 30px 70px -20px oklch(0 0 0 / 72%);
+}
+
+/* Floating glass: dock context menus, stacks, the Launchpad shelf. Thinner and
+   more transparent than the bar — these sit *over* the glass chrome. */
+@utility liquid-glass {
+  --glass-tint: 64%;
+  --glass-blur: 36px;
+  --glass-rim: 52%;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--foreground) 9%, transparent) 0%,
+      transparent 50%
+    ),
+    color-mix(in oklab, var(--background) var(--glass-tint), transparent);
+  backdrop-filter: blur(var(--glass-blur)) saturate(200%) brightness(1.1);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(200%) brightness(1.1);
+  border: 1px solid color-mix(in oklab, var(--foreground) 13%, transparent);
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 24%, transparent) inset,
+    0 -1px 0 0 oklch(0 0 0 / 24%) inset,
+    0 24px 60px -18px oklch(0 0 0 / 70%);
+}
+
+/* Shared glass furniture. Written once for all three variants.
+
+   In `components` rather than at top level on purpose: these classes are also
+   worn by elements that carry their own `absolute` utility — the menu dropdowns
+   and the dock tooltips — and a top-level `position: relative` outranks the
+   utility layer and drags those panels back into flow. */
+@layer components {
+  .vibrancy,
+  .vibrancy-strong,
+  .liquid-glass {
+    position: relative;
+    isolation: isolate;
+  }
+}
+
+/* The lens rim. A conic ring masked down to the 1px border box, bright where a
+   light above-left would catch the bevel and again on the opposite shoulder. */
+.vibrancy::before,
+.vibrancy-strong::before,
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 210deg,
+    oklch(1 0 0 / var(--glass-rim)) 0deg,
+    oklch(1 0 0 / 6%) 70deg,
+    oklch(1 0 0 / 4%) 150deg,
+    color-mix(in oklab, oklch(1 0 0 / var(--glass-rim)) 80%, transparent) 220deg,
+    oklch(1 0 0 / 8%) 300deg,
+    oklch(1 0 0 / var(--glass-rim)) 360deg
+  );
+  /* Ring trick: paint the gradient over the whole box, then subtract the
+     content box so only the 1px padding band survives.
+
+     Do NOT add a `-webkit-mask` shorthand after this — it resets
+     `mask-composite` back to `add` and the gradient floods the entire panel.
+     Unprefixed mask-composite is supported everywhere this site targets. */
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* The specular highlight. Sits above the panel's contents on purpose — on real
+   glass the reflection is on the front face, in front of whatever is behind it.
+   Defaults to a soft static bloom so the panel still reads as glass before any
+   pointer arrives.
+
+   Sized in percentages, not pixels: a fixed radius that looks right on the
+   dock becomes a grey thumbprint in the middle of a 1600px menu bar. */
+.vibrancy::after,
+.vibrancy-strong::after,
+.liquid-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    46% 130% at var(--gx, 50%) var(--gy, 0%),
+    oklch(1 0 0 / 9%),
+    transparent 72%
+  );
+  opacity: var(--sheen, 0.5);
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+
+/* Cream act. The same recipe over a light ground turns into milk: the blur has
+   nothing dark to pull from, and a white rim on white is invisible. Drop the
+   blur, kill the brightness lift, and swap the rim to ink. */
+.act-hog .vibrancy,
+.act-hog .vibrancy-strong,
+.act-hog .liquid-glass {
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.6)) saturate(150%);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.6)) saturate(150%);
+  border-color: color-mix(in oklab, var(--ink) 22%, transparent);
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 70%) inset,
+    0 -1px 0 0 color-mix(in oklab, var(--ink) 10%, transparent) inset,
+    0 18px 44px -20px color-mix(in oklab, var(--ink) 40%, transparent);
+}
+
+.act-hog .vibrancy::before,
+.act-hog .vibrancy-strong::before,
+.act-hog .liquid-glass::before {
+  background: conic-gradient(
+    from 210deg,
+    oklch(1 0 0 / 90%) 0deg,
+    color-mix(in oklab, var(--ink) 10%, transparent) 90deg,
+    color-mix(in oklab, var(--ink) 14%, transparent) 180deg,
+    oklch(1 0 0 / 70%) 250deg,
+    color-mix(in oklab, var(--ink) 8%, transparent) 320deg,
+    oklch(1 0 0 / 90%) 360deg
+  );
+}
+
+.act-hog .vibrancy::after,
+.act-hog .vibrancy-strong::after,
+.act-hog .liquid-glass::after {
+  background: radial-gradient(
+    46% 130% at var(--gx, 50%) var(--gy, 0%),
+    oklch(1 0 0 / 38%),
+    transparent 70%
+  );
 }
 
 /* iOS / macOS app tile. 23% is the ratio Apple's squircle approximates to at
@@ -1256,6 +1685,12 @@
     animation: none !important;
   }
   .dock-item {
+    transition: none !important;
+  }
+  /* The sheen stops chasing the pointer and settles into a static bloom. */
+  .vibrancy::after,
+  .vibrancy-strong::after,
+  .liquid-glass::after {
     transition: none !important;
   }
 }
