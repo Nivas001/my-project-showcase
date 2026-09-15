@@ -59,21 +59,34 @@ export function MenuBar({
       <div className="vibrancy pointer-events-auto mx-auto flex h-11 max-w-[1600px] items-center gap-1 rounded-xl px-2">
         {/* ---- Left cluster ---- */}
         <div ref={menuRef} className="relative">
+          <Link
+            to="/"
+            aria-label="Go to homepage"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-foreground/10"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="grid h-5 w-5 place-items-center rounded-[6px] bg-foreground font-display text-[11px] font-bold leading-none text-background">
+              S
+            </span>
+            <span className="font-display text-sm font-bold tracking-tight text-foreground">
+              {site.name}
+            </span>
+          </Link>
+
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
             className={cn(
-              "flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors",
+              "rounded-lg px-1.5 py-1.5 transition-colors",
               menuOpen ? "bg-foreground/15" : "hover:bg-foreground/10",
             )}
           >
-            <span className="grid h-5 w-5 place-items-center rounded-[6px] bg-foreground font-display text-[11px] font-bold leading-none text-background">
-              S
-            </span>
-            <span className="font-display text-sm font-bold tracking-tight text-foreground">
-              {site.fullName}
+            <span className="sr-only">Open menu</span>
+            <span aria-hidden className="flex flex-col gap-[3px] px-0.5">
+              <span className="block h-px w-3.5 bg-foreground/70" />
+              <span className="block h-px w-3.5 bg-foreground/70" />
             </span>
           </button>
 

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Download, ExternalLink, Mail } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
+import { Download, ExternalLink, Mail, Rocket, Layers, Cog, LayoutDashboard } from "lucide-react";
 import { site, skills, education, certifications, principles, toEmbedUrl } from "@/lib/site";
 import { certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
 import { experiencePeriod } from "@/lib/experiences";
@@ -17,9 +18,9 @@ import {
 } from "@/components/kit";
 import { Reveal } from "@/components/Reveal";
 
-const TITLE = "About — Srinivas M";
+const TITLE = "About — Srinivas";
 const DESCRIPTION =
-  "Srinivas M: full-stack engineer in Pondicherry. Background, stack, education and certifications, plus a video introduction.";
+  "Srinivas: full-stack engineer in Pondicherry. Background, stack, education and certifications, plus a video introduction.";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -33,7 +34,92 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
-/** A labelled section on the cream surface. */
+const STATS = [
+  { value: "3", label: "Products live", accent: "hog-red" },
+  { value: "8.79", label: "GPA / 10", accent: "hog-blue" },
+  { value: "4+", label: "Years building", accent: "hog-yellow" },
+  { value: "12+", label: "Tech in prod", accent: "hog-green" },
+] as const;
+
+const PRINCIPLE_ICONS = [Rocket, Layers, Cog, LayoutDashboard] as const;
+
+/** Animated counter that counts up when it first enters the viewport. */
+function AnimCounter({ value, className }: { value: string; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState("0");
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const num = parseFloat(value.replace(/[^0-9.]/g, ""));
+    const suffix = value.replace(/[0-9.]/g, "");
+    if (Number.isNaN(num)) {
+      setDisplay(value);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || started.current) return;
+        started.current = true;
+        const dur = 900;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min((now - start) / dur, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          const cur = (num * ease).toFixed(value.includes(".") ? 2 : 0);
+          setDisplay(cur + suffix);
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [value]);
+
+  return (
+    <span ref={ref} className={className}>
+      {display}
+    </span>
+  );
+}
+
+/** Skill pill that wiggles into view. */
+function SkillPill({ item, delay }: { item: string; delay: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.2 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <span
+      ref={ref}
+      className="rounded border border-border/25 bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/85 transition-all duration-300"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(6px)",
+        transitionDelay: `${delay}ms`,
+      }}
+    >
+      {item}
+    </span>
+  );
+}
+
+/** Labelled section on the cream surface. */
 function Block({
   index,
   label,
@@ -111,6 +197,28 @@ function AboutPage() {
       <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 
+        {/* Stats strip --------------------------------------------------- */}
+        <div className="relative border-b-2 border-border/20">
+          <div className="mx-auto grid max-w-5xl grid-cols-2 divide-x-2 divide-y-2 divide-border/20 sm:grid-cols-4 sm:divide-y-0">
+            {STATS.map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center gap-1 px-6 py-8">
+                <span
+                  className="font-display text-4xl font-black tabular-nums text-foreground sm:text-5xl"
+                >
+                  <AnimCounter value={stat.value} />
+                </span>
+                <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {stat.label}
+                </span>
+                <span
+                  className="mt-1.5 h-1 w-8 rounded-full"
+                  style={{ background: `var(--${stat.accent})` }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="relative mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-20">
           {/* Bio ---------------------------------------------------------- */}
           <Block index={nextIndex()} label="Who I am" title={["Hello — I'm Srinivas."]}>
@@ -181,7 +289,7 @@ function AboutPage() {
                       ) : (
                         <iframe
                           src={embed || ""}
-                          title="Video introduction from Srinivas M"
+                          title="Video introduction from Srinivas"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
                           allowFullScreen
                           className="absolute inset-0 h-full w-full border-0"
@@ -194,7 +302,7 @@ function AboutPage() {
             </Block>
           ) : null}
 
-          {/* Experience (only when the table has rows) --------------------- */}
+          {/* Experience --------------------------------------------------- */}
           {storedExperiences.length > 0 ? (
             <Block index={nextIndex()} label="Experience" title={["Where I've worked."]}>
               <div className="relative pl-7">
@@ -310,13 +418,8 @@ function AboutPage() {
                     </h3>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-1.5">
-                    {group.items.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded border border-border/25 bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/85"
-                      >
-                        {item}
-                      </span>
+                    {group.items.map((item, ii) => (
+                      <SkillPill key={item} item={item} delay={gi * 60 + ii * 40} />
                     ))}
                   </div>
                 </div>
@@ -326,29 +429,48 @@ function AboutPage() {
 
           {/* Education ---------------------------------------------------- */}
           <Block index={nextIndex()} label="Education" title={["Where I learned it."]}>
-            <div className="hog-card overflow-hidden">
-              {education.map((entry, i) => (
-                <div
-                  key={entry.degree}
-                  className={`flex flex-col gap-3 p-5 sm:flex-row sm:items-start sm:justify-between ${
-                    i < education.length - 1 ? "border-b-2 border-border/15" : ""
-                  }`}
-                >
-                  <div className="min-w-0">
-                    <h3 className="text-[15px] font-semibold text-foreground">{entry.degree}</h3>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{entry.school}</p>
-                    {entry.note ? (
-                      <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                        {entry.note}
-                      </p>
-                    ) : null}
-                  </div>
-                  <div className="shrink-0 font-mono text-[11px] text-muted-foreground sm:text-right">
-                    <div>{entry.period}</div>
-                    <div className="mt-1 font-bold text-foreground">{entry.score}</div>
-                  </div>
-                </div>
-              ))}
+            <div className="relative pl-6">
+              {/* vertical rail */}
+              <span
+                aria-hidden
+                className="absolute bottom-3 left-[7px] top-3 w-0.5 bg-border/20"
+              />
+              <div className="space-y-5">
+                {education.map((entry, i) => (
+                  <Reveal key={entry.degree} delay={i * 80}>
+                    <div className="relative">
+                      <span
+                        aria-hidden
+                        className="absolute -left-6 top-5 h-3.5 w-3.5 rounded-full border-2 border-border"
+                        style={{ background: `var(--${accentFor(i)})` }}
+                      />
+                      <article className="hog-card p-5">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <h3 className="text-[15px] font-semibold text-foreground">
+                              {entry.degree}
+                            </h3>
+                            <p className="mt-0.5 text-sm text-muted-foreground">{entry.school}</p>
+                          </div>
+                          <div className="shrink-0 sm:text-right">
+                            <p className="font-mono text-[11px] text-muted-foreground">
+                              {entry.period}
+                            </p>
+                            <p className="mt-0.5 font-mono text-sm font-bold text-foreground">
+                              {entry.score}
+                            </p>
+                          </div>
+                        </div>
+                        {entry.note ? (
+                          <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+                            {entry.note}
+                          </p>
+                        ) : null}
+                      </article>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </Block>
 
@@ -433,27 +555,34 @@ function AboutPage() {
           {/* Principles --------------------------------------------------- */}
           <Block index={nextIndex()} label="How I work" title={["Four opinions."]}>
             <div className="grid gap-5 sm:grid-cols-2">
-              {principles.map((principle, i) => (
-                <Reveal key={principle.title} delay={i * 80}>
-                  <article className="hog-card hog-card-hover flex h-full gap-4 p-5">
-                    <span
-                      aria-hidden
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-md border-2 border-border font-display text-base font-bold"
-                      style={accentSurface(accentFor(i))}
-                    >
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="text-[15px] font-semibold text-foreground">
-                        {principle.title}
-                      </h3>
-                      <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
-                        {principle.body}
-                      </p>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
+              {principles.map((principle, i) => {
+                const Icon = PRINCIPLE_ICONS[i];
+                return (
+                  <Reveal key={principle.title} delay={i * 80}>
+                    <article className="hog-card hog-card-hover group flex h-full gap-4 p-5">
+                      <span
+                        aria-hidden
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-md border-2 border-border transition-transform duration-200 group-hover:scale-110"
+                        style={accentSurface(accentFor(i))}
+                      >
+                        {Icon ? (
+                          <Icon className="h-4 w-4" />
+                        ) : (
+                          <span className="font-display text-base font-bold">{i + 1}</span>
+                        )}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="text-[15px] font-semibold text-foreground">
+                          {principle.title}
+                        </h3>
+                        <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
+                          {principle.body}
+                        </p>
+                      </div>
+                    </article>
+                  </Reveal>
+                );
+              })}
             </div>
           </Block>
 

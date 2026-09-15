@@ -28,20 +28,21 @@ export function ProjectCard({
         className,
       )}
     >
-      {/* Colour bar — the cheapest way to make a grid of cards feel authored. */}
+      {/* Accent bar */}
       <span
         aria-hidden
-        className="h-1.5 w-full shrink-0"
+        className="h-1.5 w-full shrink-0 transition-all duration-300 group-hover:h-2"
         style={{ background: `var(--${accent})` }}
       />
 
+      {/* Cover image with hover overlay */}
       <div className="relative aspect-[16/10] shrink-0 overflow-hidden border-b-2 border-border bg-secondary">
         {cover ? (
           <img
             src={cover}
             alt={`${project.title} screenshot`}
             loading="lazy"
-            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.06]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center font-mono text-xs text-muted-foreground">
@@ -49,6 +50,24 @@ export function ProjectCard({
           </div>
         )}
 
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+        {/* Tech stack preview — slides up on hover */}
+        <div className="absolute inset-x-0 bottom-0 translate-y-full p-3 transition-transform duration-300 group-hover:translate-y-0">
+          <div className="flex flex-wrap gap-1">
+            {project.tech.slice(0, 3).map((tech) => (
+              <span
+                key={tech}
+                className="rounded bg-white/15 px-1.5 py-0.5 font-mono text-[10px] text-white backdrop-blur-sm"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Badges */}
         <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
           <span className="rounded-full border-2 border-border bg-card px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground">
             {project.category}
