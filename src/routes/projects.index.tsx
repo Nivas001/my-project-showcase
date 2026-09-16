@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { projectsQuery } from "@/lib/queries";
-import { toAbsoluteUrl } from "@/lib/site";
+import { toAbsoluteUrl, canonical } from "@/lib/site";
 import { ProjectCard } from "@/components/ProjectCard";
 import {
   HandNote,
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/projects/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
     ],
+    links: [canonical("/projects")],
   }),
   component: ProjectsPage,
 });
@@ -100,7 +101,8 @@ function ProjectsPage() {
         lines={["Everything", "I've built."]}
         lede={
           <>
-            Commerce platforms, mobile apps and one research model — each one{" "}
+            A property platform, a weekly magazine, commerce sites, mobile apps and one research
+            model — each one{" "}
             <Marked kind="underline" tone="hog-red" delay={600}>
               designed, built and deployed by me
             </Marked>

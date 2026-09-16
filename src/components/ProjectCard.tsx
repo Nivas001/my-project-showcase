@@ -70,9 +70,14 @@ export function ProjectCard({
 
           {/* Badges */}
           <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border-2 border-border bg-card px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground">
-              {project.category}
-            </span>
+            {/* "Live" as a category and "Live" as a status are the same word;
+                showing both put it on the card twice. The status pill wins —
+                it carries the indicator dot. */}
+            {project.category.toLowerCase() === "live" && live ? null : (
+              <span className="rounded-full border-2 border-border bg-card px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground">
+                {project.category}
+              </span>
+            )}
             {live ? (
               <span className="flex items-center gap-1.5 rounded-full border-2 border-border bg-card px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground">
                 <StatusDot />

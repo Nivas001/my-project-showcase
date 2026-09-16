@@ -14,11 +14,12 @@ import {
   Presentation,
 } from "lucide-react";
 import { projectQuery } from "@/lib/queries";
-import { toAbsoluteUrl, prettyUrl, shortTitle } from "@/lib/site";
+import { toAbsoluteUrl, prettyUrl, shortTitle, canonical } from "@/lib/site";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
 import { DesignBoard } from "@/components/DesignBoard";
 import { ScreenshotCarousel } from "@/components/ScreenshotCarousel";
+import { DecisionLog } from "@/components/projects/DecisionLog";
 import { Shot } from "@/components/Shot";
 import {
   BrowserFrame,
@@ -65,6 +66,7 @@ export const Route = createFileRoute("/projects/$slug")({
             ]
           : []),
       ],
+      links: [canonical(`/projects/${project.slug}`)],
     };
   },
   notFoundComponent: ProjectMissing,
@@ -254,6 +256,7 @@ function ProjectDetail() {
     if (project.video_url) add("demo", "Demo");
     if (project.description) add("overview", "Overview");
     if (project.highlights.length > 0) add("features", "What it does");
+    if (project.decisions.length > 0) add("decisions", "Calls I made");
     if (project.screenshots.length > 0) add("screens", "Screens");
     if (project.designs.length > 0) add("designs", "Design pages");
     if (docUrl) add("docs", "Documentation");
@@ -274,6 +277,7 @@ function ProjectDetail() {
     { value: String(project.tech.length), label: "technologies" },
     { value: String(project.highlights.length), label: "shipped features" },
     { value: String(project.screenshots.length), label: "screens" },
+    { value: String(project.decisions.length), label: "decisions logged" },
   ].filter((fact) => fact.value !== "0");
 
   return (
@@ -317,9 +321,14 @@ function ProjectDetail() {
           <div className="mt-8 grid items-end gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
             <motion.div style={{ y: titleY }} className="min-w-0">
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                  {project.category}
-                </span>
+                {/* The category pill is suppressed for "Live" projects: the
+                    status pill beside it already says Live, and rendering both
+                    printed the word twice in a row. */}
+                {project.category.toLowerCase() === "live" && liveUrl ? null : (
+                  <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    {project.category}
+                  </span>
+                )}
                 {liveUrl ? (
                   <span className="inline-flex items-center gap-2 rounded-full border border-hog-green/40 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground">
                     <StatusDot />
@@ -523,6 +532,21 @@ function ProjectDetail() {
                       </Reveal>
                     ))}
                   </ul>
+                </Block>
+              ) : null}
+
+              {project.decisions.length > 0 && chapterFor("decisions") ? (
+                <Block
+                  id="decisions"
+                  index={chapterFor("decisions")!.index}
+                  label="Calls I made"
+                  note="and what each one cost"
+                >
+                  <p className="mb-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                    The section above says what this does. This one says why it is built the way it
+                    is — including the parts that did not come free.
+                  </p>
+                  <DecisionLog decisions={project.decisions} />
                 </Block>
               ) : null}
 

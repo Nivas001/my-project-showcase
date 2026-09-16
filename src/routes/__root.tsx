@@ -24,9 +24,12 @@ import { Toaster } from "@/components/ui/sonner";
 
 const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
 const DESCRIPTION =
-  "Full-stack engineer in Pondicherry with three products live in production and a published Tamil NLP summarisation model. React, TanStack, Python, Flutter, PostgreSQL.";
-const OG_IMAGE =
-  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4869a48e-75b9-4dfa-b4a1-f5b15cc0b31b/id-preview-7e102b57--6307a852-b20a-4277-b229-dbceb744db18.lovable.app-1785679047358.png";
+  "Full-stack engineer in Pondicherry with five products live in production and a published Tamil NLP summarisation model. React, TanStack, Next.js, Python, Flutter, PostgreSQL.";
+/* Served from public/, not a preview-deployment screenshot on someone else's
+   bucket. Every LinkedIn, WhatsApp and Slack unfurl of the site loads this, so
+   it has to outlive whatever host built it. Absolute URL: crawlers do not
+   resolve relative og:image paths. */
+const OG_IMAGE = `${site.url}/og.png`;
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -36,12 +39,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { name: "author", content: "Srinivas M" },
-      { name: "theme-color", content: "#141414" },
+      { name: "theme-color", content: "#080808" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Srinivas M" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Srinivas M — Full-Stack Engineer. nivas.tech" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },

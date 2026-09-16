@@ -6,16 +6,14 @@ import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, Upload, X } from "lucide-reac
 import { supabase } from "@/integrations/supabase/client";
 import { SortableMediaList } from "@/components/admin/SortableMediaList";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
+import { saveCertificate, deleteCertificate } from "@/lib/certificates.functions";
+import { emptyCertificate, type Certificate, type CertificateInput } from "@/lib/certificates";
 import {
-  saveCertificate,
-  deleteCertificate,
-} from "@/lib/certificates.functions";
-import {
-  emptyCertificate,
-  type Certificate,
-  type CertificateInput,
-} from "@/lib/certificates";
-import { projectsQuery, certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
+  projectsQuery,
+  certificatesQuery,
+  skillGroupsQuery,
+  experiencesQuery,
+} from "@/lib/queries";
 import { emptySkillGroup, type SkillGroup, type SkillGroupInput } from "@/lib/skills";
 import { saveSkillGroup, deleteSkillGroup } from "@/lib/skills.functions";
 import {
@@ -28,6 +26,7 @@ import {
 import { saveExperience, deleteExperience } from "@/lib/experiences.functions";
 import {
   DOWNLOAD_PLATFORMS,
+  type ProjectDecision,
   GITHUB_VISIBILITIES,
   PROJECT_CATEGORIES,
   SCREENSHOT_BUCKET,
@@ -49,7 +48,13 @@ const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 function safeFileName(name: string) {
   const dot = name.lastIndexOf(".");
   const base = dot > 0 ? name.slice(0, dot) : name;
-  const ext = dot > 0 ? name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "";
+  const ext =
+    dot > 0
+      ? name
+          .slice(dot + 1)
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "")
+      : "";
   const cleanBase =
     base
       .normalize("NFKD")
@@ -94,13 +99,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const inputClass =
   "mt-1.5 w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary";
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
       <span className="font-mono text-xs text-muted-foreground">{label}</span>
@@ -174,7 +173,6 @@ function AdminPage() {
     }
   }
 
-
   async function handleSkillSave() {
     if (!skillDraft) return;
     if (!skillDraft.name.trim()) {
@@ -212,8 +210,6 @@ function AdminPage() {
       toast.error(error instanceof Error ? error.message : "Could not delete skill category");
     }
   }
-
-
 
   async function handleCertUpload(files: FileList | null) {
     if (!files || !certDraft) return;
@@ -351,7 +347,6 @@ function AdminPage() {
     }
   }
 
-
   async function handleSave() {
     if (!draft) return;
     if (!draft.title || !draft.slug) {
@@ -383,7 +378,11 @@ function AdminPage() {
   }
 
   if (checkingRole) {
-    return <p className="mx-auto max-w-5xl px-5 py-24 font-mono text-sm text-muted-foreground">Checking access…</p>;
+    return (
+      <p className="mx-auto max-w-5xl px-5 py-24 font-mono text-sm text-muted-foreground">
+        Checking access…
+      </p>
+    );
   }
 
   if (!adminInfo?.isAdmin) {
@@ -553,7 +552,6 @@ function AdminPage() {
             </Field>
           </div>
 
-
           <div className="mt-4 space-y-4">
             <Field label="summary (card text)">
               <textarea
@@ -578,7 +576,10 @@ function AdminPage() {
                 onChange={(e) =>
                   setDraft({
                     ...draft,
-                    tech: e.target.value.split(",").map((v) => v.trim()).filter(Boolean),
+                    tech: e.target.value
+                      .split(",")
+                      .map((v) => v.trim())
+                      .filter(Boolean),
                   })
                 }
               />
@@ -591,7 +592,10 @@ function AdminPage() {
                 onChange={(e) =>
                   setDraft({
                     ...draft,
-                    highlights: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                    highlights: e.target.value
+                      .split("\n")
+                      .map((v) => v.trim())
+                      .filter(Boolean),
                   })
                 }
               />
@@ -707,8 +711,105 @@ function AdminPage() {
             </div>
           </div>
 
+          {/* Decision log — the "Calls I made" section on the project page.
+              Five fixed fields rather than free prose: a decision that cannot
+              be stated as "picked X over Y because Z, and it cost W" is
+              usually one that has not actually been made. */}
+          <div className="mt-5">
+            <span className="font-mono text-xs text-muted-foreground">
+              decision log (optional — the “Calls I made” section)
+            </span>
+            <div className="mt-2 space-y-3">
+              {draft.decisions.map((item, index) => {
+                const patch = (changes: Partial<ProjectDecision>) => {
+                  const next = [...draft.decisions];
+                  next[index] = { ...item, ...changes };
+                  setDraft({ ...draft, decisions: next });
+                };
+                return (
+                  <div key={index} className="rounded-sm border border-border p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        decision {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <button
+                        type="button"
+                        className="rounded-sm border border-border px-2 py-1 text-sm hover:border-destructive"
+                        onClick={() =>
+                          setDraft({
+                            ...draft,
+                            decisions: draft.decisions.filter((_, i) => i !== index),
+                          })
+                        }
+                        aria-label={`Remove decision ${index + 1}`}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
 
-
+                    <div className="mt-2 space-y-2">
+                      <input
+                        className="w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                        placeholder="the problem — what forced a choice?"
+                        value={item.problem}
+                        onChange={(e) => patch({ problem: e.target.value })}
+                      />
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <input
+                          className="rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                          placeholder="chose (e.g. Server-side rendering)"
+                          value={item.chose}
+                          onChange={(e) => patch({ chose: e.target.value })}
+                        />
+                        <input
+                          className="rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                          placeholder="rejected alternatives, comma separated (not the chosen one)"
+                          value={item.options.join(", ")}
+                          onChange={(e) =>
+                            patch({
+                              options: e.target.value
+                                .split(",")
+                                .map((v) => v.trim())
+                                .filter(Boolean),
+                            })
+                          }
+                        />
+                      </div>
+                      <textarea
+                        rows={2}
+                        className="w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                        placeholder="because — why it won"
+                        value={item.because}
+                        onChange={(e) => patch({ because: e.target.value })}
+                      />
+                      <textarea
+                        rows={2}
+                        className="w-full rounded-sm border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                        placeholder="what it cost — the honest half (optional, but write it)"
+                        value={item.cost}
+                        onChange={(e) => patch({ cost: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setDraft({
+                  ...draft,
+                  decisions: [
+                    ...draft.decisions,
+                    { problem: "", options: [], chose: "", because: "", cost: "" },
+                  ],
+                })
+              }
+              className="mt-3 inline-flex items-center gap-2 rounded-sm border border-border px-3 py-2 text-sm hover:border-primary"
+            >
+              <Plus className="h-4 w-4" /> Add decision
+            </button>
+          </div>
 
           <div className="mt-5">
             <span className="font-mono text-xs text-muted-foreground">
@@ -988,9 +1089,7 @@ function AdminPage() {
                   rows={4}
                   className={inputClass}
                   value={expDraft.tech.join(", ")}
-                  onChange={(e) =>
-                    setExpDraft({ ...expDraft, tech: e.target.value.split(",") })
-                  }
+                  onChange={(e) => setExpDraft({ ...expDraft, tech: e.target.value.split(",") })}
                 />
               </Field>
             </div>
@@ -1054,7 +1153,6 @@ function AdminPage() {
           ) : null}
         </div>
       </section>
-
 
       <section className="mt-16">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1255,9 +1353,7 @@ function AdminPage() {
                 <input
                   className={inputClass}
                   value={skillDraft.name}
-                  onChange={(e) =>
-                    setSkillDraft({ ...skillDraft, name: e.target.value })
-                  }
+                  onChange={(e) => setSkillDraft({ ...skillDraft, name: e.target.value })}
                   placeholder="Frameworks & Libraries"
                 />
               </Field>
@@ -1352,4 +1448,3 @@ function AdminPage() {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { site } from "@/lib/site";
+import { site, canonical } from "@/lib/site";
 import { projectsQuery, skillGroupsQuery } from "@/lib/queries";
 import { Gate } from "@/components/home/Gate";
 import { Statements } from "@/components/home/Statements";
@@ -12,7 +12,7 @@ import { HireCTA } from "@/components/home/HireCTA";
 
 const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
 const DESCRIPTION =
-  "Full-stack engineer in Pondicherry with three products live in production and a published Tamil NLP summarisation model. React, TanStack, Python, Flutter, PostgreSQL.";
+  "Full-stack engineer in Pondicherry with five products live in production and a published Tamil NLP summarisation model. React, TanStack, Next.js, Python, Flutter, PostgreSQL.";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(projectsQuery),
@@ -57,6 +57,7 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
+    links: [canonical("/")],
   }),
   component: Home,
 });

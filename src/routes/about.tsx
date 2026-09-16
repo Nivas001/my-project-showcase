@@ -2,7 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useEffect, useState } from "react";
 import { Download, ExternalLink, Mail, Rocket, Layers, Cog, LayoutDashboard } from "lucide-react";
-import { site, skills, education, certifications, principles, toEmbedUrl } from "@/lib/site";
+import {
+  site,
+  skills,
+  education,
+  certifications,
+  principles,
+  toEmbedUrl,
+  canonical,
+} from "@/lib/site";
 import { certificatesQuery, skillGroupsQuery, experiencesQuery } from "@/lib/queries";
 import { experiencePeriod } from "@/lib/experiences";
 import { accentFor, accentSurface } from "@/lib/accents";
@@ -35,12 +43,13 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
     ],
+    links: [canonical("/about")],
   }),
   component: AboutPage,
 });
 
 const STATS = [
-  { value: "3", label: "Products live", accent: "hog-red" },
+  { value: "5", label: "Products live", accent: "hog-red" },
   { value: "8.79", label: "GPA / 10", accent: "hog-blue" },
   { value: "4+", label: "Years building", accent: "hog-yellow" },
   { value: "12+", label: "Tech in prod", accent: "hog-green" },

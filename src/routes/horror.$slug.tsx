@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { canonical } from "@/lib/site";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Volume2, VolumeX, RotateCcw, Skull, Heart } from "lucide-react";
 import { getStory, STORIES } from "@/content/horror";
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/horror/$slug")({
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary" },
       ],
+      links: [canonical(`/horror/${s.slug}`)],
     };
   },
   errorComponent: () => <Fallback title="Something went wrong in the dark" />,

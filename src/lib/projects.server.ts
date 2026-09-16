@@ -1,6 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { normaliseDownloads, type Project, type SignedProject } from "@/lib/projects";
+import {
+  normaliseDecisions,
+  normaliseDownloads,
+  PROJECT_COLUMNS,
+  PROJECT_COLUMNS_LEGACY,
+  type Project,
+  type SignedProject,
+} from "@/lib/projects";
 
 function isOpaqueKey(value: string) {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -22,6 +29,29 @@ export function createPublicServerClient() {
       },
     },
   });
+}
+
+/**
+ * Read every project row, newest schema first.
+ *
+ * `decisions` arrives with a migration the deploy may not have run yet, and
+ * PostgREST answers an unknown column with 42703 rather than a null, which
+ * would take the whole site down. One retry on the pre-migration column list
+ * keeps the pages serving with an empty decision log instead.
+ */
+export async function selectAllProjects(
+  supabase: ReturnType<typeof createPublicServerClient>,
+): Promise<Project[]> {
+  const query = (columns: string) =>
+    supabase.from("projects").select(columns).order("sort_order", { ascending: true });
+
+  const { data, error } = await query(PROJECT_COLUMNS);
+  if (!error) return (data ?? []) as unknown as Project[];
+  if (error.code !== "42703") throw new Error(error.message);
+
+  const legacy = await query(PROJECT_COLUMNS_LEGACY);
+  if (legacy.error) throw new Error(legacy.error.message);
+  return (legacy.data ?? []) as unknown as Project[];
 }
 
 /**
@@ -57,6 +87,7 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     screenshots: (row.screenshots ?? []).map(resolve),
     designs: (row.designs ?? []).map(resolve),
     downloads: normaliseDownloads(row.downloads),
+    decisions: normaliseDecisions(row.decisions),
     // Served through a proxy so the file renders inline; ext lets the viewer
     // pick a PDF reader or a slide-deck embed.
     doc_signed_url: row.doc_path ? proxy(row, "doc", row.doc_path) : null,

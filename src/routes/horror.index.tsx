@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { canonical } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { Clock, Eye, GitBranch, Skull, Volume2 } from "lucide-react";
 import { STORIES } from "@/content/horror";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/horror/")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
     ],
+    links: [canonical("/horror")],
   }),
   component: HorrorLibrary,
 });

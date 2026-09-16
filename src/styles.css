@@ -1694,3 +1694,101 @@
     transition: none !important;
   }
 }
+
+/* ===========================================================================
+ * PRINT
+ *
+ * Recruiters print portfolios and save them as PDFs, and a two-act site built
+ * on near-black grounds, film grain and scroll-triggered reveals prints as
+ * black rectangles with invisible text — the `reveal` utility holds opacity 0
+ * until an IntersectionObserver fires, and print never fires one.
+ *
+ * So the print sheet does three things: force both acts onto white, drop every
+ * piece of chrome that only makes sense on screen, and reverse the reveals so
+ * nothing lands on paper still waiting to animate in.
+ * ========================================================================= */
+
+@media print {
+  /* Both acts collapse to ink on white. Redefining the semantic tokens is
+     enough — every component reads through them. */
+  :root,
+  .act-noir,
+  .act-hog {
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #ffffff;
+    --card-foreground: #000000;
+    --muted: #ffffff;
+    --muted-foreground: #333333;
+    --border: #999999;
+    --secondary: #f2f2f2;
+    --secondary-foreground: #000000;
+    --hairline: #cccccc;
+    --shadow-hard: none;
+    --shadow-hard-lg: none;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Nothing that only exists to be interacted with or looked at on a screen. */
+  .grain,
+  .hairline-grid,
+  .dot-grid,
+  .scanlines,
+  [data-print="hide"],
+  nav[aria-label="Contents"],
+  .dock,
+  .dock-item,
+  .menu-bar,
+  video,
+  iframe,
+  canvas {
+    display: none !important;
+  }
+
+  /* Reveals are opacity-0 until observed; on paper they never are. */
+  .reveal,
+  .fade-rise,
+  .line-rise,
+  .type-in,
+  .char-in {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Pinned/sticky sections stack into the flow instead of overprinting. */
+  * {
+    position: static !important;
+    box-shadow: none !important;
+  }
+
+  /* Full-viewport sections would each take a page to themselves. */
+  section {
+    min-height: 0 !important;
+    height: auto !important;
+    break-inside: avoid;
+  }
+
+  /* A link is useless on paper unless it says where it goes. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    word-break: break-all;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}

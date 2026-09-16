@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { canonical } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { Bug, Gamepad2, Ghost, Keyboard, Skull, Timer, Zap } from "lucide-react";
 import { GAMES, type GameId } from "@/lib/games";
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/fun")({
         content: "Five browser mini-games with a public leaderboard, built for no good reason.",
       },
     ],
+    links: [canonical("/fun")],
   }),
   component: FunPage,
 });

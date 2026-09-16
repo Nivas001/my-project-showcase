@@ -40,6 +40,8 @@ export type AppSpec = {
   id: string;
   /** Shown under the icon and in the tooltip. */
   label: string;
+  /** A tighter label for the phone dock, where four slots share one row. */
+  short?: string;
   glyph: AppGlyph | LucideIcon;
   /** Two stops for the tile gradient, top then bottom. */
   from: string;
@@ -158,6 +160,7 @@ export const DOCK_APPS: AppSpec[] = [
   {
     id: "mail",
     label: "Email me",
+    short: "Email",
     glyph: Mail,
     from: "oklch(0.78 0.14 235)",
     to: "oklch(0.56 0.19 250)",
@@ -173,9 +176,15 @@ export const DOCK_APPS: AppSpec[] = [
     glyph: LiveMark,
     from: "oklch(0.82 0.11 220)",
     to: "oklch(0.55 0.2 250)",
-    href: "https://www.anibakes.app",
+    href: "https://estate-ulagam.vercel.app",
     menu: [
-      { kind: "link", label: "Ani Bakes", href: "https://www.anibakes.app" },
+      { kind: "caption", label: "Five products, live right now" },
+      { kind: "link", label: "Estate Ulagam", href: "https://estate-ulagam.vercel.app" },
+      { kind: "link", label: "Vaaram Magazine", href: "https://vaaram.ca" },
+      { kind: "link", label: "Ani Bakes", href: "https://anibakes.app" },
+      { kind: "link", label: "AARRKKAA", href: "https://aarrkkaa.com" },
+      { kind: "link", label: "Velocity", href: "https://velocitybox.app" },
+      { kind: "separator" },
       { kind: "route", label: "See all live work", to: "/projects" },
     ],
   },

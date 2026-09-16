@@ -56,17 +56,6 @@ type Icon = ComponentType<{ className?: string }>;
 
 type Menu = { id: string; label: string; items: MenuItem[] };
 
-/** The Apple menu's slot — the one that carries identity rather than navigation. */
-const LOGO_MENU: MenuItem[] = [
-  { kind: "route", label: "About this developer", to: "/about", icon: User },
-  { kind: "link", label: "Download résumé", href: site.resumeUrl, icon: Download, download: true },
-  { kind: "link", label: "Get in touch", href: `mailto:${site.email}`, icon: Mail },
-  { kind: "separator" },
-  { kind: "route", label: "Everything I've built", to: "/projects", icon: Briefcase },
-  { kind: "separator" },
-  { kind: "caption", label: `${site.locationShort} · Available for work` },
-];
-
 const MENUS: Menu[] = [
   {
     id: "work",
@@ -74,6 +63,18 @@ const MENUS: Menu[] = [
     items: [
       { kind: "route", label: "All projects", to: "/projects", icon: Briefcase },
       { kind: "separator" },
+      {
+        kind: "route",
+        label: "Estate Ulagam",
+        to: "/projects/$slug",
+        params: { slug: "estate-ulagam" },
+      },
+      {
+        kind: "route",
+        label: "Vaaram Magazine",
+        to: "/projects/$slug",
+        params: { slug: "vaaram-magazine" },
+      },
       { kind: "route", label: "Ani Bakes", to: "/projects/$slug", params: { slug: "anibakes" } },
       {
         kind: "route",
@@ -366,28 +367,27 @@ export function MenuBar({
 
         <span aria-hidden className="mx-1.5 h-4 w-px bg-foreground/15" />
 
-        {/* Identity menu — the Apple menu's slot. */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setOpen((v) => (v === "logo" ? null : "logo"))}
-            onPointerEnter={() => setOpen((v) => (v ? "logo" : v))}
-            aria-expanded={open === "logo"}
-            aria-haspopup="menu"
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors",
-              open === "logo" ? "bg-foreground/15" : "hover:bg-foreground/10",
-            )}
-          >
-            <span className="grid h-5 w-5 place-items-center rounded-[6px] bg-foreground font-display text-[11px] font-bold leading-none text-background">
-              S
-            </span>
-            <span className="font-display text-sm font-bold tracking-tight text-foreground">
-              {site.name}
-            </span>
-          </button>
-          <MenuPanel items={LOGO_MENU} open={open === "logo"} onPick={close} />
-        </div>
+        {/* The wordmark goes home.
+
+            It used to open an identity menu in the Apple menu's slot, which
+            was the one place on the bar where the macOS metaphor cost more
+            than it paid: a logo is the most-clicked "take me home" control on
+            any site, and every visitor who reached for it got a dropdown
+            instead. The menu's items all lived in Work/About/Contact anyway. */}
+        <Link
+          to="/"
+          onClick={close}
+          aria-label={`${site.name} — home`}
+          aria-current={pathname === "/" ? "page" : undefined}
+          className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-foreground/10"
+        >
+          <span className="grid h-5 w-5 place-items-center rounded-[6px] bg-foreground font-display text-[11px] font-bold leading-none text-background">
+            S
+          </span>
+          <span className="font-display text-sm font-bold tracking-tight text-foreground">
+            {site.name}
+          </span>
+        </Link>
 
         {/* Section menus. */}
         <nav aria-label="Sections" className="flex items-center">

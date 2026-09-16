@@ -1,30 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { PROJECT_COLUMNS, type Project } from "@/lib/projects";
+import type { Project } from "@/lib/projects";
 
 export const listProjects = createServerFn({ method: "GET" }).handler(async () => {
-  const { createPublicServerClient, signScreenshots } = await import("@/lib/projects.server");
+  const { createPublicServerClient, selectAllProjects, signScreenshots } =
+    await import("@/lib/projects.server");
   const supabase = createPublicServerClient();
-  const { data, error } = await supabase
-    .from("projects")
-    .select(PROJECT_COLUMNS)
-    .order("sort_order", { ascending: true });
-  if (error) throw new Error(error.message);
-  return signScreenshots((data ?? []) as unknown as Project[]);
+  return signScreenshots(await selectAllProjects(supabase));
 });
 
 export const getProjectBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }) => {
-    const { createPublicServerClient, signScreenshots } = await import("@/lib/projects.server");
+    const { createPublicServerClient, selectAllProjects, signScreenshots } =
+      await import("@/lib/projects.server");
     const supabase = createPublicServerClient();
-    const { data: rows, error } = await supabase
-      .from("projects")
-      .select(PROJECT_COLUMNS)
-      .order("sort_order", { ascending: true });
-    if (error) throw new Error(error.message);
-
-    const all = await signScreenshots((rows ?? []) as unknown as Project[]);
+    const all = await signScreenshots(await selectAllProjects(supabase));
     const index = all.findIndex((p) => p.slug === data.slug);
     if (index === -1) return null;
     return {
@@ -51,7 +42,6 @@ export const checkIsAdmin = createServerFn({ method: "GET" })
     return { isAdmin: Boolean(data), userId: context.userId };
   });
 
-
 export const saveProject = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { project: Project & { id?: string } }) => data)
@@ -67,6 +57,17 @@ export const saveProject = createServerFn({ method: "POST" })
       slides_url: fields.slides_url || null,
       slides_path: fields.slides_path || null,
       downloads: (fields.downloads ?? []).filter((item) => item.url.trim()),
+      // A half-filled decision is noise on the page; keep only the ones that
+      // actually state a problem and a choice.
+      decisions: (fields.decisions ?? [])
+        .filter((item) => item.problem.trim() && item.chose.trim())
+        .map((item) => ({
+          problem: item.problem.trim(),
+          options: (item.options ?? []).map((o) => o.trim()).filter(Boolean),
+          chose: item.chose.trim(),
+          because: item.because.trim(),
+          cost: item.cost.trim(),
+        })),
     };
 
     if (id) {

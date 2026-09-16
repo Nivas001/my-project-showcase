@@ -12,7 +12,7 @@ import {
   Send,
   Terminal as TerminalIcon,
 } from "lucide-react";
-import { site } from "@/lib/site";
+import { site, canonical } from "@/lib/site";
 import {
   CheckMark,
   HandNote,
@@ -46,6 +46,7 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
     ],
+    links: [canonical("/contact")],
   }),
   component: ContactPage,
 });

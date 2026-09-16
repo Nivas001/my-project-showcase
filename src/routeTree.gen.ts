@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FunRouteImport } from './routes/fun'
 import { Route as HowToBeSmarterThanAnAiRouteImport } from './routes/how-to-be-smarter-than-an-ai'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SurpriseRouteImport } from './routes/surprise'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiRoastRouteImport } from './routes/api/roast'
@@ -58,6 +59,11 @@ const FunRoute = FunRouteImport.update({
 const HowToBeSmarterThanAnAiRoute = HowToBeSmarterThanAnAiRouteImport.update({
   id: '/how-to-be-smarter-than-an-ai',
   path: '/how-to-be-smarter-than-an-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SurpriseRoute = SurpriseRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fun'
     | '/how-to-be-smarter-than-an-ai'
+    | '/sitemap.xml'
     | '/surprise'
     | '/admin'
     | '/api/roast'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fun'
     | '/how-to-be-smarter-than-an-ai'
+    | '/sitemap.xml'
     | '/surprise'
     | '/admin'
     | '/api/roast'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fun'
     | '/how-to-be-smarter-than-an-ai'
+    | '/sitemap.xml'
     | '/surprise'
     | '/_authenticated/admin'
     | '/api/roast'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FunRoute: typeof FunRoute
   HowToBeSmarterThanAnAiRoute: typeof HowToBeSmarterThanAnAiRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SurpriseRoute: typeof SurpriseRoute
   ApiRoastRoute: typeof ApiRoastRoute
   HorrorSlugRoute: typeof HorrorSlugRoute
@@ -282,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/how-to-be-smarter-than-an-ai'
       fullPath: '/how-to-be-smarter-than-an-ai'
       preLoaderRoute: typeof HowToBeSmarterThanAnAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/surprise': {
@@ -369,6 +389,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FunRoute: FunRoute,
   HowToBeSmarterThanAnAiRoute: HowToBeSmarterThanAnAiRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SurpriseRoute: SurpriseRoute,
   ApiRoastRoute: ApiRoastRoute,
   HorrorSlugRoute: HorrorSlugRoute,

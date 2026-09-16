@@ -14,6 +14,7 @@ import {
 } from "@/components/kit";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal } from "@/components/Reveal";
+import { LiveProof } from "@/components/home/LiveProof";
 import { Shot } from "@/components/Shot";
 
 /**
@@ -67,6 +68,10 @@ export function SelectedWork({ projects }: { projects: Project[] }) {
             </span>
           </Reveal>
         </div>
+
+        {/* Substantiates "and still maintain" directly under the line that
+            claims it, rather than leaving it as a sentence. */}
+        <LiveProof className="mt-8" />
 
         {/* Lead project — given the width it deserves. */}
         <Reveal delay={80}>

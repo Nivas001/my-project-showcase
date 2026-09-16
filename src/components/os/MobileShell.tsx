@@ -109,15 +109,20 @@ export function MobileDock() {
               key={app.id}
               app={app}
               aria-label={app.label}
-              className="relative flex flex-col items-center gap-1 rounded-xl p-0.5"
+              className="relative flex w-[4.5rem] flex-col items-center gap-1 rounded-xl p-0.5"
             >
-              <AppIcon app={app} size={50} />
+              <AppIcon app={app} size={46} />
+              {/* iOS leaves its dock unlabelled because everyone already knows
+                  those four icons. Nobody knows these, and a first-time visitor
+                  should not have to tap a glyph to find out what it is — so the
+                  metaphor yields to being understood, same as the wordmark. */}
               <span
-                aria-hidden
-                className={`h-1 w-1 rounded-full bg-foreground transition-opacity ${
-                  active ? "opacity-80" : "opacity-0"
+                className={`max-w-full truncate text-[10px] leading-none transition-opacity ${
+                  active ? "font-semibold text-foreground" : "text-foreground/70"
                 }`}
-              />
+              >
+                {app.short ?? app.label}
+              </span>
             </AppTarget>
           );
         })}

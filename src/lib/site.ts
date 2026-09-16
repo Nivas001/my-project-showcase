@@ -1,5 +1,7 @@
 export const site = {
   name: "Srinivas",
+  /** Canonical origin. No trailing slash — everything else appends a path. */
+  url: "https://nivas.tech",
   fullName: "Srinivas M",
   /** Three stacked lines for the homepage display type. Keep them short. */
   displayLines: ["Srinivas M", "Full-Stack", "Engineer"],
@@ -24,7 +26,7 @@ export const site = {
 
   /** Two or three sentences. Used on the homepage and /about. */
   summary:
-    "I ship production software. Three products are live right now — an artisanal commerce platform with slot scheduling and payments, an industrial supply storefront, and a streaming client — all built and deployed solo. Alongside that I wrote a research-grade Tamil summarisation model that preserves named entities, and put it on Hugging Face where anyone can run it.",
+    "I ship production software. Five products are live right now — a cross-border property platform reviewing listings across 18 markets, a weekly magazine publishing in Canada, an artisanal commerce platform with slot scheduling and payments, an industrial supply storefront, and a streaming client — all built and deployed solo. Alongside that I wrote a research-grade Tamil summarisation model that preserves named entities, and put it on Hugging Face where anyone can run it.",
 
   /** The longer version, for /about. */
   bio: [
@@ -33,6 +35,20 @@ export const site = {
     "The other half of my work is applied NLP. My postgraduate research tackled abstractive summarisation in Tamil, a low-resource language where off-the-shelf models lose the names that make a news story mean anything. I fine-tuned mT5 with PEFT and wired NER in to hold those entities in place.",
   ],
 } as const;
+
+/**
+ * The canonical <link> for a page.
+ *
+ * Without one, every alternate host the app answers on — the Vercel preview
+ * domain, the Lovable preview, www vs apex, a URL carrying a `?utm_*` tail —
+ * is a separate page as far as a crawler is concerned, and the ranking for the
+ * real one is split across all of them.
+ *
+ * Pass the path only, with a leading slash. Query strings never belong here.
+ */
+export function canonical(path: string): { rel: "canonical"; href: string } {
+  return { rel: "canonical", href: path === "/" ? `${site.url}/` : `${site.url}${path}` };
+}
 
 /** `aarrkkaa.com` and `velocitybox.app` are stored without a protocol, which
  *  makes them resolve as relative paths. Normalise before rendering any link. */
@@ -80,7 +96,7 @@ export const needs = [
     label: "A whole product",
     answer:
       "I take it from an empty repo to a live domain — schema, server, interface, payments, admin panel, deploy. No handoffs, no missing half.",
-    proof: "3 live in production",
+    proof: "5 live in production",
     stack: ["TanStack Start", "React 19", "PostgreSQL", "Razorpay", "Vercel"],
     accent: "hog-red",
   },
@@ -128,7 +144,7 @@ export const aboutDrafts = [
     stamp: "draft 1",
     lines: [
       { text: "Full-stack engineer. Pondicherry, India.", note: null },
-      { text: "Three products live in production.", note: "all shipped solo" },
+      { text: "Five products live in production.", note: "all shipped solo" },
       { text: "One published NLP model on Hugging Face.", note: null },
       { text: "MCA, Pondicherry University — 8.79 / 10.", note: null },
       { text: "Available for work. Replies within a day.", note: "yes, really" },
@@ -190,12 +206,12 @@ export const statements = [
     index: "01",
     kicker: "What I do",
     line: ["I build things", "that ship."],
-    body: "Not prototypes. Three products are in production with real users, real payments and real uptime. I own them end to end — schema to deploy.",
+    body: "Not prototypes. Five products are in production with real users, real payments and real uptime. I own them end to end — schema to deploy.",
     note: "all three are live right now",
     accent: "hog-red",
     scene: "deploy",
     evidence: [
-      { value: "3", label: "live in production" },
+      { value: "5", label: "live in production" },
       { value: "0", label: "handoffs required" },
       { value: "100%", label: "built solo" },
     ],
@@ -298,6 +314,22 @@ export const principles = [
 
 /** Milestones, newest first. `slug` links to a project; null links to /about. */
 export const changelog = [
+  {
+    date: "Sep 2026",
+    tag: "Shipped",
+    accent: "hog-blue",
+    title: "Vaaram Magazine publishes its first edition",
+    body: "A weekly advertising and classifieds magazine for readers across Canada — PDF editions, a full archive, sponsored banner slots and a one-email-per-edition list. Next.js and Supabase.",
+    slug: "vaaram-magazine",
+  },
+  {
+    date: "Sep 2026",
+    tag: "Building",
+    accent: "hog-purple",
+    title: "Estate Ulagam opens across 18 markets",
+    body: "Review-gated property discovery spanning South Asia, the Middle East, Europe, the Americas and Asia-Pacific. Multi-currency pricing, curated collections, mobile clients planned.",
+    slug: "estate-ulagam",
+  },
   {
     date: "Aug 2026",
     tag: "Shipped",
@@ -429,12 +461,19 @@ export const certifications = [
  * marked live in the database: the chrome renders on every route, and a decorative
  * ticker is not worth a data fetch on pages that need nothing else from it.
  */
-export const shippingNow = ["AARRKKAA", "Ani Bakes", "Velocity"];
+export const shippingNow = [
+  "Estate Ulagam",
+  "Vaaram Magazine",
+  "Ani Bakes",
+  "AARRKKAA",
+  "Velocity",
+];
 
 /** The tech ticker under the hero. */
 export const tickerItems = [
   "React 19",
   "TanStack Start",
+  "Next.js",
   "TypeScript",
   "Python",
   "Flutter",

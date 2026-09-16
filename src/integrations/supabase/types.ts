@@ -169,6 +169,7 @@ export type Database = {
           designs: string[]
           doc_path: string | null
           doc_url: string | null
+          decisions: Json
           downloads: Json
           featured: boolean
           github_url: string | null
@@ -196,6 +197,7 @@ export type Database = {
           designs?: string[]
           doc_path?: string | null
           doc_url?: string | null
+          decisions?: Json
           downloads?: Json
           featured?: boolean
           github_url?: string | null
@@ -223,6 +225,7 @@ export type Database = {
           designs?: string[]
           doc_path?: string | null
           doc_url?: string | null
+          decisions?: Json
           downloads?: Json
           featured?: boolean
           github_url?: string | null

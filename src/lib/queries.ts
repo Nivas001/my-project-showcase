@@ -4,6 +4,7 @@ import { listCertificates } from "@/lib/certificates.functions";
 import { listSkillGroups } from "@/lib/skills.functions";
 import { listExperiences } from "@/lib/experiences.functions";
 import { getLeaderboard } from "@/lib/games.functions";
+import { getUptime } from "@/lib/uptime.functions";
 
 export const skillGroupsQuery = queryOptions({
   queryKey: ["skill-groups"],
@@ -38,3 +39,13 @@ export const leaderboardQuery = (game: string) =>
     staleTime: 60 * 1000,
   });
 
+/**
+ * Live-site health. The server caches for five minutes; matching that here
+ * stops a client-side refetch asking a question the server will only answer
+ * from cache anyway.
+ */
+export const uptimeQuery = queryOptions({
+  queryKey: ["uptime"],
+  queryFn: () => getUptime(),
+  staleTime: 5 * 60 * 1000,
+});
