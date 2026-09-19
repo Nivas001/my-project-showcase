@@ -1,5 +1,6 @@
 import { useRouterState } from "@tanstack/react-router";
-import { BatteryMedium, Signal, Wifi } from "lucide-react";
+import { useCallback } from "react";
+import { BatteryMedium, Search, Signal, Wifi } from "lucide-react";
 import { StatusDot } from "@/components/kit";
 import { HOME_APPS, IOS_DOCK } from "@/lib/os-apps";
 import { LocalClock } from "@/components/kit";
@@ -29,6 +30,10 @@ export function StatusBar() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const match = ROUTE_TITLES.find(([prefix]) => pathname.startsWith(prefix));
 
+  const openSearch = useCallback(() => {
+    document.dispatchEvent(new CustomEvent("open-command-palette"));
+  }, []);
+
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-50 lg:hidden">
       <div className="vibrancy flex h-11 items-center justify-between rounded-none border-x-0 border-t-0 px-4">
@@ -39,13 +44,26 @@ export function StatusBar() {
 
         {/* The island. Carries the route name so a phone always knows where it
             is — the menu bar does that job on desktop, and the dock alone does
-            not say which page you are on. */}
-        <span className="mx-2 flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground/10 px-2.5 py-1">
+            not say which page you are on.
+
+            It is also the only way to reach anything but the four dock apps
+            from a phone. The dock holds Work, About, Contact and Email; the
+            arcade, the stories and everything else lived in the footer, which
+            means a visitor deep in a story had to scroll to the bottom of it to
+            go anywhere. Tapping the island opens the same command palette the
+            desktop gets on ⌘K, which lists every route. */}
+        <button
+          type="button"
+          onClick={openSearch}
+          aria-label="Search and jump to any page"
+          className="pointer-events-auto mx-2 flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground/10 px-2.5 py-1 transition-colors active:bg-foreground/20"
+        >
           <StatusDot tone={match ? "hog-red" : "hog-green"} />
           <span className="truncate font-mono text-[10px] uppercase tracking-widest text-foreground/90">
             {match ? match[1] : `${site.name} · Portfolio`}
           </span>
-        </span>
+          <Search className="h-3 w-3 shrink-0 text-foreground/50" />
+        </button>
 
         <span
           aria-hidden

@@ -1,137 +1,247 @@
-import { useEffect, useRef, useState } from "react";
-import { Play, RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Timer, Zap } from "lucide-react";
+import { useArcadeAudio } from "@/lib/arcade/use-arcade-audio";
+import { readBest, recordBest } from "@/lib/arcade/best";
+import { Hud, HudStat, ResultCard, StartButton } from "./bits";
+
+/* ==========================================================================
+ * REACTION TIME
+ *
+ * Five rounds, averaged. Three fixes over the first version:
+ *
+ *   false starts   used to burn a round. Jumping the light now replays the
+ *                  same round, which is the only fair reading of "too soon".
+ *   flow           rounds used to need a click to continue. They now chain
+ *                  automatically, so five rounds take eight seconds.
+ *   context        a bare millisecond number means nothing to most people, so
+ *                  each result gets a band it falls into.
+ * ======================================================================== */
 
 const ROUNDS = 5;
 
+type Phase = "idle" | "arming" | "live" | "tooSoon" | "between" | "over";
+
+/** Where a time lands. Bands are from published simple-visual-reaction data. */
+function band(ms: number) {
+  if (ms < 160) return { label: "inhuman", tone: "hog-purple" };
+  if (ms < 200) return { label: "elite", tone: "game-go" };
+  if (ms < 250) return { label: "quick", tone: "game-go" };
+  if (ms < 300) return { label: "average", tone: "hog-yellow" };
+  if (ms < 400) return { label: "sleepy", tone: "hog-orange" };
+  return { label: "geological", tone: "hog-red" };
+}
+
 export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => void }) {
-  const [status, setStatus] = useState<"idle" | "waiting" | "ready" | "tooSoon" | "roundDone" | "over">("idle");
+  const audio = useArcadeAudio();
+  const [phase, setPhase] = useState<Phase>("idle");
   const [round, setRound] = useState(1);
   const [times, setTimes] = useState<number[]>([]);
-  const [currentTime, setCurrentTime] = useState(0);
-  const timeoutRef = useRef<number | null>(null);
-  const startTimeRef = useRef(0);
+  const [last, setLast] = useState<number | null>(null);
+  const [best, setBest] = useState<number | undefined>(undefined);
+  const [isBest, setIsBest] = useState(false);
 
-  const reset = () => {
-    setRound(1);
-    setTimes([]);
-    setCurrentTime(0);
-    setStatus("idle");
-    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-  };
+  const timer = useRef<number | null>(null);
+  const litAt = useRef(0);
+  const roundRef = useRef(1);
+  const timesRef = useRef<number[]>([]);
 
-  const start = () => {
-    reset();
-    setStatus("waiting");
-    const delay = 1500 + Math.random() * 2500;
-    timeoutRef.current = window.setTimeout(() => {
-      setStatus("ready");
-      startTimeRef.current = performance.now();
-    }, delay);
-  };
+  useEffect(() => setBest(readBest("reaction-time")), []);
+  useEffect(
+    () => () => {
+      if (timer.current) window.clearTimeout(timer.current);
+    },
+    [],
+  );
 
-  const handleClick = () => {
-    if (status === "waiting") {
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-      setStatus("tooSoon");
+  const arm = useCallback(() => {
+    setPhase("arming");
+    if (timer.current) window.clearTimeout(timer.current);
+    // 1.4–4.2s. The spread has to be wide enough that rhythm can't beat it.
+    timer.current = window.setTimeout(
+      () => {
+        setPhase("live");
+        litAt.current = performance.now();
+        audio.play("blip");
+      },
+      1400 + Math.random() * 2800,
+    );
+  }, [audio]);
+
+  const finish = useCallback(() => {
+    const all = timesRef.current;
+    const avg = Math.round(all.reduce((a, b) => a + b, 0) / (all.length || 1));
+    setPhase("over");
+    setBest(readBest("reaction-time"));
+    const beat = recordBest("reaction-time", avg);
+    setIsBest(beat);
+    audio.play(beat ? "highscore" : "gameover");
+    onGameOver(avg);
+  }, [audio, onGameOver]);
+
+  const tap = () => {
+    if (phase === "idle" || phase === "over") {
+      audio.play("start");
+      roundRef.current = 1;
+      timesRef.current = [];
+      setRound(1);
+      setTimes([]);
+      setLast(null);
+      setIsBest(false);
+      arm();
       return;
     }
-    if (status !== "ready") return;
-    const time = performance.now() - startTimeRef.current;
-    setCurrentTime(Math.round(time));
-    setTimes((prev) => [...prev, time]);
-    setStatus("roundDone");
-  };
 
-  const nextRound = () => {
-    if (round >= ROUNDS) {
-      setStatus("over");
-      const avg = Math.round(times.reduce((a, b) => a + b, 0) / (times.length || 1));
-      onGameOver(avg);
+    if (phase === "tooSoon") {
+      arm();
       return;
     }
-    setRound((r) => r + 1);
-    setStatus("waiting");
-    const delay = 1500 + Math.random() * 2500;
-    timeoutRef.current = window.setTimeout(() => {
-      setStatus("ready");
-      startTimeRef.current = performance.now();
-    }, delay);
+
+    if (phase === "arming") {
+      if (timer.current) window.clearTimeout(timer.current);
+      audio.play("error");
+      setPhase("tooSoon");
+      return;
+    }
+
+    if (phase !== "live") return;
+
+    const ms = Math.round(performance.now() - litAt.current);
+    timesRef.current = [...timesRef.current, ms];
+    setTimes(timesRef.current);
+    setLast(ms);
+    audio.play(ms < 250 ? "coin" : "hit");
+
+    if (roundRef.current >= ROUNDS) {
+      setPhase("between");
+      window.setTimeout(finish, 700);
+      return;
+    }
+
+    roundRef.current += 1;
+    setRound(roundRef.current);
+    setPhase("between");
+    // Chain straight into the next round; no click required.
+    window.setTimeout(arm, 850);
   };
 
+  // Space bar, because that is what anyone testing a reaction time reaches for.
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      e.preventDefault();
+      tap();
     };
-  }, []);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
-  const bgColor =
-    status === "ready"
-      ? "bg-game-go border-game-go"
-      : status === "tooSoon"
-        ? "bg-destructive/25 border-destructive"
-        : "bg-surface-raised";
+  const avg = times.length > 0 ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : null;
 
-  const label =
-    status === "idle"
-      ? "Click Start, then tap when it turns green."
-      : status === "waiting"
-      ? "Wait for green..."
-      : status === "tooSoon"
-      ? "Too soon! Itchy fingers. Click to retry this round."
-      : status === "ready"
-      ? "TAP NOW!"
-      : status === "roundDone"
-      ? `${currentTime} ms — click to continue.`
-      : `Average: ${Math.round(times.reduce((a, b) => a + b, 0) / (times.length || 1))} ms`;
+  const surface =
+    phase === "live"
+      ? "border-game-go bg-game-go"
+      : phase === "tooSoon"
+        ? "border-destructive bg-destructive/25"
+        : phase === "arming"
+          ? "border-hog-red/60 bg-hog-red/10"
+          : "border-border bg-surface-raised";
+
+  const headline =
+    phase === "idle"
+      ? "Tap to begin"
+      : phase === "arming"
+        ? "Wait for green…"
+        : phase === "live"
+          ? "TAP"
+          : phase === "tooSoon"
+            ? "Too soon"
+            : phase === "between" && last !== null
+              ? `${last} ms`
+              : "…";
+
+  const sub =
+    phase === "idle"
+      ? `${ROUNDS} rounds, averaged · space bar works too`
+      : phase === "arming"
+        ? "tapping early replays the round"
+        : phase === "live"
+          ? "now"
+          : phase === "tooSoon"
+            ? "tap to replay this round"
+            : phase === "between" && last !== null
+              ? band(last).label
+              : "";
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <div className="flex items-center justify-between font-mono text-xs text-muted-foreground">
-        <span>round {Math.min(round, ROUNDS)} / {ROUNDS}</span>
-        <span>
-          {times.length > 0 ? `avg: ${Math.round(times.reduce((a, b) => a + b, 0) / times.length)} ms` : "avg: —"}
-        </span>
+      <Hud>
+        <HudStat icon={Timer} label="round" value={`${Math.min(round, ROUNDS)}/${ROUNDS}`} />
+        <HudStat icon={Zap} label="avg" value={avg !== null ? `${avg} ms` : "—"} tone="accent" />
+      </Hud>
+
+      {/* Per-round chips. Seeing round three was the slow one is the whole
+          point of running five of them. */}
+      <div className="mt-3 flex gap-1.5">
+        {Array.from({ length: ROUNDS }).map((_, i) => {
+          const t = times[i];
+          return (
+            <span
+              key={i}
+              className="flex-1 rounded-sm border py-1 text-center font-mono text-[10px] tabular-nums"
+              style={
+                t !== undefined
+                  ? {
+                      borderColor: `var(--${band(t).tone})`,
+                      color: `var(--${band(t).tone})`,
+                      background: `color-mix(in oklab, var(--${band(t).tone}) 12%, transparent)`,
+                    }
+                  : { borderColor: "var(--border)", color: "var(--muted-foreground)" }
+              }
+            >
+              {t !== undefined ? t : "—"}
+            </span>
+          );
+        })}
       </div>
 
       <button
         type="button"
-        onClick={status === "idle" || status === "over" ? start : status === "tooSoon" ? nextRound : handleClick}
-        disabled={status === "roundDone"}
-        className={`mt-4 flex h-64 w-full flex-col items-center justify-center rounded-md border transition-colors duration-100 active:scale-[0.99] ${bgColor}`}
+        onPointerDown={tap}
+        className={`mt-3 flex h-56 w-full select-none flex-col items-center justify-center rounded-md border-2 transition-colors duration-75 active:scale-[0.995] ${surface}`}
       >
         <span
-          className={`font-mono text-sm ${status === "ready" ? "text-2xl font-bold text-game-go-foreground" : "text-foreground"}`}
+          className={`font-mono font-black tracking-tight ${
+            phase === "live"
+              ? "text-5xl text-game-go-foreground"
+              : "text-3xl text-foreground"
+          }`}
         >
-          {label}
+          {headline}
         </span>
-        {status === "ready" && (
-          <span className="mt-2 font-mono text-xs text-game-go-foreground/80">tap anywhere</span>
-        )}
+        <span
+          className={`mt-2 font-mono text-[11px] uppercase tracking-[0.25em] ${
+            phase === "live" ? "text-game-go-foreground/70" : "text-muted-foreground"
+          }`}
+        >
+          {sub}
+        </span>
       </button>
 
-
-      {status === "roundDone" && (
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={nextRound}
-            className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Next round
-          </button>
+      {phase === "idle" && (
+        <div className="mt-5 text-center">
+          <StartButton onClick={tap}>Start</StartButton>
         </div>
       )}
 
-      {status === "over" && (
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={start}
-            className="inline-flex items-center gap-2 rounded-sm border border-border px-5 py-2.5 text-sm transition-colors hover:border-primary"
-          >
-            <RotateCcw className="h-4 w-4" /> Play again
-          </button>
-        </div>
+      {phase === "over" && avg !== null && (
+        <ResultCard
+          score={avg}
+          unit="ms"
+          best={best}
+          isBest={isBest}
+          detail={`${band(avg).label} · fastest ${Math.min(...times)} ms · slowest ${Math.max(...times)} ms`}
+          onRetry={tap}
+        />
       )}
     </div>
   );

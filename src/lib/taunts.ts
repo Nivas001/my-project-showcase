@@ -17,6 +17,21 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
       "{s}?! Okay speedrunner, touch some grass.",
     ],
   },
+  "deploy-dash": {
+    bad: [
+      "{s} points. The build failed before it left the office.",
+      "{s}. You were outrun by a failing unit test.",
+      "{s} points. Somewhere a rollback button is laughing.",
+    ],
+    mid: [
+      "{s} points. Shipped, eventually, with warnings.",
+      "{s}. A perfectly forgettable deploy.",
+    ],
+    good: [
+      "{s} points. Green across the board. Insufferable.",
+      "{s}?! Go outside. The pipeline will still be there.",
+    ],
+  },
   "snake-byte": {
     bad: [
       "{s} bytes. You lost to a wall. A stationary wall.",
@@ -56,7 +71,8 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
 };
 
 const THRESHOLDS: Record<GameId, { good: number; mid: number; lowerIsBetter?: boolean }> = {
-  "bug-hunt": { good: 25, mid: 12 },
+  "bug-hunt": { good: 45, mid: 20 },
+  "deploy-dash": { good: 900, mid: 350 },
   "snake-byte": { good: 20, mid: 8 },
   "memory-stack": { good: 9, mid: 5 },
   "code-sprint": { good: 55, mid: 30 },

@@ -84,52 +84,6 @@ export function prettyUrl(url: string | null | undefined): string {
 /* -------------------------------------------------------------------------- */
 
 /**
- * The hero's one-line answer to "who is this?", said four different ways.
- *
- * A visitor arrives with a job in mind, not a person in mind. Letting them
- * pick the job and answering in their own terms beats a single paragraph that
- * tries to be all four at once.
- */
-export const needs = [
-  {
-    id: "product",
-    label: "A whole product",
-    answer:
-      "I take it from an empty repo to a live domain — schema, server, interface, payments, admin panel, deploy. No handoffs, no missing half.",
-    proof: "5 live in production",
-    stack: ["TanStack Start", "React 19", "PostgreSQL", "Razorpay", "Vercel"],
-    accent: "hog-red",
-  },
-  {
-    id: "mobile",
-    label: "A mobile app",
-    answer:
-      "Flutter on the front, a real backend behind it: auth, live sync, offline-first storage, and a release pipeline that reaches an actual store build.",
-    proof: "Android released",
-    stack: ["Flutter", "Dart", "Firebase", "Node.js"],
-    accent: "hog-blue",
-  },
-  {
-    id: "nlp",
-    label: "An NLP model",
-    answer:
-      "Postgraduate research on Tamil summarisation: mT5 fine-tuned with PEFT and NER wired in so named entities survive. Public and reproducible.",
-    proof: "Published on Hugging Face",
-    stack: ["Python", "mT5 + PEFT", "spaCy", "TensorFlow", "Hugging Face"],
-    accent: "hog-purple",
-  },
-  {
-    id: "panel",
-    label: "The boring admin panel",
-    answer:
-      "The CMS nobody wants to build and everybody needs: drag-to-reorder media, signed uploads, role-gated access, row-level security. The owner runs it without me.",
-    proof: "Ships with every build",
-    stack: ["Supabase", "Row-level security", "Signed URLs", "Drag & drop"],
-    accent: "hog-green",
-  },
-] as const;
-
-/**
  * /about's hero is a page being edited: the bio types itself out, line by
  * line, with notes pinned in the margin. Three drafts of the same person, so
  * a visitor in a hurry and a visitor who wants the whole thing both get served.

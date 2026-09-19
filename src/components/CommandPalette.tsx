@@ -12,6 +12,10 @@ import {
 import { projectsQuery } from "@/lib/queries";
 // Shared with the dock's Launchpad, which renders the same index as a grid.
 import { NAV_PAGES as pages } from "@/lib/os-apps";
+import { GAMES } from "@/lib/games";
+// Titles and tags only — see the note in manifest.ts for why this is not the
+// story index itself.
+import { STORY_INDEX } from "@/content/horror/manifest";
 
 export function CommandPalette({ trigger = true }: { trigger?: boolean } = {}) {
   const [open, setOpen] = useState(false);
@@ -26,8 +30,8 @@ export function CommandPalette({ trigger = true }: { trigger?: boolean } = {}) {
       }
     };
     document.addEventListener("keydown", onKey);
-    // The macOS menu bar's search button opens the palette through this event,
-    // so the two stay decoupled.
+    // The macOS menu bar's search button and the phone status bar's island both
+    // open the palette through this event, so the three stay decoupled.
     const onOpen = () => setOpen(true);
     document.addEventListener("open-command-palette", onOpen);
     return () => {
@@ -68,6 +72,42 @@ export function CommandPalette({ trigger = true }: { trigger?: boolean } = {}) {
               </CommandItem>
             ))}
           </CommandGroup>
+          <CommandGroup heading="Games">
+            {GAMES.map((game) => (
+              <CommandItem
+                key={game.id}
+                value={`${game.label} ${game.description}`}
+                onSelect={() => {
+                  setOpen(false);
+                  navigate({ to: "/fun" });
+                }}
+              >
+                <span>{game.label}</span>
+                <span className="ml-auto font-mono text-[10px] opacity-40">arcade</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+
+          {/* Sixteen stories is too many to reach by scrolling a library page
+              on a phone. Searching "hostel" or "tape" should open the story. */}
+          <CommandGroup heading="Stories">
+            {STORY_INDEX.map((story) => (
+              <CommandItem
+                key={story.slug}
+                value={`${story.title} ${story.tags.join(" ")} ${story.lang}`}
+                onSelect={() => {
+                  setOpen(false);
+                  navigate({ to: "/horror/$slug", params: { slug: story.slug } });
+                }}
+              >
+                <span className="truncate">{story.title}</span>
+                <span className="ml-auto shrink-0 font-mono text-[10px] opacity-40">
+                  {story.kind === "tape" ? "tape" : story.lang}
+                </span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+
           <CommandGroup heading="Projects">
             {(projects ?? []).map((project) => (
               <CommandItem

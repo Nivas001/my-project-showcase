@@ -1,131 +1,231 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Play, RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Brain, Eye, Hand, Layers } from "lucide-react";
+import { useArcadeAudio } from "@/lib/arcade/use-arcade-audio";
+import { readBest, recordBest } from "@/lib/arcade/best";
+import { Hud, HudStat, ResultCard, StartButton } from "./bits";
+
+/* ==========================================================================
+ * MEMORY STACK
+ *
+ * Simon, with the two things Simon actually needs and the original here was
+ * missing: every tile has its own pitch, and the sequence is drawn as a
+ * progress strip while you repeat it.
+ *
+ * The pitch is not decoration. Sound is a second channel to memorise through,
+ * and it is the difference between recalling nine flashes and recalling a tune.
+ * ======================================================================== */
 
 const CELLS = 9;
-const START_DELAY = 700;
+const BASE_DELAY = 720;
+
+/** One accent per tile, so a sequence has colour shape as well as position. */
+const TONES = [
+  "hog-red",
+  "hog-orange",
+  "hog-yellow",
+  "game-go",
+  "hog-blue",
+  "hog-purple",
+  "hog-green",
+  "signature",
+  "hog-red-deep",
+] as const;
 
 export function MemoryStack({ onGameOver }: { onGameOver: (score: number) => void }) {
-  const [status, setStatus] = useState<"idle" | "playing" | "input" | "over">("idle");
+  const audio = useArcadeAudio();
+  const [status, setStatus] = useState<"idle" | "watch" | "input" | "over">("idle");
   const [level, setLevel] = useState(1);
   const [sequence, setSequence] = useState<number[]>([]);
   const [flash, setFlash] = useState<number | null>(null);
+  const [wrong, setWrong] = useState<number | null>(null);
   const [inputIndex, setInputIndex] = useState(0);
-  const timeouts = useRef<number[]>([]);
+  const [best, setBest] = useState<number | undefined>(undefined);
+  const [isBest, setIsBest] = useState(false);
 
-  const clearTimeouts = () => {
-    timeouts.current.forEach((t) => clearTimeout(t));
+  const timeouts = useRef<number[]>([]);
+  const seqRef = useRef<number[]>([]);
+  const idxRef = useRef(0);
+
+  useEffect(() => setBest(readBest("memory-stack")), []);
+
+  const clearTimers = () => {
+    timeouts.current.forEach((t) => window.clearTimeout(t));
     timeouts.current = [];
   };
+  useEffect(() => clearTimers, []);
 
-  const playSequence = useCallback((seq: number[]) => {
-    setStatus("playing");
-    setFlash(null);
-    setInputIndex(0);
-    clearTimeouts();
-    const speed = Math.max(350, START_DELAY - (seq.length - 1) * 35);
+  const after = (ms: number, fn: () => void) => {
+    timeouts.current.push(window.setTimeout(fn, ms));
+  };
 
-    seq.forEach((cell, i) => {
-      timeouts.current.push(
-        window.setTimeout(() => {
+  /* ---- playback -------------------------------------------------------- */
+
+  const playSequence = useCallback(
+    (seq: number[]) => {
+      setStatus("watch");
+      setFlash(null);
+      setWrong(null);
+      setInputIndex(0);
+      idxRef.current = 0;
+      clearTimers();
+
+      // Tightens as the chain grows, with a floor that keeps it readable.
+      const gap = Math.max(300, BASE_DELAY - (seq.length - 1) * 38);
+
+      seq.forEach((cell, i) => {
+        after(i * gap + 400, () => {
           setFlash(cell);
-          timeouts.current.push(
-            window.setTimeout(() => setFlash(null), speed * 0.55),
-          );
-        }, i * speed),
-      );
-    });
+          audio.play("hit", cell);
+          after(gap * 0.52, () => setFlash(null));
+        });
+      });
 
-    timeouts.current.push(
-      window.setTimeout(() => {
+      after(seq.length * gap + 560, () => {
         setStatus("input");
-      }, seq.length * speed + 150),
-    );
-  }, []);
+        audio.play("blip");
+      });
+    },
+    [audio],
+  );
 
   const start = () => {
-    clearTimeouts();
+    clearTimers();
+    audio.play("start");
     const first = [Math.floor(Math.random() * CELLS)];
-    setLevel(1);
+    seqRef.current = first;
     setSequence(first);
-    setInputIndex(0);
-    setStatus("playing");
+    setLevel(1);
+    setIsBest(false);
     playSequence(first);
   };
 
-  const nextLevel = () => {
-    const next = [...sequence, Math.floor(Math.random() * CELLS)];
+  const nextLevel = useCallback(() => {
+    const next = [...seqRef.current, Math.floor(Math.random() * CELLS)];
+    seqRef.current = next;
     setSequence(next);
-    setLevel((l) => l + 1);
-    setInputIndex(0);
+    setLevel(next.length);
+    audio.play("levelup");
     playSequence(next);
-  };
+  }, [audio, playSequence]);
 
-  const handleCell = (cell: number) => {
+  /* ---- input ----------------------------------------------------------- */
+
+  const press = (cell: number) => {
     if (status !== "input") return;
-    if (sequence[inputIndex] !== cell) {
+
+    if (seqRef.current[idxRef.current] !== cell) {
+      clearTimers();
+      setWrong(cell);
       setStatus("over");
-      onGameOver(level);
+      const reached = seqRef.current.length - 1; // the last level you cleared
+      const final = Math.max(0, reached);
+      setBest(readBest("memory-stack"));
+      const beat = recordBest("memory-stack", final);
+      setIsBest(beat);
+      audio.play("hurt");
+      after(300, () => audio.play(beat ? "highscore" : "gameover"));
+      onGameOver(final);
       return;
     }
+
     setFlash(cell);
-    window.setTimeout(() => setFlash(null), 180);
-    const nextIndex = inputIndex + 1;
-    if (nextIndex >= sequence.length) {
-      setStatus("playing");
-      window.setTimeout(nextLevel, 650);
-    } else {
-      setInputIndex(nextIndex);
+    audio.play("hit", cell);
+    after(170, () => setFlash(null));
+
+    idxRef.current += 1;
+    setInputIndex(idxRef.current);
+
+    if (idxRef.current >= seqRef.current.length) {
+      setStatus("watch");
+      after(700, nextLevel);
     }
   };
 
-  useEffect(() => clearTimeouts, []);
+  const statusLabel =
+    status === "watch"
+      ? "watch"
+      : status === "input"
+        ? "your turn"
+        : status === "over"
+          ? "broken chain"
+          : "ready";
 
   return (
     <div className="mx-auto w-full max-w-xs">
-      <div className="flex items-center justify-between font-mono text-xs text-muted-foreground">
-        <span>level: {level}</span>
-        <span>{status === "input" ? "your turn" : status === "playing" ? "watch" : "ready"}</span>
-      </div>
+      <Hud>
+        <HudStat icon={Layers} label="level" value={level} tone="accent" />
+        <HudStat
+          icon={status === "input" ? Hand : Eye}
+          value={statusLabel}
+          tone={status === "input" ? "go" : undefined}
+        />
+      </Hud>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {Array.from({ length: CELLS }).map((_, i) => (
-          <button
+      {/* Progress strip: one notch per beat in the sequence, filled as you
+          repeat it. Without it a nine-long chain is invisible while you play. */}
+      <div className="mt-3 flex gap-1">
+        {sequence.map((_, i) => (
+          <span
             key={i}
-            type="button"
-            onClick={() => handleCell(i)}
-            disabled={status !== "input"}
-            className={`aspect-square rounded-md border border-border transition-all duration-150 ${
-              flash === i
-                ? "border-accent bg-accent/40 shadow-[0_0_30px_-6px_var(--glow)]"
-                : "bg-surface-raised hover:border-primary"
-            } ${status !== "input" ? "cursor-default" : "active:scale-95"}`}
-            aria-label={`Cell ${i + 1}`}
+            className={`h-1 flex-1 rounded-full transition-colors duration-200 ${
+              status === "input" && i < inputIndex ? "bg-game-go" : "bg-secondary"
+            }`}
           />
         ))}
       </div>
 
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {Array.from({ length: CELLS }).map((_, i) => {
+          const lit = flash === i;
+          const bad = wrong === i;
+          const tone = TONES[i]!;
+          return (
+            <button
+              key={i}
+              type="button"
+              onPointerDown={() => press(i)}
+              disabled={status !== "input"}
+              aria-label={`Tile ${i + 1}`}
+              className={`aspect-square rounded-md border-2 transition-all duration-100 ${
+                bad
+                  ? "border-destructive bg-destructive/40"
+                  : lit
+                    ? "scale-[1.04]"
+                    : "border-border bg-surface-raised"
+              } ${status === "input" ? "cursor-pointer hover:border-foreground/40 active:scale-95" : "cursor-default"}`}
+              style={
+                lit && !bad
+                  ? {
+                      borderColor: `var(--${tone})`,
+                      background: `color-mix(in oklab, var(--${tone}) 45%, transparent)`,
+                      boxShadow: `0 0 28px -4px var(--${tone})`,
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
+      </div>
+
       {status === "idle" && (
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={start}
-            className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Play className="h-4 w-4" /> Start
-          </button>
+          <StartButton onClick={start}>Start</StartButton>
+          <p className="mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+            <Brain className="h-3 w-3" />
+            every tile has its own note — listen, don't just look
+          </p>
         </div>
       )}
 
       {status === "over" && (
-        <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={start}
-            className="inline-flex items-center gap-2 rounded-sm border border-border px-5 py-2.5 text-sm transition-colors hover:border-primary"
-          >
-            <RotateCcw className="h-4 w-4" /> Play again
-          </button>
-        </div>
+        <ResultCard
+          score={Math.max(0, sequence.length - 1)}
+          unit="levels"
+          best={best}
+          isBest={isBest}
+          detail={`you repeated ${sequence.length - 1} of ${sequence.length}`}
+          onRetry={start}
+        />
       )}
     </div>
   );

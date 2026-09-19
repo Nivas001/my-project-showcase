@@ -1,16 +1,33 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { canonical } from "@/lib/site";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Volume2, VolumeX, RotateCcw, Skull, Heart } from "lucide-react";
-import { getStory, STORIES } from "@/content/horror";
-import type { Beat, ChoiceBeat, EndingBeat, Story, TextBeat } from "@/lib/horror/types";
+import {
+  ArrowLeft,
+  ChevronsRight,
+  Heart,
+  Radio,
+  RotateCcw,
+  Skull,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+/* Metadata is eager; the story's branches are fetched when the reader presses
+   enter. See content/horror/manifest.ts for why they are apart. */
+import {
+  STORY_INDEX,
+  getStoryMeta,
+  loadStoryNodes,
+  type StoryMeta,
+} from "@/content/horror/manifest";
+import type { Beat, ChoiceBeat, EndingBeat, TextBeat } from "@/lib/horror/types";
 import { HorrorAudio } from "@/lib/horror/audio";
 import { recordEnding, readNickname, writeNickname } from "@/lib/horror/progress";
 import { recordRun } from "@/lib/horror.functions";
+import { TapeDeck, type TapeState } from "@/components/horror/TapeDeck";
 
 export const Route = createFileRoute("/horror/$slug")({
   loader: ({ params }) => {
-    const story = getStory(params.slug);
+    const story = getStoryMeta(params.slug);
     if (!story) throw notFound();
     return { story };
   },
@@ -71,14 +88,72 @@ function fmt(s: number) {
 function StoryReader() {
   const { story } = Route.useLoaderData();
   const [started, setStarted] = useState(false);
+  const [nodes, setNodes] = useState<Record<string, Beat[]> | null>(null);
+  const [failed, setFailed] = useState(false);
 
-  if (!started) return <EntryGate story={story} onEnter={() => setStarted(true)} />;
-  return <Player key={story.slug} story={story} />;
+  /**
+   * The branches are fetched on the way in, not on page load. Pressing enter is
+   * a deliberate act — the reader has already accepted a warning about sound
+   * and timed choices — so a beat of "threading the tape" there costs nothing,
+   * and it keeps roughly 200KB of prose off every other page of the site.
+   *
+   * The gate is prefetched on hover, so by the time anyone actually presses it
+   * this is usually already resolved.
+   */
+  const begin = useCallback(() => {
+    setStarted(true);
+    if (nodes) return;
+    loadStoryNodes(story.slug).then(setNodes, () => setFailed(true));
+  }, [nodes, story.slug]);
+
+  const prefetch = useCallback(() => {
+    if (nodes || failed) return;
+    loadStoryNodes(story.slug).then(setNodes, () => {
+      /* A failed prefetch is silent; `begin` will surface it. */
+    });
+  }, [nodes, failed, story.slug]);
+
+  if (!started) return <EntryGate story={story} onEnter={begin} onPrefetch={prefetch} />;
+  if (failed) return <Fallback title="That story wouldn't load" />;
+  if (!nodes) return <Threading story={story} />;
+  return <Player key={story.slug} story={story} nodes={nodes} />;
 }
 
-function EntryGate({ story, onEnter }: { story: Story; onEnter: () => void }) {
+/** The moment between pressing enter and the first line. */
+function Threading({ story }: { story: StoryMeta }) {
   return (
     <div className="act-noir grain read-vignette flex min-h-screen items-center justify-center px-6">
+      <div className="relative z-10 text-center">
+        <p className="flicker font-mono text-xs uppercase tracking-[0.4em] opacity-50">
+          {story.kind === "tape" ? "threading the tape" : "turning out the lights"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
+ * Entry gate
+ *
+ * Also the unlock gesture for the audio context: nothing in this story makes a
+ * sound until somebody presses this button, which is both a browser
+ * requirement and, as it happens, good manners.
+ * ======================================================================== */
+
+function EntryGate({
+  story,
+  onEnter,
+  onPrefetch,
+}: {
+  story: StoryMeta;
+  onEnter: () => void;
+  onPrefetch: () => void;
+}) {
+  const tape = story.kind === "tape";
+  const tanglish = story.lang === "tanglish";
+
+  return (
+    <div className="act-noir grain read-vignette flex min-h-screen items-center justify-center px-6 py-24">
       <div className="relative z-10 w-full max-w-lg text-center">
         <Link
           to="/horror"
@@ -87,18 +162,42 @@ function EntryGate({ story, onEnter }: { story: Story; onEnter: () => void }) {
           <ArrowLeft className="h-3.5 w-3.5" /> the dark room
         </Link>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.4em] text-hog-red">
-          {"▮".repeat(story.fear)}
-          {"▯".repeat(5 - story.fear)} fear rating
-        </p>
-        <h1 className="flicker mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+        <div className="mb-4 flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em]">
+          {tape ? (
+            <span className="inline-flex items-center gap-1.5 rounded-sm bg-hog-purple/20 px-2 py-1 text-hog-purple">
+              <Radio className="h-3 w-3" /> tape
+            </span>
+          ) : null}
+          {tanglish ? (
+            <span className="rounded-sm bg-hog-yellow/15 px-2 py-1 text-hog-yellow">tanglish</span>
+          ) : null}
+          <span className="text-hog-red">
+            {"▮".repeat(story.fear)}
+            {"▯".repeat(5 - story.fear)}
+          </span>
+        </div>
+
+        <h1
+          className={`flicker text-3xl font-semibold tracking-tight sm:text-4xl ${
+            tape ? "font-tape" : ""
+          }`}
+        >
           {story.title}
         </h1>
-        <p className="mt-5 text-sm leading-relaxed opacity-70">{story.hook}</p>
+        {tape && story.tapeLabel ? (
+          <p className="mt-2 font-tape text-xs tracking-[0.25em] opacity-50">{story.tapeLabel}</p>
+        ) : null}
+
+        <p className={`mt-5 text-sm leading-relaxed opacity-70 ${tanglish ? "" : "font-story text-base"}`}>
+          {story.hook}
+        </p>
 
         <ul className="mx-auto mt-8 max-w-sm space-y-2 text-left font-mono text-[11px] opacity-55">
           <li>— choices are timed. hesitate and the story decides for you.</li>
           <li>— sound is generated live. headphones are strongly recommended.</li>
+          {tape ? (
+            <li>— the picture is drawn frame by frame. there is no video file.</li>
+          ) : null}
           <li>
             — {story.endings} endings. this one takes {story.minutes}.
           </li>
@@ -107,17 +206,34 @@ function EntryGate({ story, onEnter }: { story: Story; onEnter: () => void }) {
         <button
           type="button"
           onClick={onEnter}
+          onPointerEnter={onPrefetch}
+          onFocus={onPrefetch}
           className="mt-10 w-full rounded-sm border border-hog-red bg-hog-red/10 px-6 py-4 font-mono text-sm uppercase tracking-[0.3em] transition-colors hover:bg-hog-red/25"
         >
-          enter
+          {tape ? "play tape" : "enter"}
         </button>
-        <p className="mt-4 font-mono text-[10px] opacity-40">pressing enter turns the sound on</p>
+        <p className="mt-4 font-mono text-[10px] opacity-40">this turns the sound on</p>
       </div>
     </div>
   );
 }
 
-function Player({ story }: { story: Story }) {
+/* ==========================================================================
+ * Player
+ *
+ * One beat engine drives both presentations. `runNode` walks a node's beats,
+ * plays the sound, moves the picture, waits a length of time proportional to
+ * how long the line takes to read, and stops at a choice.
+ *
+ * The one control worth calling out is `skip`: beats advance on a timer, and a
+ * fast reader stuck behind a slow line stops being frightened and starts being
+ * irritated. Space, or a click anywhere, releases the current wait early.
+ * ======================================================================== */
+
+function Player({ story, nodes }: { story: StoryMeta; nodes: Record<string, Beat[]> }) {
+  const tape = story.kind === "tape";
+  const tanglish = story.lang === "tanglish";
+
   const audioRef = useRef<HorrorAudio | null>(null);
   const [muted, setMuted] = useState(false);
   const [fear, setFear] = useState(10);
@@ -132,14 +248,37 @@ function Player({ story }: { story: Story }) {
   const cancelled = useRef(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
+  /** Resolves the current inter-beat wait early. */
+  const skipRef = useRef<(() => void) | null>(null);
+  const [canSkip, setCanSkip] = useState(false);
+
+  // Tape picture state. A ref, not state: the canvas reads it every frame and
+  // re-rendering React sixty times a second to move a silhouette would be
+  // absurd.
+  const tapeState = useRef<TapeState>({ figure: 0, fx: null, fear: 10, seconds: 0 });
+
   const fearRef = useRef(10);
+
+  /**
+   * Beats carry a `fear` number that reads like a tension level for that line
+   * (a quiet opening is 6, a body in the room is 40). Added raw, a seven-beat
+   * opening totals well over 100 and the meter is pegged before the first
+   * choice — which costs the story its whole second act, because a bar that
+   * cannot rise any further stops meaning anything.
+   *
+   * Rises are therefore scaled and drops are not: dread accumulates slowly and
+   * relief is allowed to land. The arc still reaches 100 on a long story; it
+   * just takes the story to get there.
+   */
   const bump = useCallback((d: number) => {
-    fearRef.current = Math.max(0, Math.min(100, fearRef.current + d));
+    const delta = d > 0 ? d * 0.4 : d * 0.85;
+    fearRef.current = Math.max(0, Math.min(100, fearRef.current + delta));
     setFear(fearRef.current);
+    tapeState.current.fear = fearRef.current;
     audioRef.current?.setFear(fearRef.current);
   }, []);
 
-  // Boot audio (called from the entry gate click, so the context unlocks).
+  // Boot audio (the entry gate click unlocked the context).
   useEffect(() => {
     cancelled.current = false;
     const a = new HorrorAudio();
@@ -153,15 +292,42 @@ function Player({ story }: { story: Story }) {
     };
   }, [story.ambience]);
 
+  // Tape timecode runs in real time from the moment the tape starts.
+  useEffect(() => {
+    if (!tape) return;
+    const t0 = performance.now();
+    const id = window.setInterval(() => {
+      tapeState.current.seconds = (performance.now() - t0) / 1000;
+    }, 40);
+    return () => window.clearInterval(id);
+  }, [tape]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [shown.length, choice, ending]);
 
-  const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
+  /** A wait that can be released early by `skip`. */
+  const wait = (ms: number) =>
+    new Promise<void>((resolve) => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        window.clearTimeout(timer);
+        skipRef.current = null;
+        setCanSkip(false);
+        resolve();
+      };
+      const timer = window.setTimeout(finish, ms);
+      skipRef.current = finish;
+      setCanSkip(true);
+    });
+
+  const skip = useCallback(() => skipRef.current?.(), []);
 
   const runNode = useCallback(
     async (nodeId: string) => {
-      const beats: Beat[] | undefined = story.nodes[nodeId];
+      const beats: Beat[] | undefined = nodes[nodeId];
       if (!beats) return;
 
       for (const beat of beats) {
@@ -176,7 +342,19 @@ function Player({ story }: { story: Story }) {
             setShake(true);
             window.setTimeout(() => setShake(false), 420);
           }
+
+          // Tape: fx drives the picture. `figure` puts something at the end of
+          // the corridor; `approach` brings it in. Nothing ever sends it back.
+          if (tape && beat.fx) {
+            const t = tapeState.current;
+            t.fx = beat.fx;
+            if (beat.fx === "figure") t.figure = Math.max(t.figure, 0.2);
+            if (beat.fx === "approach") t.figure = Math.min(1, Math.max(t.figure, 0.2) + 0.26);
+            if (beat.fx === "face") t.figure = Math.min(1, t.figure + 0.1);
+          }
+
           setShown((prev) => [...prev, { key: `${nodeId}-${prev.length}`, beat }]);
+
           const base = beat.slow ? 60 : 34;
           await wait(
             Math.min(9000, 900 + beat.s.length * base * (beat.slow ? 0.55 : 0.4)) +
@@ -193,6 +371,7 @@ function Player({ story }: { story: Story }) {
         if (beat.t === "ending") {
           audioRef.current?.play(beat.outcome === "survived" ? "bell" : "scream");
           if (beat.outcome !== "survived") bump(25);
+          if (tape) tapeState.current.fx = beat.outcome === "survived" ? "static" : "dark";
           setEnding(beat);
           recordEnding(story.slug, beat.id);
           return;
@@ -203,7 +382,7 @@ function Player({ story }: { story: Story }) {
         return;
       }
     },
-    [bump, story],
+    [bump, nodes, story, tape],
   );
 
   // kick off (guarded so StrictMode's double-mount doesn't play the story twice)
@@ -248,6 +427,24 @@ function Player({ story }: { story: Story }) {
     return () => window.clearInterval(id);
   }, [choice, bump, pick]);
 
+  // Keyboard: number keys take a choice, space skips a line.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        skip();
+        return;
+      }
+      if (!choice) return;
+      const n = Number(e.key);
+      if (!Number.isInteger(n) || n < 1 || n > choice.options.length) return;
+      const opt = choice.options[n - 1]!;
+      pick(opt.go, opt.label, opt.fear);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [choice, pick, skip]);
+
   const toggleMute = () => {
     const next = !muted;
     setMuted(next);
@@ -259,10 +456,24 @@ function Player({ story }: { story: Story }) {
     window.location.reload();
   };
 
+  /* -------------------------------------------------------------------- */
+
+  const beatClass = (beat: TextBeat) => {
+    if (beat.as === "sign")
+      return "border-l-2 border-hog-red/60 bg-hog-red/[0.06] px-4 py-3 font-tape text-[15px] tracking-wide";
+    if (beat.as === "sms")
+      return "inline-block rounded-2xl rounded-bl-sm bg-secondary px-4 py-2.5 font-mono text-[13px]";
+    if (beat.as === "voice") return "pl-4 italic opacity-95";
+    return "";
+  };
+
   return (
     <div className={`act-noir grain read-vignette min-h-screen ${shake ? "fear-shake" : ""}`}>
-      <div className="relative z-10 mx-auto max-w-2xl px-5 pb-32 pt-6">
-        <div className="sticky top-0 z-20 -mx-5 flex items-center justify-between gap-3 bg-background/90 px-5 py-3 backdrop-blur">
+      {/* The macOS menu bar floats over every page at 12–56px on large screens,
+          so both sticky layers here start below it rather than under it. */}
+      <div className="relative z-10 mx-auto max-w-2xl px-5 pb-32 pt-6 lg:pt-20">
+        {/* ---- Bar ---- */}
+        <div className="sticky top-0 z-30 -mx-5 flex items-center justify-between gap-3 bg-background/92 px-5 py-3 backdrop-blur lg:top-[3.75rem]">
           <Link
             to="/horror"
             className="inline-flex items-center gap-2 font-mono text-[11px] opacity-50 hover:opacity-100"
@@ -274,10 +485,15 @@ function Player({ story }: { story: Story }) {
             <Heart className={`h-3.5 w-3.5 text-hog-red ${fear > 45 ? "animate-pulse" : ""}`} />
             <div className="h-1 flex-1 overflow-hidden rounded-full bg-secondary">
               <div
-                className="h-full rounded-full bg-hog-red transition-[width] duration-700"
-                style={{ width: `${fear}%` }}
+                className="h-full rounded-full transition-[width,background-color] duration-700"
+                style={{
+                  width: `${fear}%`,
+                  background:
+                    fear > 70 ? "var(--hog-red)" : fear > 40 ? "var(--hog-orange)" : "var(--hog-red-deep)",
+                }}
               />
             </div>
+            <span className="w-8 font-mono text-[10px] tabular-nums opacity-40">{Math.round(fear)}</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -300,26 +516,66 @@ function Player({ story }: { story: Story }) {
           </div>
         </div>
 
-        <h1 className="mt-6 font-mono text-[11px] uppercase tracking-[0.4em] opacity-40">
-          {story.title}
-        </h1>
+        {/* ---- The tape, if this is one ---- */}
+        {tape ? (
+          <div className="sticky top-[3.25rem] z-20 -mx-5 mt-2 bg-background/92 px-5 pb-3 pt-1 backdrop-blur lg:top-[7rem]">
+            <TapeDeck
+              state={tapeState}
+              label={story.tapeLabel ?? story.title}
+              scene={story.tapeScene ?? "corridor"}
+            />
+          </div>
+        ) : (
+          <h1 className="mt-6 font-mono text-[11px] uppercase tracking-[0.4em] opacity-40">
+            {story.title}
+          </h1>
+        )}
 
-        <div className="mt-8 space-y-6">
+        {/* ---- Beats ---- */}
+        <div
+          className={tape ? "mt-6 space-y-3" : "mt-8 space-y-6"}
+          onClick={skip}
+          role="presentation"
+        >
           {shown.map(({ key, beat }) => (
             <p
               key={key}
-              className={`beat-in text-[15px] leading-8 sm:text-base ${
-                beat.slow ? "text-foreground text-lg leading-9 tracking-wide" : "opacity-85"
-              }`}
+              className={`beat-in ${
+                tape
+                  ? // Subtitles: centred, tape face, dimming as they age.
+                    "text-center font-tape text-[15px] leading-relaxed opacity-90 sm:text-base"
+                  : `${tanglish ? "font-sans" : "font-story"} text-[17px] leading-[1.85] sm:text-[18px] ${
+                      beat.slow ? "text-foreground" : "opacity-[0.88]"
+                    }`
+              } ${beatClass(beat)}`}
             >
               {beat.s}
             </p>
           ))}
         </div>
 
+        {/* A line is on a timer. Anyone reading faster than the timer should be
+            able to say so, and space does it too. */}
+        {canSkip && !ending ? (
+          <button
+            type="button"
+            onClick={skip}
+            className="mt-6 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] opacity-30 transition-opacity hover:opacity-70"
+          >
+            <ChevronsRight className="h-3 w-3" /> space to continue
+          </button>
+        ) : null}
+
+        {/* ---- Choice ---- */}
         {choice && !ending && (
           <div className="beat-in mt-10 rounded-md border border-border bg-card p-5">
-            {choice.prompt && <p className="mb-4 text-sm italic opacity-70">{choice.prompt}</p>}
+            {choice.prompt && (
+              <p
+                className={`mb-4 text-sm italic opacity-70 ${tanglish ? "" : "font-story text-[15px]"}`}
+              >
+                {choice.prompt}
+              </p>
+            )}
 
             {timeLeft !== null && choice.timer && (
               <div className="mb-4">
@@ -333,30 +589,26 @@ function Player({ story }: { story: Story }) {
                   />
                 </div>
                 <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.3em] opacity-40">
-                  {fmt(timeLeft)} left
+                  {fmt(timeLeft)} left · silence is also a choice
                 </p>
               </div>
             )}
 
             <div className="space-y-2">
-              {choice.options.map((opt) => (
+              {choice.options.map((opt, i) => (
                 <button
                   key={opt.go + opt.label}
                   type="button"
                   onClick={() => pick(opt.go, opt.label, opt.fear)}
-                  className="block w-full rounded-sm border border-border px-4 py-3 text-left text-sm transition-all hover:translate-x-1 hover:border-hog-red hover:bg-hog-red/10"
+                  className="flex w-full items-start gap-3 rounded-sm border border-border px-4 py-3 text-left text-sm transition-all hover:translate-x-1 hover:border-hog-red hover:bg-hog-red/10"
                 >
-                  <span className="mr-2 font-mono text-[11px] text-hog-red">&gt;</span>
-                  {opt.label}
+                  <span className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-sm border border-border font-mono text-[10px] text-hog-red">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0">{opt.label}</span>
                 </button>
               ))}
             </div>
-
-            {timeLeft !== null && (
-              <p className="mt-3 font-mono text-[10px] opacity-40">
-                {timeLeft.toFixed(1)}s — silence is also a choice
-              </p>
-            )}
           </div>
         )}
 
@@ -375,19 +627,24 @@ function Player({ story }: { story: Story }) {
   );
 }
 
+/* ==========================================================================
+ * Ending
+ * ======================================================================== */
+
 function EndingCard({
   story,
   ending,
   path,
   seconds,
 }: {
-  story: Story;
+  story: StoryMeta;
   ending: EndingBeat;
   path: string[];
   seconds: number;
 }) {
   const [nickname, setNickname] = useState("");
   const [state, setState] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const tanglish = story.lang === "tanglish";
 
   useEffect(() => {
     setNickname(readNickname());
@@ -400,10 +657,12 @@ function EndingCard({
         ? "border-amber-600/30 bg-amber-600/5"
         : "border-hog-red/50 bg-hog-red/10";
 
-  const others = useMemo(
-    () => STORIES.filter((s) => s.slug !== story.slug).slice(0, 3),
-    [story.slug],
-  );
+  // Same format first, so "try another tape" means another tape.
+  const others = useMemo(() => {
+    const rest = STORY_INDEX.filter((s) => s.slug !== story.slug);
+    const sameKind = rest.filter((s) => s.kind === story.kind);
+    return [...sameKind, ...rest.filter((s) => s.kind !== story.kind)].slice(0, 3);
+  }, [story]);
 
   const submit = async () => {
     setState("saving");
@@ -438,14 +697,18 @@ function EndingCard({
 
       <div className="mt-5 space-y-3">
         {ending.lines.map((line) => (
-          <p key={line} className="text-sm leading-7 opacity-80">
+          <p
+            key={line}
+            className={`text-[15px] leading-[1.8] opacity-80 ${tanglish ? "" : "font-story"}`}
+          >
             {line}
           </p>
         ))}
       </div>
 
       <p className="mt-6 font-mono text-[11px] opacity-45">
-        {path.length} choices · {Math.floor(seconds / 60)}m {seconds % 60}s in the dark
+        {path.length} choices · {Math.floor(seconds / 60)}m {seconds % 60}s in the dark ·{" "}
+        {story.endings} endings exist
       </p>
 
       <div className="mt-6 border-t border-border pt-6">

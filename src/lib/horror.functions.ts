@@ -47,9 +47,10 @@ export const recordRun = createServerFn({ method: "POST" })
     }) => data,
   )
   .handler(async ({ data }) => {
-    const { STORIES } = await import("@/content/horror");
-    const story = STORIES.find((s) => s.slug === data.story);
-    if (!story) throw new Error("Unknown story.");
+    // Metadata only: this validates that the slug names a real story, and the
+    // server has no more reason than the browser to hold every branch in memory.
+    const { getStoryMeta } = await import("@/content/horror/manifest");
+    if (!getStoryMeta(data.story)) throw new Error("Unknown story.");
     if (!/^[a-z0-9-]{1,40}$/.test(data.ending)) throw new Error("Unknown ending.");
     if (!["survived", "doomed", "worst"].includes(data.outcome)) throw new Error("Unknown outcome.");
 

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { site } from "@/lib/site";
-import { STORIES } from "@/content/horror";
+import { STORY_INDEX } from "@/content/horror/manifest";
 
 /**
  * /sitemap.xml
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           /* static entries only */
         }
 
-        for (const story of STORIES) {
+        for (const story of STORY_INDEX) {
           entries.push({
             path: `/horror/${encodeURIComponent(story.slug)}`,
             changefreq: "yearly",
