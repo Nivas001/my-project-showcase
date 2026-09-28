@@ -14,7 +14,7 @@ import {
   Presentation,
 } from "lucide-react";
 import { projectQuery } from "@/lib/queries";
-import { toAbsoluteUrl, prettyUrl, shortTitle, canonical } from "@/lib/site";
+import { toAbsoluteUrl, prettyUrl, shortTitle, canonical, site } from "@/lib/site";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { DocViewer } from "@/components/DocViewer";
 import { DesignBoard } from "@/components/DesignBoard";
@@ -51,7 +51,14 @@ export const Route = createFileRoute("/projects/$slug")({
     }
     const { project } = loaderData;
     const title = `${project.title} — Srinivas M`;
-    const image = project.screenshots.find((url) => url.startsWith("https://"));
+    // Curated media is served from this site (a root-relative path); crawlers
+    // need an absolute URL for og:image.
+    const first = project.screenshots[0];
+    const image = first?.startsWith("/")
+      ? `${site.url}${first}`
+      : first?.startsWith("https://")
+        ? first
+        : undefined;
     return {
       meta: [
         { title },

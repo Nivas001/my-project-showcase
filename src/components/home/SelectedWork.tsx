@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { heroProject, type Project } from "@/lib/projects";
 import { prettyUrl, shortTitle, toAbsoluteUrl } from "@/lib/site";
 import { Shot } from "@/components/Shot";
+import { ratioOf } from "@/content/project-media";
 import { Eyebrow, FadeIn, RiseWords } from "./fx";
 
 const FEATURED = 3;
@@ -157,7 +158,7 @@ function Card({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -10% 0px" }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      className="relative w-full origin-top overflow-hidden rounded-3xl border border-border bg-card lg:grid lg:h-[min(72vh,600px)] lg:grid-cols-12"
+      className="relative w-full origin-top overflow-hidden rounded-3xl border border-border bg-card lg:grid lg:grid-cols-12"
     >
       <div className="flex flex-col justify-between gap-8 p-6 sm:p-9 lg:col-span-5 lg:p-10">
         <p className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
@@ -209,18 +210,25 @@ function Card({
         </div>
       </div>
 
+      {/* The screenshot sits in a frame cut to its own proportions, so nothing
+          is cropped: the stage around it absorbs whatever space is left. */}
       <Link
         to="/projects/$slug"
         params={{ slug: project.slug }}
         data-cursor="View case study"
         aria-label={`${project.title} — case study`}
-        className="group relative block aspect-[16/10] overflow-hidden border-t border-border bg-secondary lg:col-span-7 lg:aspect-auto lg:border-l lg:border-t-0"
+        className="group relative flex items-center justify-center border-t border-border bg-secondary/40 p-4 sm:p-7 lg:col-span-7 lg:border-l lg:border-t-0"
       >
-        <Shot
-          src={project.screenshots[0]}
-          alt=""
-          className="transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-        />
+        <span
+          className="relative block w-full overflow-hidden rounded-xl border border-border bg-card shadow-[0_24px_60px_-32px_rgba(0,0,0,0.55)]"
+          style={{ aspectRatio: String(ratioOf(project.screenshots[0]) ?? 16 / 10) }}
+        >
+          <Shot
+            src={project.screenshots[0]}
+            alt=""
+            className="transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+        </span>
       </Link>
 
       {stacking ? (

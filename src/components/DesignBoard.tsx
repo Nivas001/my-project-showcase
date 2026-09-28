@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Maximize2, Minimize2, Move, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { labelOf } from "@/content/project-media";
 
 const MIN_ZOOM = 0.15;
 const MAX_ZOOM = 6;
@@ -11,7 +12,7 @@ function clamp(value: number, min: number, max: number) {
 /** Figma-style board: every page design laid out on one zoomable, pannable canvas. */
 export function DesignBoard({ images, title }: { images: string[]; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = useState(0.5);
+  const [zoom, setZoom] = useState(0.28);
   const [offset, setOffset] = useState({ x: 40, y: 40 });
   const [dragging, setDragging] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -66,7 +67,7 @@ export function DesignBoard({ images, title }: { images: string[]; title: string
   }
 
   function reset() {
-    setZoom(0.5);
+    setZoom(0.28);
     setOffset({ x: 40, y: 40 });
   }
 
@@ -105,26 +106,27 @@ export function DesignBoard({ images, title }: { images: string[]; title: string
         className={`relative flex-1 touch-none overflow-hidden ${
           dragging ? "cursor-grabbing" : "cursor-grab"
         } ${fullscreen ? "rounded-md border border-border" : "h-[62vh] max-h-[720px] min-h-[360px]"}`}
-
       >
         <div
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
             transformOrigin: "0 0",
           }}
-          className="absolute left-0 top-0 flex items-start gap-10"
+          className="absolute left-0 top-0 flex items-start gap-16"
         >
           {images.map((src, index) => (
             <figure key={src} className="w-max">
+              <figcaption className="mb-3 flex items-baseline gap-3 font-mono text-[22px] text-muted-foreground">
+                <span className="text-accent">{String(index + 1).padStart(2, "0")}</span>
+                <span className="text-foreground">{labelOf(src) ?? `Page ${index + 1}`}</span>
+              </figcaption>
               <img
                 src={src}
-                alt={`${title} design page ${index + 1}`}
+                alt={`${title} — ${labelOf(src) ?? `design page ${index + 1}`}`}
                 draggable={false}
-                className="max-w-[1400px] rounded-md border border-border bg-card shadow-lg"
+                decoding="async"
+                className="w-[1200px] max-w-none rounded-xl border border-border bg-card shadow-[0_30px_80px_-40px_rgba(0,0,0,0.6)]"
               />
-              <figcaption className="mt-2 font-mono text-[13px] text-muted-foreground">
-                page {String(index + 1).padStart(2, "0")}
-              </figcaption>
             </figure>
           ))}
         </div>
@@ -138,10 +140,20 @@ export function DesignBoard({ images, title }: { images: string[]; title: string
           <span className="rounded-sm border border-border bg-background/85 px-2 py-1 font-mono text-[11px] text-muted-foreground">
             {Math.round(zoom * 100)}%
           </span>
-          <button type="button" onClick={() => zoomFromCenter(1 / 1.25)} className={controlClass} aria-label="Zoom out">
+          <button
+            type="button"
+            onClick={() => zoomFromCenter(1 / 1.25)}
+            className={controlClass}
+            aria-label="Zoom out"
+          >
             <ZoomOut className="h-4 w-4" />
           </button>
-          <button type="button" onClick={() => zoomFromCenter(1.25)} className={controlClass} aria-label="Zoom in">
+          <button
+            type="button"
+            onClick={() => zoomFromCenter(1.25)}
+            className={controlClass}
+            aria-label="Zoom in"
+          >
             <ZoomIn className="h-4 w-4" />
           </button>
           <button type="button" onClick={reset} className={controlClass} aria-label="Reset view">

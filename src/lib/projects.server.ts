@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { PROJECT_MEDIA } from "@/content/project-media";
 import {
   normaliseDecisions,
   normaliseDownloads,
@@ -80,17 +81,27 @@ export async function signScreenshots(rows: Project[]): Promise<SignedProject[]>
     return `/api/public/project-file/${encodeURIComponent(row.slug)}/${kind}/${kind === "slides" ? "deck" : "documentation"}.${ext}`;
   };
 
-  return rows.map((row) => ({
-    ...row,
-    screenshot_paths: row.screenshots ?? [],
-    design_paths: row.designs ?? [],
-    screenshots: (row.screenshots ?? []).map(resolve),
-    designs: (row.designs ?? []).map(resolve),
-    downloads: normaliseDownloads(row.downloads),
-    decisions: normaliseDecisions(row.decisions),
-    // Served through a proxy so the file renders inline; ext lets the viewer
-    // pick a PDF reader or a slide-deck embed.
-    doc_signed_url: row.doc_path ? proxy(row, "doc", row.doc_path) : null,
-    slides_signed_url: row.slides_path ? proxy(row, "slides", row.slides_path) : null,
-  }));
+  return rows.map((row) => {
+    // Curated media (see content/project-media.ts) wins for the projects it
+    // covers. Only the display URLs change: the *_paths the admin editor saves
+    // from are left as the database has them.
+    const curated = PROJECT_MEDIA[row.slug];
+    return {
+      ...row,
+      screenshot_paths: row.screenshots ?? [],
+      design_paths: row.designs ?? [],
+      screenshots: curated?.screens.length
+        ? curated.screens.map((m) => m.src)
+        : (row.screenshots ?? []).map(resolve),
+      designs: curated?.designs.length
+        ? curated.designs.map((m) => m.src)
+        : (row.designs ?? []).map(resolve),
+      downloads: normaliseDownloads(row.downloads),
+      decisions: normaliseDecisions(row.decisions),
+      // Served through a proxy so the file renders inline; ext lets the viewer
+      // pick a PDF reader or a slide-deck embed.
+      doc_signed_url: row.doc_path ? proxy(row, "doc", row.doc_path) : null,
+      slides_signed_url: row.slides_path ? proxy(row, "slides", row.slides_path) : null,
+    };
+  });
 }
