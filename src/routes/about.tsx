@@ -29,7 +29,8 @@ import {
   TiltCard,
 } from "@/components/kit";
 import { Reveal } from "@/components/Reveal";
-import { AboutHero } from "@/components/about/AboutHero";
+import { StudioStory } from "@/components/about/StudioStory";
+import { VideoScreening } from "@/components/about/VideoScreening";
 
 const TITLE = "About — Srinivas";
 const DESCRIPTION =
@@ -203,7 +204,13 @@ function AboutPage() {
 
   return (
     <>
-      <AboutHero />
+      <StudioStory />
+      {hasVideo ? (
+        <VideoScreening
+          src={isDirectVideo ? site.videoResumeUrl : (embed ?? "")}
+          direct={Boolean(isDirectVideo)}
+        />
+      ) : null}
 
       <section data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
@@ -293,46 +300,6 @@ function AboutPage() {
               </div>
             </div>
           </Block>
-
-          {/* Video -------------------------------------------------------- */}
-          {hasVideo ? (
-            <Block
-              index={nextIndex()}
-              label="Video introduction"
-              title={["Or just watch me", "say it."]}
-            >
-              <Reveal>
-                <div className="relative">
-                  <div className="absolute -top-10 right-4 hidden lg:block">
-                    <HandNote tone="hog-blue" rotate={-6} arrow="down" arrowClassName="h-9 w-7">
-                      ~90 seconds, promise
-                    </HandNote>
-                  </div>
-
-                  <BrowserFrame url="srinivas — introduction.mp4">
-                    <div className="relative aspect-video w-full bg-secondary">
-                      {isDirectVideo ? (
-                        <video
-                          src={site.videoResumeUrl}
-                          controls
-                          preload="metadata"
-                          className="absolute inset-0 h-full w-full object-contain"
-                        />
-                      ) : (
-                        <iframe
-                          src={embed || ""}
-                          title="Video introduction from Srinivas"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                          allowFullScreen
-                          className="absolute inset-0 h-full w-full border-0"
-                        />
-                      )}
-                    </div>
-                  </BrowserFrame>
-                </div>
-              </Reveal>
-            </Block>
-          ) : null}
 
           {/* Experience --------------------------------------------------- */}
           {storedExperiences.length > 0 ? (

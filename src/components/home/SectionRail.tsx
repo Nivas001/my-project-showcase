@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 
 /**
  * A quiet index down the right edge of the homepage on wide screens: one tick
- * per section, the current one drawn long. Hovering a tick names it; clicking
- * goes there. It reads `data-rail` off the sections, so adding a section to
+ * per section, the current one drawn long in the accent. Hovering a tick names
+ * it (labels stay hidden otherwise, so they never sit on top of content);
+ * clicking goes there. It reads `data-rail` off the sections, so adding a section to
  * the page adds it here.
  */
 export function SectionRail() {
@@ -58,7 +59,7 @@ export function SectionRail() {
             <span
               className={`font-mono text-[10px] uppercase tracking-[0.16em] transition-all duration-300 ${
                 on
-                  ? "translate-x-0 text-foreground opacity-100"
+                  ? "translate-x-1 text-foreground opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
                   : "translate-x-1 text-muted-foreground opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
               }`}
             >

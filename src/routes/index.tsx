@@ -8,6 +8,7 @@ import { Capabilities } from "@/components/home/Capabilities";
 import { SelectedWork } from "@/components/home/SelectedWork";
 import { SpecSheet } from "@/components/home/SpecSheet";
 import { Anatomy } from "@/components/home/Anatomy";
+import { SideBuilds } from "@/components/home/SideBuilds";
 import { SectionRail } from "@/components/home/SectionRail";
 import { HowIWork } from "@/components/home/HowIWork";
 import { HireCTA } from "@/components/home/HireCTA";
@@ -67,8 +68,9 @@ export const Route = createFileRoute("/")({
 /**
  * The homepage is one continuous scroll on a single ground:
  *
- *   Hero → 01 The work → 02 What I do → 03 Selected work → 04 Under the hood
- *        → 05 Technical depth → 06 How I work → 07 Contact
+ *   Hero → 01 The work (+ GitHub) → 02 What I do → 03 Selected work
+ *        → 04 Side builds → 05 Under the hood → 06 Technical depth
+ *        → 07 How I work → 08 Contact
  *
  * Each section says one thing and gets out of the way. The macOS desktop, the
  * pinned statement screens and the two-act colour change are gone; the
@@ -86,6 +88,7 @@ function Home() {
       <Intro projects={projects} />
       <Capabilities />
       <SelectedWork projects={projects} />
+      <SideBuilds />
       <Anatomy />
       <SpecSheet projects={projects} groups={groups} />
       <HowIWork />

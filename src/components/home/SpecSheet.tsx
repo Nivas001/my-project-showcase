@@ -46,7 +46,7 @@ export function SpecSheet({
   return (
     <section data-act="noir" data-rail="Stack" className="act-noir relative">
       <div className="mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
-        <Eyebrow index="05">Technical depth</Eyebrow>
+        <Eyebrow index="06">Technical depth</Eyebrow>
 
         <RiseWords
           text="The stack,"

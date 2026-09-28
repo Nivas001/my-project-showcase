@@ -1,6 +1,7 @@
 import type { Project } from "@/lib/projects";
 import { toAbsoluteUrl } from "@/lib/site";
 import { Eyebrow, LitParagraph } from "./fx";
+import { GitHubStrip } from "./GitHubStrip";
 
 const WORDS = [
   "Zero",
@@ -37,6 +38,8 @@ export function Intro({ projects }: { projects: Project[] }) {
           emphasis={["ship.", "alone.", "Tamil"]}
           text={`I build things that ship. ${count} products are live right now — real users, real payments, real uptime — each one designed, built and deployed alone. Alongside them sits research-grade NLP: a summarisation model for Tamil that keeps the names in the story.`}
         />
+
+        <GitHubStrip />
       </div>
     </section>
   );

@@ -154,9 +154,7 @@ export function AboutHero() {
                   </span>
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="sticker scale-90">
-                    {draft.stamp}
-                  </span>
+                  <span className="sticker scale-90">{draft.stamp}</span>
                   <button
                     type="button"
                     onClick={() => setDraftIndex((v) => v)}

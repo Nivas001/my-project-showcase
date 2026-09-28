@@ -97,7 +97,7 @@ export function Anatomy() {
       className="act-noir relative pb-28 sm:pb-40 lg:pb-24"
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <Eyebrow index="04">Under the hood</Eyebrow>
+        <Eyebrow index="05">Under the hood</Eyebrow>
         <RiseWords
           text="The anatomy of a product,"
           muted="from first request to deploy."

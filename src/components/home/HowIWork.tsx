@@ -13,7 +13,7 @@ export function HowIWork() {
   return (
     <section data-act="noir" data-rail="Principles" className="act-noir relative">
       <div className="mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
-        <Eyebrow index="06">How I work</Eyebrow>
+        <Eyebrow index="07">How I work</Eyebrow>
 
         <div className="mt-10 grid gap-14 lg:grid-cols-12 lg:gap-12">
           <div className="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">

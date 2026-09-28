@@ -26,7 +26,7 @@ export function HireCTA() {
       className="act-noir relative scroll-mt-10"
     >
       <div className="mx-auto max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28">
-        <Eyebrow index="07">Contact</Eyebrow>
+        <Eyebrow index="08">Contact</Eyebrow>
 
         <RiseWords
           text="Have something worth building?"

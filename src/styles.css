@@ -2801,3 +2801,143 @@ html .act-hog ::selection {
     animation: none;
   }
 }
+
+/* ===========================================================================
+ * SIDE-BUILD PREVIEWS — one loop per card in the homepage gallery.
+ * ========================================================================= */
+
+.sb-snake {
+  animation: sb-snake 3.4s steps(19) infinite;
+}
+@keyframes sb-snake {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(152px);
+  }
+}
+
+.sb-blink {
+  animation: sb-blink 1.2s steps(1) infinite;
+}
+@keyframes sb-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.sb-flicker {
+  animation: sb-flicker 4s linear infinite;
+}
+@keyframes sb-flicker {
+  0%,
+  18%,
+  22%,
+  62%,
+  64%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  63% {
+    opacity: 0.35;
+  }
+}
+
+.sb-float {
+  animation: sb-float 5s ease-in-out infinite;
+}
+@keyframes sb-float {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.sb-draw {
+  stroke-dasharray: 120;
+  animation: sb-draw 3.5s ease-in-out infinite;
+}
+@keyframes sb-draw {
+  0% {
+    stroke-dashoffset: 120;
+  }
+  60%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sb-paint {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: sb-paint 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes sb-paint {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  35%,
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.sb-pop {
+  animation: sb-pop 5s cubic-bezier(0.16, 1, 0.3, 1) infinite both;
+}
+@keyframes sb-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  10%,
+  85% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.sb-dot {
+  animation: sb-dot 1s ease-in-out infinite;
+}
+@keyframes sb-dot {
+  50% {
+    transform: translateY(-3px);
+    opacity: 0.4;
+  }
+}
+
+.sb-feed {
+  animation: sb-feed 9s linear infinite;
+}
+@keyframes sb-feed {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-snake,
+  .sb-blink,
+  .sb-flicker,
+  .sb-float,
+  .sb-draw,
+  .sb-paint,
+  .sb-pop,
+  .sb-dot,
+  .sb-feed {
+    animation: none;
+  }
+  .sb-paint {
+    stroke-dashoffset: 0;
+  }
+}
