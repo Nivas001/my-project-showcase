@@ -31,11 +31,11 @@ export function PinnedProject({ project }: { project: Project }) {
   const cover = project.screenshots[0];
 
   return (
-    <section data-act="hog" className="act-hog relative overflow-hidden border-t-[3px] border-ink">
+    <section data-act="hog" className="act-hog relative overflow-hidden border-t border-border">
       <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-40 -top-32 h-[32rem] w-[32rem] rounded-full blur-[130px]"
+        className="hidden"
         style={{
           background: "radial-gradient(circle, var(--hog-red) 0%, transparent 70%)",
           opacity: 0.12,

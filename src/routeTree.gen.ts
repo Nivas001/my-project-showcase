@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AppsRouteImport } from './routes/apps'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FunRouteImport } from './routes/fun'
+import { Route as GenzRouteImport } from './routes/genz'
 import { Route as HowToBeSmarterThanAnAiRouteImport } from './routes/how-to-be-smarter-than-an-ai'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SurpriseRouteImport } from './routes/surprise'
+import { Route as WallRouteImport } from './routes/wall'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiRoastRouteImport } from './routes/api/roast'
 import { Route as HorrorIndexRouteImport } from './routes/horror.index'
@@ -25,6 +28,7 @@ import { Route as HorrorSlugRouteImport } from './routes/horror.$slug'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as ApiPublicProjectDocRouteImport } from './routes/api/public/project-doc'
+import { Route as HorrorListenSlugRouteImport } from './routes/horror.listen.$slug'
 import { Route as ApiPublicProjectFileSplatRouteImport } from './routes/api/public/project-file.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -39,6 +43,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppsRoute = AppsRouteImport.update({
+  id: '/apps',
+  path: '/apps',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -56,6 +65,11 @@ const FunRoute = FunRouteImport.update({
   path: '/fun',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenzRoute = GenzRouteImport.update({
+  id: '/genz',
+  path: '/genz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HowToBeSmarterThanAnAiRoute = HowToBeSmarterThanAnAiRouteImport.update({
   id: '/how-to-be-smarter-than-an-ai',
   path: '/how-to-be-smarter-than-an-ai',
@@ -69,6 +83,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SurpriseRoute = SurpriseRouteImport.update({
   id: '/surprise',
   path: '/surprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WallRoute = WallRouteImport.update({
+  id: '/wall',
+  path: '/wall',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -106,6 +125,11 @@ const ApiPublicProjectDocRoute = ApiPublicProjectDocRouteImport.update({
   path: '/api/public/project-doc',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HorrorListenSlugRoute = HorrorListenSlugRouteImport.update({
+  id: '/horror/listen/$slug',
+  path: '/horror/listen/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicProjectFileSplatRoute =
   ApiPublicProjectFileSplatRouteImport.update({
     id: '/api/public/project-file/$',
@@ -116,12 +140,15 @@ const ApiPublicProjectFileSplatRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/apps': typeof AppsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/genz': typeof GenzRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
+  '/wall': typeof WallRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
@@ -129,17 +156,21 @@ export interface FileRoutesByFullPath {
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/horror/listen/$slug': typeof HorrorListenSlugRoute
   '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/apps': typeof AppsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/genz': typeof GenzRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
+  '/wall': typeof WallRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
@@ -147,6 +178,7 @@ export interface FileRoutesByTo {
   '/horror': typeof HorrorIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/horror/listen/$slug': typeof HorrorListenSlugRoute
   '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRoutesById {
@@ -154,12 +186,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/apps': typeof AppsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/fun': typeof FunRoute
+  '/genz': typeof GenzRoute
   '/how-to-be-smarter-than-an-ai': typeof HowToBeSmarterThanAnAiRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/surprise': typeof SurpriseRoute
+  '/wall': typeof WallRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
@@ -167,6 +202,7 @@ export interface FileRoutesById {
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/api/public/project-doc': typeof ApiPublicProjectDocRoute
+  '/horror/listen/$slug': typeof HorrorListenSlugRoute
   '/api/public/project-file/$': typeof ApiPublicProjectFileSplatRoute
 }
 export interface FileRouteTypes {
@@ -174,12 +210,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/apps'
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/genz'
     | '/how-to-be-smarter-than-an-ai'
     | '/sitemap.xml'
     | '/surprise'
+    | '/wall'
     | '/admin'
     | '/api/roast'
     | '/horror/$slug'
@@ -187,17 +226,21 @@ export interface FileRouteTypes {
     | '/horror/'
     | '/projects/'
     | '/api/public/project-doc'
+    | '/horror/listen/$slug'
     | '/api/public/project-file/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/apps'
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/genz'
     | '/how-to-be-smarter-than-an-ai'
     | '/sitemap.xml'
     | '/surprise'
+    | '/wall'
     | '/admin'
     | '/api/roast'
     | '/horror/$slug'
@@ -205,18 +248,22 @@ export interface FileRouteTypes {
     | '/horror'
     | '/projects'
     | '/api/public/project-doc'
+    | '/horror/listen/$slug'
     | '/api/public/project-file/$'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/apps'
     | '/auth'
     | '/contact'
     | '/fun'
+    | '/genz'
     | '/how-to-be-smarter-than-an-ai'
     | '/sitemap.xml'
     | '/surprise'
+    | '/wall'
     | '/_authenticated/admin'
     | '/api/roast'
     | '/horror/$slug'
@@ -224,6 +271,7 @@ export interface FileRouteTypes {
     | '/horror/'
     | '/projects/'
     | '/api/public/project-doc'
+    | '/horror/listen/$slug'
     | '/api/public/project-file/$'
   fileRoutesById: FileRoutesById
 }
@@ -231,18 +279,22 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AppsRoute: typeof AppsRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   FunRoute: typeof FunRoute
+  GenzRoute: typeof GenzRoute
   HowToBeSmarterThanAnAiRoute: typeof HowToBeSmarterThanAnAiRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SurpriseRoute: typeof SurpriseRoute
+  WallRoute: typeof WallRoute
   ApiRoastRoute: typeof ApiRoastRoute
   HorrorSlugRoute: typeof HorrorSlugRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   HorrorIndexRoute: typeof HorrorIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   ApiPublicProjectDocRoute: typeof ApiPublicProjectDocRoute
+  HorrorListenSlugRoute: typeof HorrorListenSlugRoute
   ApiPublicProjectFileSplatRoute: typeof ApiPublicProjectFileSplatRoute
 }
 
@@ -269,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apps': {
+      id: '/apps'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof AppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -290,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/genz': {
+      id: '/genz'
+      path: '/genz'
+      fullPath: '/genz'
+      preLoaderRoute: typeof GenzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/how-to-be-smarter-than-an-ai': {
       id: '/how-to-be-smarter-than-an-ai'
       path: '/how-to-be-smarter-than-an-ai'
@@ -309,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/surprise'
       fullPath: '/surprise'
       preLoaderRoute: typeof SurpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wall': {
+      id: '/wall'
+      path: '/wall'
+      fullPath: '/wall'
+      preLoaderRoute: typeof WallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -360,6 +433,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicProjectDocRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/horror/listen/$slug': {
+      id: '/horror/listen/$slug'
+      path: '/horror/listen/$slug'
+      fullPath: '/horror/listen/$slug'
+      preLoaderRoute: typeof HorrorListenSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/project-file/$': {
       id: '/api/public/project-file/$'
       path: '/api/public/project-file/$'
@@ -385,18 +465,22 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AppsRoute: AppsRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   FunRoute: FunRoute,
+  GenzRoute: GenzRoute,
   HowToBeSmarterThanAnAiRoute: HowToBeSmarterThanAnAiRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SurpriseRoute: SurpriseRoute,
+  WallRoute: WallRoute,
   ApiRoastRoute: ApiRoastRoute,
   HorrorSlugRoute: HorrorSlugRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   HorrorIndexRoute: HorrorIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   ApiPublicProjectDocRoute: ApiPublicProjectDocRoute,
+  HorrorListenSlugRoute: HorrorListenSlugRoute,
   ApiPublicProjectFileSplatRoute: ApiPublicProjectFileSplatRoute,
 }
 export const routeTree = rootRouteImport

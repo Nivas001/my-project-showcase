@@ -107,7 +107,7 @@ export function AboutHero() {
             <Marked kind="oval" tone="hog-red" delay={1100} duration={950} immediate>
               version
             </Marked>
-            <span className="text-hog-red">.</span>
+            <span className="text-accent">.</span>
           </span>
         </h1>
 
@@ -143,26 +143,18 @@ export function AboutHero() {
             </div>
 
             <div
-              className="fade-rise relative mt-4 rounded-lg border border-border bg-card/55 backdrop-blur-sm"
+              className="fade-rise relative mt-4 rounded-xl border border-border bg-card"
               style={{ "--line-delay": "480ms" } as React.CSSProperties}
             >
               {/* Editor chrome */}
               <div className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-2.5">
                 <span className="flex items-center gap-1.5">
-                  {["mac-close", "mac-min", "mac-max"].map((token) => (
-                    <span
-                      key={token}
-                      aria-hidden
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: `var(--${token})` }}
-                    />
-                  ))}
-                  <span className="ml-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                     about-me.txt
                   </span>
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="sticker scale-90" style={{ transform: "rotate(-6deg)" }}>
+                  <span className="sticker scale-90">
                     {draft.stamp}
                   </span>
                   <button
@@ -251,21 +243,7 @@ export function AboutHero() {
             style={{ "--line-delay": "620ms" } as React.CSSProperties}
           >
             <div className="relative mx-auto w-full max-w-sm lg:max-w-none">
-              {/* Tape corners, so the portrait reads as pinned to the page. */}
-              {[
-                "-left-3 -top-3 rotate-[-18deg]",
-                "-right-3 -top-3 rotate-[16deg]",
-                "-bottom-3 -left-3 rotate-[14deg]",
-                "-bottom-3 -right-3 rotate-[-15deg]",
-              ].map((place) => (
-                <span
-                  key={place}
-                  aria-hidden
-                  className={`absolute z-10 h-5 w-12 bg-foreground/15 backdrop-blur-sm ${place}`}
-                />
-              ))}
-
-              <div className="rounded-sm border border-border bg-card/40 p-3">
+              <div className="rounded-2xl border border-border bg-card/40 p-3">
                 <PortraitMatrix
                   src="/portrait.png"
                   mode="photo"

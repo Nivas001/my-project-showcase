@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import type { AppSpec } from "@/lib/os-apps";
+import { useWindows } from "@/components/os/WindowManager";
 import { cn } from "@/lib/utils";
 
 /**
@@ -75,18 +76,26 @@ export function AppTarget({
   app: AppSpec;
   children: ReactNode;
   className?: string;
+  /**
+   * Overrides the window manager. Only passed by surfaces that keep their own
+   * window state; everything else leaves this alone and the tile opens the
+   * real window itself.
+   */
   onOpenWindow?: (id: NonNullable<AppSpec["window"]>) => void;
   /** Fired in addition to the destination — used to close a stack or menu. */
   onClick?: () => void;
 } & { "aria-label"?: string; title?: string }) {
-  if (app.window && onOpenWindow) {
+  const { open } = useWindows();
+
+  if (app.window) {
     const id = app.window;
     return (
       <button
         type="button"
         className={className}
         onClick={() => {
-          onOpenWindow(id);
+          if (onOpenWindow) onOpenWindow(id);
+          else open(id);
           onClick?.();
         }}
         {...rest}

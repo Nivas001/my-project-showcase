@@ -1,13 +1,100 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { controlSide, useTheme } from "@/lib/os/theme";
 
 /**
- * A macOS window: traffic lights, a draggable title bar, and a body.
+ * A desktop window, dressed by whichever skin is active.
  *
  * Dragging is pointer-event based and writes transforms directly, so moving a
- * window never re-renders its contents. The window traps Escape to close and is
- * announced as a dialog; the traffic lights are real buttons, not decoration.
+ * window never re-renders its contents — which matters a great deal once the
+ * contents are a paint canvas or a running game loop.
+ *
+ * The skin decides three things and nothing else: which side the controls sit
+ * on, what the title bar looks like, and how round the corners are. All three
+ * come from CSS custom properties, so switching skins repaints without
+ * remounting the window or losing what is inside it.
  */
+
+/* --------------------------------------------------------------------------
+ * Controls
+ *
+ * macOS and Ubuntu draw three coloured discs; the Windows family draws three
+ * glyph buttons in a row, with close turning red on hover. Both are real
+ * buttons with real labels — the traffic lights on this site have always done
+ * something, and a skin is no reason to start faking them.
+ * ------------------------------------------------------------------------ */
+
+function Controls({
+  title,
+  zoomed,
+  onClose,
+  onMinimise,
+  onZoom,
+}: {
+  title: string;
+  zoomed: boolean;
+  onClose: () => void;
+  onMinimise: () => void;
+  onZoom: () => void;
+}) {
+  const { skin } = useTheme();
+  const discs = skin === "macos" || skin === "ubuntu";
+
+  if (discs) {
+    return (
+      <span className="group/lights flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={`Close ${title}`}
+          className="h-3 w-3 rounded-full border border-black/20 transition-transform hover:scale-110"
+          style={{ background: "var(--mac-close)" }}
+        />
+        <button
+          type="button"
+          onClick={onMinimise}
+          aria-label={`Minimise ${title}`}
+          className="h-3 w-3 rounded-full border border-black/20 transition-transform hover:scale-110"
+          style={{ background: "var(--mac-min)" }}
+        />
+        <button
+          type="button"
+          onClick={onZoom}
+          aria-label={zoomed ? `Restore ${title}` : `Zoom ${title}`}
+          className="h-3 w-3 rounded-full border border-black/20 transition-transform hover:scale-110"
+          style={{ background: "var(--mac-max)" }}
+        />
+      </span>
+    );
+  }
+
+  const btn =
+    "grid h-full w-11 place-items-center text-[11px] leading-none transition-colors hover:bg-foreground/12";
+  return (
+    <span className="-my-px flex h-[var(--os-titlebar-h)] shrink-0 items-stretch self-stretch">
+      <button type="button" onClick={onMinimise} aria-label={`Minimise ${title}`} className={btn}>
+        <span aria-hidden className="mt-2 block h-px w-3 bg-current" />
+      </button>
+      <button
+        type="button"
+        onClick={onZoom}
+        aria-label={zoomed ? `Restore ${title}` : `Maximise ${title}`}
+        className={btn}
+      >
+        <span aria-hidden className="block h-2.5 w-2.5 border border-current" />
+      </button>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label={`Close ${title}`}
+        className={cn(btn, "hover:!bg-[oklch(0.58_0.22_25)] hover:!text-white")}
+      >
+        <span aria-hidden>✕</span>
+      </button>
+    </span>
+  );
+}
+
 export function Window({
   title,
   subtitle,
@@ -17,7 +104,12 @@ export function Window({
   zIndex = 10,
   initial,
   width = 560,
+  /** Body height. `auto` lets short windows shrink to their contents. */
+  height,
   className,
+  bodyClassName,
+  /** Apps that manage their own scrolling (canvas, game loops) opt out. */
+  scroll = true,
 }: {
   title: string;
   subtitle?: string;
@@ -28,10 +120,15 @@ export function Window({
   /** Starting offset from the centre of the desktop, in pixels. */
   initial?: { x: number; y: number };
   width?: number;
+  height?: number;
   className?: string;
+  bodyClassName?: string;
+  scroll?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [zoomed, setZoomed] = useState(false);
+  const { skin } = useTheme();
+  const side = controlSide(skin);
   const pos = useRef({ x: initial?.x ?? 0, y: initial?.y ?? 0 });
   const drag = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(
     null,
@@ -48,14 +145,16 @@ export function Window({
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      // Escape belongs to whatever has focus inside the window first — a text
+      // field mid-edit, a colour picker, a confirm step. Only an unhandled
+      // Escape should take the window down with it.
+      if (event.key === "Escape" && !event.defaultPrevented) onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    // Never start a drag from the traffic lights.
     if ((event.target as HTMLElement).closest("button")) return;
     if (zoomed) return;
     onFocus?.();
@@ -65,9 +164,6 @@ export function Window({
       originX: pos.current.x,
       originY: pos.current.y,
     };
-    // Capture keeps the drag alive if the pointer outruns the title bar. It
-    // throws for a pointer id that is not actually active, which must not take
-    // the drag down with it.
     try {
       (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     } catch {
@@ -95,6 +191,16 @@ export function Window({
     }
   };
 
+  const controls = (
+    <Controls
+      title={title}
+      zoomed={zoomed}
+      onClose={onClose}
+      onMinimise={onClose}
+      onZoom={() => setZoomed((v) => !v)}
+    />
+  );
+
   return (
     <div
       ref={ref}
@@ -102,57 +208,63 @@ export function Window({
       aria-modal="false"
       aria-label={title}
       onPointerDown={() => onFocus?.()}
-      style={{ zIndex, width: zoomed ? undefined : width }}
+      style={{
+        zIndex,
+        width: zoomed ? undefined : width,
+        borderRadius: "var(--os-radius)",
+        boxShadow: "var(--os-shadow)",
+        fontFamily: "var(--os-font)",
+      }}
       className={cn(
-        "window-open vibrancy-strong pointer-events-auto absolute overflow-hidden rounded-xl",
+        "window-open os-window vibrancy-strong pointer-events-auto absolute flex flex-col overflow-hidden",
         zoomed ? "inset-4 !translate-x-0 !translate-y-0" : "max-w-[calc(100vw-3rem)]",
         className,
       )}
     >
-      {/* Title bar */}
       <div
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        style={{
+          height: "var(--os-titlebar-h)",
+          background: "var(--os-titlebar)",
+          color: "var(--os-titlebar-ink)",
+        }}
         className={cn(
-          "group flex h-10 shrink-0 items-center gap-2 border-b border-foreground/10 px-3",
+          "group relative flex shrink-0 items-center gap-2 border-b px-3",
           zoomed ? "cursor-default" : "cursor-grab active:cursor-grabbing",
         )}
       >
-        <span className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={`Close ${title}`}
-            className="h-3 w-3 rounded-full transition-transform hover:scale-110"
-            style={{ background: "var(--mac-close)" }}
-          />
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={`Minimise ${title}`}
-            className="h-3 w-3 rounded-full transition-transform hover:scale-110"
-            style={{ background: "var(--mac-min)" }}
-          />
-          <button
-            type="button"
-            onClick={() => setZoomed((v) => !v)}
-            aria-label={zoomed ? `Restore ${title}` : `Zoom ${title}`}
-            className="h-3 w-3 rounded-full transition-transform hover:scale-110"
-            style={{ background: "var(--mac-max)" }}
-          />
-        </span>
+        {side === "left" ? controls : null}
 
-        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-center">
-          <span className="block text-[13px] font-semibold text-foreground">{title}</span>
-          {subtitle ? (
-            <span className="block font-mono text-[10px] text-muted-foreground">{subtitle}</span>
+        <span
+          className={cn(
+            "pointer-events-none min-w-0 flex-1 truncate",
+            // macOS centres the title; the Windows family and GNOME left-align
+            // it against the icon. Getting this wrong is the single most
+            // obvious tell that a skin is a costume.
+            skin === "macos" ? "absolute left-1/2 w-full -translate-x-1/2 text-center" : "",
+          )}
+        >
+          <span className="block truncate text-[13px] font-semibold">{title}</span>
+          {subtitle && skin === "macos" ? (
+            <span className="block font-mono text-[10px] opacity-60">{subtitle}</span>
           ) : null}
         </span>
+
+        {side === "right" ? <span className="ml-auto flex items-stretch">{controls}</span> : null}
       </div>
 
-      <div className={cn("overflow-y-auto", zoomed ? "h-[calc(100%-2.5rem)]" : "max-h-[60vh]")}>
+      <div
+        style={height && !zoomed ? { height } : undefined}
+        className={cn(
+          "min-h-0 flex-1",
+          scroll ? "overflow-y-auto" : "overflow-hidden",
+          !height && !zoomed ? "max-h-[60vh]" : "",
+          bodyClassName,
+        )}
+      >
         {children}
       </div>
     </div>

@@ -389,7 +389,7 @@ function ContactPage() {
       <ContactHero />
 
       {/* The composer --------------------------------------------------- */}
-      <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+      <section data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
         <div className="relative mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-20">
           <Reveal>
@@ -488,7 +488,7 @@ function ContactPage() {
           <Reveal delay={160}>
             <div className="mt-14 text-center">
               <h2 className="display-md text-foreground">
-                Or say hello the normal way<span className="text-hog-red">.</span>
+                Or say hello the normal way<span className="text-accent">.</span>
               </h2>
               <div className="mx-auto mt-3 w-56">
                 <Squiggle tone="hog-red" />
@@ -505,7 +505,7 @@ function ContactPage() {
       {/* Console -------------------------------------------------------- */}
       <section
         data-act="noir"
-        className="act-noir grain relative overflow-hidden border-t-[3px] border-ink"
+        className="act-noir grain relative overflow-hidden border-t border-border"
       >
         <div
           aria-hidden

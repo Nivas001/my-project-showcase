@@ -83,7 +83,7 @@ function ProjectMissing() {
       <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
       <p className="micro relative text-hog-red">Not found</p>
       <h1 className="hero-lg relative mt-4 text-foreground">
-        No such project<span className="text-hog-red">.</span>
+        No such project<span className="text-accent">.</span>
       </h1>
       <p className="relative mt-5 max-w-sm text-base text-muted-foreground">
         It may have been renamed or removed.
@@ -474,7 +474,7 @@ function ProjectDetail() {
       {/* ---------------------------------------------------------------- */}
       {/* Act II — the working surface                                      */}
       {/* ---------------------------------------------------------------- */}
-      <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+      <section data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 
         <div className="relative mx-auto max-w-[88rem] px-5 py-16 sm:px-8 sm:py-20">

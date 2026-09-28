@@ -137,7 +137,7 @@ function ProjectsPage() {
       <section
         id="all-projects"
         data-act="hog"
-        className="act-hog relative border-t-[3px] border-ink"
+        className="act-hog relative border-t border-border"
       >
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 

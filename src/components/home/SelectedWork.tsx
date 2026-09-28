@@ -1,181 +1,240 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { heroProject, type Project } from "@/lib/projects";
-import { toAbsoluteUrl, prettyUrl } from "@/lib/site";
-import {
-  BrowserFrame,
-  HandNote,
-  HardLink,
-  HardRouteLink,
-  SectionLabel,
-  SplitLines,
-  Sticker,
-  StatusDot,
-} from "@/components/kit";
-import { ProjectCard } from "@/components/ProjectCard";
-import { Reveal } from "@/components/Reveal";
-import { LiveProof } from "@/components/home/LiveProof";
+import { prettyUrl, shortTitle, toAbsoluteUrl } from "@/lib/site";
 import { Shot } from "@/components/Shot";
+import { Eyebrow, FadeIn, RiseWords } from "./fx";
+
+const FEATURED = 3;
 
 /**
- * The showcase proper. The lead project gets a wide feature card with browser
- * chrome; the rest fall into a standard grid.
+ * The showcase. Three projects arrive as a deck: on desktop each card pins
+ * below the header and the next one slides over it, while the ones beneath
+ * settle back and dim — so the eye is always on exactly one project, and the
+ * pile behind it says there is more. Everything else is an index: one line
+ * per project.
  */
 export function SelectedWork({ projects }: { projects: Project[] }) {
-  // Opener already gave this one a browser frame two sections up; leading with
-  // it again makes the page look like it only has one project.
-  const alreadyShown = heroProject(projects)?.id;
-  const pool = projects.filter((p) => p.id !== alreadyShown);
+  const lead = heroProject(projects);
+  const withShots = projects.filter((p) => p.screenshots.length > 0);
+  const ordered = [
+    ...(lead ? [lead] : []),
+    ...withShots.filter((p) => p.featured && p.id !== lead?.id),
+    ...withShots.filter((p) => !p.featured && p.id !== lead?.id),
+  ];
+  const featured = ordered.slice(0, FEATURED);
+  const rest = projects.filter((p) => !featured.some((f) => f.id === p.id));
 
-  const featured = pool.filter((p) => p.featured);
-  const ordered = featured.length > 0 ? [...featured, ...pool.filter((p) => !p.featured)] : pool;
-  const [lead, ...rest] = ordered;
-  const shown = rest.slice(0, 3);
-
-  if (!lead) return null;
-
-  const leadUrl = toAbsoluteUrl(lead.live_url);
+  if (featured.length === 0) return null;
 
   return (
-    <section data-act="hog" className="act-hog relative border-t-2 border-border/15">
-      <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <Reveal>
-          <SectionLabel index="02">Selected work</SectionLabel>
-        </Reveal>
+    <section id="work" data-act="noir" data-rail="Work" className="act-noir relative scroll-mt-10">
+      <div className="mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
+        <Eyebrow index="03">Selected work</Eyebrow>
 
-        <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
-          <SplitLines
-            as="h2"
-            onView
-            lines={["Things I built", "and still maintain."]}
-            className="hero-md max-w-2xl text-foreground"
+        <div className="mt-10 flex flex-wrap items-end justify-between gap-6">
+          <RiseWords
+            text="Things I built"
+            muted="and still maintain."
+            className="max-w-[20ch] text-balance font-display text-[clamp(1.9rem,3.4vw,3rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
           />
-          <Reveal delay={120}>
-            <span className="flex flex-wrap items-center gap-3">
-              <HandNote
-                tone="hog-blue"
-                rotate={-4}
-                size="sm"
-                arrow="swoop"
-                arrowClassName="h-7 w-12"
-              >
-                and the rest in here
-              </HandNote>
-              <HardRouteLink to="/projects" variant="secondary" size="md">
-                All {projects.length} projects
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </HardRouteLink>
-            </span>
-          </Reveal>
+          <FadeIn delay={0.2}>
+            <Link
+              to="/projects"
+              className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              All {projects.length} projects
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </FadeIn>
         </div>
 
-        {/* Substantiates "and still maintain" directly under the line that
-            claims it, rather than leaving it as a sentence. */}
-        <LiveProof className="mt-8" />
+        <Deck projects={featured} />
 
-        {/* Lead project — given the width it deserves. */}
-        <Reveal delay={80}>
-          <article className="hog-card mt-12 overflow-hidden">
-            <div className="grid lg:grid-cols-[1fr_1.15fr]">
-              <div className="flex flex-col justify-center gap-5 border-b-2 border-border p-6 sm:p-9 lg:border-b-0 lg:border-r-2">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <Sticker tone="hog-red" rotate={-4}>
-                    Featured
-                  </Sticker>
-                  {leadUrl ? (
-                    <span className="sticker" style={{ transform: "rotate(2deg)" }}>
-                      <StatusDot />
-                      Live
-                    </span>
-                  ) : null}
-                  <span className="font-mono text-[11px] text-muted-foreground">{lead.period}</span>
-                </div>
-
-                <h3 className="display-md text-foreground">{lead.title}</h3>
-                <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
-                  {lead.summary}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {lead.tech.slice(0, 7).map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded border border-border/25 bg-secondary px-2 py-0.5 font-mono text-[11px] text-foreground/80"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {lead.tech.length > 7 ? (
-                    <span className="px-1 py-0.5 font-mono text-[11px] text-muted-foreground">
-                      +{lead.tech.length - 7} more
-                    </span>
-                  ) : null}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 pt-1">
-                  <HardRouteLink
+        {rest.length > 0 ? (
+          <div className="mt-28 sm:mt-40">
+            <FadeIn>
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Also built
+              </p>
+            </FadeIn>
+            <ul className="mt-6 border-t border-border">
+              {rest.map((project, i) => (
+                <FadeIn as="li" key={project.id} delay={i * 0.05} y={12}>
+                  <Link
                     to="/projects/$slug"
-                    params={{ slug: lead.slug }}
-                    variant="primary"
-                    size="md"
+                    params={{ slug: project.slug }}
+                    className="group grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-border py-5 transition-colors sm:grid-cols-[1fr_12rem_5rem_auto] sm:py-6"
                   >
-                    Read the case study
-                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                  </HardRouteLink>
-                  {leadUrl ? (
-                    <HardLink
-                      href={leadUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      variant="ghost"
-                      size="md"
-                    >
-                      Visit
-                      <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </HardLink>
-                  ) : null}
-                  {lead.github_visibility === "public" && lead.github_url ? (
-                    <HardLink
-                      href={lead.github_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      variant="ghost"
-                      size="md"
-                      aria-label={`${lead.title} source on GitHub`}
-                    >
-                      <Github className="h-4 w-4" />
-                      Source
-                    </HardLink>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="bg-secondary p-6 sm:p-9">
-                <Link to="/projects/$slug" params={{ slug: lead.slug }} className="block">
-                  <BrowserFrame
-                    url={leadUrl ? prettyUrl(leadUrl) : lead.title}
-                    className="hard-shadow"
-                  >
-                    <div className="aspect-[16/10] w-full overflow-hidden bg-card">
-                      <Shot src={lead.screenshots[0]} alt={`${lead.title} screenshot`} />
-                    </div>
-                  </BrowserFrame>
-                </Link>
-              </div>
-            </div>
-          </article>
-        </Reveal>
-
-        {shown.length > 0 ? (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {shown.map((project, i) => (
-              <Reveal key={project.id} delay={i * 100}>
-                <ProjectCard project={project} index={i + 1} />
-              </Reveal>
-            ))}
+                    <span className="text-lg font-medium tracking-tight text-foreground transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2 sm:text-xl">
+                      {shortTitle(project.title)}
+                    </span>
+                    <span className="hidden truncate text-sm text-muted-foreground sm:block">
+                      {project.category}
+                    </span>
+                    <span className="hidden font-mono text-xs tabular-nums text-muted-foreground sm:block">
+                      {yearOf(project.period)}
+                    </span>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+                  </Link>
+                </FadeIn>
+              ))}
+            </ul>
           </div>
         ) : null}
       </div>
     </section>
   );
+}
+
+function useDesktop() {
+  const [desktop, setDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return desktop;
+}
+
+function Deck({ projects }: { projects: Project[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const desktop = useDesktop();
+  const stacking = desktop && !reduced;
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+
+  return (
+    <div ref={ref} className="mt-16 space-y-8 sm:mt-24 lg:space-y-0">
+      {projects.map((project, i) => (
+        <div
+          key={project.id}
+          className="lg:sticky lg:flex lg:h-[88vh] lg:items-start"
+          style={stacking ? { top: `${96 + i * 22}px` } : {}}
+        >
+          <Card
+            project={project}
+            index={i}
+            total={projects.length}
+            progress={scrollYProgress}
+            stacking={stacking}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Card({
+  project,
+  index,
+  total,
+  progress,
+  stacking,
+}: {
+  project: Project;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  stacking: boolean;
+}) {
+  const live = toAbsoluteUrl(project.live_url);
+  // Each card starts receding once the next begins to cover it, and ends
+  // smaller the deeper it sits in the pile.
+  const start = (index + 1) / total - 1 / total / 2;
+  const depth = total - 1 - index;
+  const scale = useTransform(progress, [Math.max(0, start - 0.15), 1], [1, 1 - depth * 0.045]);
+  const dim = useTransform(progress, [Math.max(0, start - 0.15), 1], [0, depth * 0.22]);
+
+  return (
+    <motion.article
+      style={stacking ? { scale } : {}}
+      initial={stacking ? false : { opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      className="relative w-full origin-top overflow-hidden rounded-3xl border border-border bg-card lg:grid lg:h-[min(72vh,600px)] lg:grid-cols-12"
+    >
+      <div className="flex flex-col justify-between gap-8 p-6 sm:p-9 lg:col-span-5 lg:p-10">
+        <p className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
+          <span className="tabular-nums text-accent">0{index + 1}</span>
+          <span className="tabular-nums">{yearOf(project.period)}</span>
+          <span className="text-border">/</span>
+          <span className="uppercase tracking-[0.14em]">{project.category}</span>
+        </p>
+
+        <div>
+          <h3 className="font-display text-[clamp(1.75rem,2.8vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.035em] text-foreground">
+            {shortTitle(project.title)}
+          </h3>
+          <p className="mt-4 line-clamp-4 text-[15px] leading-relaxed text-muted-foreground">
+            {project.summary}
+          </p>
+          <ul className="mt-6 flex flex-wrap gap-1.5">
+            {project.tech.slice(0, 5).map((t) => (
+              <li
+                key={t}
+                className="rounded-full border border-border px-2.5 py-1 font-mono text-[10.5px] text-muted-foreground"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+          <Link
+            to="/projects/$slug"
+            params={{ slug: project.slug }}
+            className="group inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-5 font-medium text-background transition-opacity hover:opacity-85"
+          >
+            Case study
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+          {live ? (
+            <a
+              href={live}
+              target="_blank"
+              rel="noreferrer"
+              className="group inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {prettyUrl(live)}
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
+          ) : null}
+        </div>
+      </div>
+
+      <Link
+        to="/projects/$slug"
+        params={{ slug: project.slug }}
+        data-cursor="View case study"
+        aria-label={`${project.title} — case study`}
+        className="group relative block aspect-[16/10] overflow-hidden border-t border-border bg-secondary lg:col-span-7 lg:aspect-auto lg:border-l lg:border-t-0"
+      >
+        <Shot
+          src={project.screenshots[0]}
+          alt=""
+          className="transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+        />
+      </Link>
+
+      {stacking ? (
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-background"
+          style={{ opacity: dim }}
+        />
+      ) : null}
+    </motion.article>
+  );
+}
+
+function yearOf(period: string): string {
+  const years = period.match(/\d{4}/g);
+  return years ? years[years.length - 1]! : period;
 }

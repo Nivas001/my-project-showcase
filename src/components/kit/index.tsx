@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
-import { accentSurface } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
 /* ==========================================================================
@@ -22,9 +21,9 @@ export function SectionLabel({
 }) {
   return (
     <div className={cn("flex items-center gap-3 text-muted-foreground", className)}>
-      {index ? <span className="micro text-accent">{index}</span> : null}
-      <span className="micro">{children}</span>
-      {rule ? <span aria-hidden className="h-px flex-1 bg-current opacity-25" /> : null}
+      {index ? <span className="font-mono text-[11px] tabular-nums text-accent">{index}</span> : null}
+      <span className="font-mono text-[11px] uppercase tracking-[0.18em]">{children}</span>
+      {rule ? <span aria-hidden className="h-px flex-1 bg-border" /> : null}
     </div>
   );
 }
@@ -98,31 +97,33 @@ export function SplitLines({
 }
 
 /* ==========================================================================
- * HardButton — the PostHog button. 2px border, solid offset shadow, and it
- * presses INTO the page on click.
+ * HardButton — a quiet pill. Solid for the one action that matters on a
+ * screen, hairline for everything else. The name is historical.
  * ======================================================================== */
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "invert";
 type ButtonSize = "sm" | "md" | "lg";
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground border-border hard-shadow",
-  secondary: "bg-card text-foreground border-border hard-shadow",
-  invert: "bg-foreground text-background border-foreground hard-shadow",
-  ghost: "bg-transparent text-foreground border-border",
+  primary: "bg-foreground text-background border-foreground hover:opacity-85",
+  secondary:
+    "bg-transparent text-foreground border-border hover:border-foreground/40 hover:bg-secondary/60",
+  invert: "bg-foreground text-background border-foreground hover:opacity-85",
+  ghost:
+    "bg-transparent text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary/60",
 };
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5 text-xs gap-1.5",
-  md: "px-5 py-2.5 text-sm gap-2",
-  lg: "px-7 py-3.5 text-base gap-2.5",
+  sm: "h-8 px-3.5 text-xs gap-1.5",
+  md: "h-10 px-5 text-sm gap-2",
+  lg: "h-12 px-6 text-[15px] gap-2.5",
 };
 
 function buttonClass(variant: ButtonVariant, size: ButtonSize, className?: string) {
   return cn(
-    "group inline-flex items-center justify-center rounded-md border-2 font-medium",
+    "group inline-flex items-center justify-center whitespace-nowrap rounded-full border font-medium tracking-tight",
+    "transition-[opacity,background-color,border-color,color,transform] duration-300 active:scale-[0.98]",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-    variant === "ghost" ? "transition-colors hover:bg-secondary" : "hog-press",
     BUTTON_VARIANTS[variant],
     BUTTON_SIZES[size],
     className,
@@ -192,14 +193,14 @@ export function HardRouteLink({
 }
 
 /* ==========================================================================
- * Sticker — a rotated badge that sits on a card like it was stuck there.
+ * Sticker — a small outlined pill. It used to sit rotated like a sticker;
+ * `rotate` is still accepted so callers compile, and ignored.
  * ======================================================================== */
 
 export function Sticker({
   children,
   tone,
   className,
-  rotate = -3,
 }: {
   children: ReactNode;
   /** A `hog-*` colour token name, e.g. "hog-blue". */
@@ -210,10 +211,7 @@ export function Sticker({
   return (
     <span
       className={cn("sticker", className)}
-      style={{
-        transform: `rotate(${rotate}deg)`,
-        ...(tone ? accentSurface(tone) : undefined),
-      }}
+      style={tone ? { color: `var(--${tone})` } : undefined}
     >
       {children}
     </span>
@@ -272,35 +270,22 @@ export function BrowserFrame({
   url,
   children,
   className,
-  tone = "hog-red",
 }: {
   url?: string;
   children: ReactNode;
   className?: string;
+  /** Retained for callers; the frame no longer paints colour. */
   tone?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-lg border-2 border-border bg-card hard-shadow-lg",
-        className,
-      )}
-    >
-      <div className="flex items-center gap-2 border-b-2 border-border bg-secondary px-3 py-2.5">
-        <span className="flex gap-1.5">
-          <span
-            className="h-2.5 w-2.5 rounded-full border border-border/40"
-            style={{ background: `var(--${tone})` }}
-          />
-          <span className="h-2.5 w-2.5 rounded-full border border-border/40 bg-hog-yellow" />
-          <span className="h-2.5 w-2.5 rounded-full border border-border/40 bg-hog-green" />
-        </span>
-        {url ? (
-          <span className="ml-2 min-w-0 flex-1 truncate rounded border border-border/25 bg-background/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+    <div className={cn("overflow-hidden rounded-xl border border-border bg-card", className)}>
+      {url ? (
+        <div className="flex items-center justify-center border-b border-border px-3 py-2">
+          <span className="min-w-0 truncate font-mono text-[10.5px] text-muted-foreground">
             {url}
           </span>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
       <div className="relative">{children}</div>
     </div>
   );
@@ -363,24 +348,8 @@ export function CopyCommand({ command, className }: { command: string; className
  * more to sell the personality than any colour choice.
  * ======================================================================== */
 
-export function Squiggle({ className, tone = "hog-red" }: { className?: string; tone?: string }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 220 14"
-      fill="none"
-      preserveAspectRatio="none"
-      className={cn("h-3 w-full", className)}
-      style={{ color: `var(--${tone})` }}
-    >
-      <path
-        d="M2 9.2c24-5.6 48-7.4 72-5.2 24 2.2 48 8.4 72 7.2 20-1 36-5.4 72-8.6"
-        stroke="currentColor"
-        strokeWidth="3.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+export function Squiggle(_: { className?: string; tone?: string }) {
+  return null;
 }
 
 /** A curving arrow for pointing at things, like a note scribbled in a margin. */
@@ -491,9 +460,8 @@ export function LocalClock({ timeZone, className }: { timeZone: string; classNam
 }
 
 /* ==========================================================================
- * PageHero — the noir band that opens every interior page, so each route
- * repeats the homepage's two-act move in miniature: dark statement, then the
- * cream working surface underneath.
+ * PageHero — the quiet band that opens every interior page: a label, one
+ * headline, one line of context. Nothing behind it.
  * ======================================================================== */
 
 export function PageHero({
@@ -513,27 +481,22 @@ export function PageHero({
   className?: string | undefined;
 }) {
   return (
-    <section data-act="noir" className={cn("act-noir grain relative overflow-hidden", className)}>
-      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-50" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-40 top-0 h-[26rem] w-[26rem] rounded-full blur-[110px]"
-        style={{
-          background: "radial-gradient(circle, var(--hog-red) 0%, transparent 70%)",
-          opacity: 0.14,
-        }}
-      />
-
-      <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-36">
-        <SectionLabel index={index} className="max-w-md">
+    <section data-act="noir" className={cn("act-noir relative", className)}>
+      <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-32 sm:px-8 sm:pb-20 sm:pt-44">
+        <SectionLabel index={index} rule={false} className="soft-in">
           {label}
         </SectionLabel>
 
-        <SplitLines as="h1" lines={lines} className="display-lg mt-6 text-foreground" />
+        <SplitLines
+          as="h1"
+          lines={lines}
+          delay={80}
+          className="display-lg mt-6 max-w-4xl text-foreground"
+        />
 
         {lede ? (
           <div
-            className="fade-rise mt-6 max-w-xl text-base leading-relaxed text-muted-foreground"
+            className="soft-in mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
             style={{ "--line-delay": "280ms" } as React.CSSProperties}
           >
             {lede}
@@ -542,8 +505,8 @@ export function PageHero({
 
         {children ? (
           <div
-            className="fade-rise mt-8"
-            style={{ "--line-delay": "360ms" } as React.CSSProperties}
+            className="soft-in mt-9"
+            style={{ "--line-delay": "380ms" } as React.CSSProperties}
           >
             {children}
           </div>

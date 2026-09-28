@@ -465,3 +465,93 @@ export function toEmbedUrl(url: string): string | null {
     return null;
   }
 }
+
+/**
+ * ============================================================================
+ * THE BOOMBOX
+ * ============================================================================
+ *
+ * What the Spotify app on the desktop plays.
+ *
+ * These are Spotify's own embed players, which need no API key, no OAuth and
+ * no account on this side. A visitor who is signed in to Spotify in the same
+ * browser gets full tracks; everyone else gets Spotify's thirty-second
+ * previews. That is a limit of the embed, not of this code, and it is the
+ * reason there is no "log in with Spotify" button — collecting somebody's
+ * Spotify credentials to play background music on a portfolio would be a
+ * spectacularly bad trade.
+ *
+ * TO PUT YOUR OWN MUSIC HERE
+ * --------------------------
+ * Open the playlist, album or track in Spotify, hit Share → Copy link. The id
+ * is the part after /playlist/ (or /album/, /track/) and before the `?`:
+ *
+ *   https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M?si=abc123
+ *                                     ^^^^^^^^^^^^^^^^^^^^^^
+ *
+ * Add a row below with that id and `kind` set to playlist | album | track.
+ * `profileUrl` is your public Spotify profile — the app links to it so anyone
+ * can follow you properly rather than listening through an iframe.
+ *
+ * The three seeded rows are Spotify's own editorial playlists, so the app has
+ * something to play before anyone touches this file. Replace them.
+ */
+export const spotify = {
+  /** Public profile link. Set to null to hide the "Follow" button. */
+  profileUrl: null as string | null,
+
+  stations: [
+    {
+      id: "37i9dQZF1DXcBWIGoYBM5M",
+      kind: "playlist" as const,
+      name: "Today's Top Hits",
+      blurb: "The default. Swap it for something of yours.",
+    },
+    {
+      id: "37i9dQZF1DX0XUsuxWHRQd",
+      kind: "playlist" as const,
+      name: "RapCaviar",
+      blurb: "For the parts of a build that need momentum.",
+    },
+    {
+      id: "37i9dQZF1DWZeKCadgRdKQ",
+      kind: "playlist" as const,
+      name: "Deep Focus",
+      blurb: "Anything with words in it loses to the compiler.",
+    },
+  ],
+} as const;
+
+export type SpotifyKind = (typeof spotify)["stations"][number]["kind"];
+
+/**
+ * Pulls the kind and id out of anything Spotify hands you — a share link, a
+ * `spotify:` URI, or a bare id pasted on its own.
+ *
+ * Returns null rather than guessing, because a malformed id renders as
+ * Spotify's own error page inside the iframe, which looks like a bug in this
+ * site rather than a typo in the box.
+ */
+export function parseSpotify(input: string): { kind: string; id: string } | null {
+  const text = input.trim();
+  if (!text) return null;
+
+  const KINDS = ["playlist", "album", "track", "episode", "show", "artist"];
+
+  const uri = text.match(/^spotify:(\w+):([A-Za-z0-9]{22})$/);
+  if (uri && KINDS.includes(uri[1]!)) return { kind: uri[1]!, id: uri[2]! };
+
+  const url = text.match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(\w+)\/([A-Za-z0-9]{22})/);
+  if (url && KINDS.includes(url[1]!)) return { kind: url[1]!, id: url[2]! };
+
+  // A bare id has no kind attached, and a playlist is the overwhelmingly
+  // likely intent when somebody pastes twenty-two characters into a music app.
+  if (/^[A-Za-z0-9]{22}$/.test(text)) return { kind: "playlist", id: text };
+
+  return null;
+}
+
+/** The embed URL for a station. `theme=0` is Spotify's dark player. */
+export function spotifyEmbed(kind: string, id: string): string {
+  return `https://open.spotify.com/embed/${kind}/${id}?utm_source=generator&theme=0`;
+}

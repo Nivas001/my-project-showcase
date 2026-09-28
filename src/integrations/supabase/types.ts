@@ -161,6 +161,93 @@ export type Database = {
         }
         Relationships: []
       }
+      notes: {
+        Row: {
+          author_email: string
+          author_name: string
+          body: string
+          created_at: string
+          hidden: boolean
+          id: string
+          pinned: boolean
+          tint: string
+          title: string
+        }
+        Insert: {
+          author_email: string
+          author_name: string
+          body?: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          pinned?: boolean
+          tint?: string
+          title?: string
+        }
+        Update: {
+          author_email?: string
+          author_name?: string
+          body?: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          pinned?: boolean
+          tint?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      paintings: {
+        Row: {
+          artist_email: string
+          artist_name: string
+          created_at: string
+          featured: boolean
+          height: number
+          hidden: boolean
+          id: string
+          image: string
+          rating: number | null
+          rating_note: string | null
+          seconds: number
+          strokes: number
+          title: string
+          width: number
+        }
+        Insert: {
+          artist_email: string
+          artist_name: string
+          created_at?: string
+          featured?: boolean
+          height?: number
+          hidden?: boolean
+          id?: string
+          image: string
+          rating?: number | null
+          rating_note?: string | null
+          seconds?: number
+          strokes?: number
+          title?: string
+          width?: number
+        }
+        Update: {
+          artist_email?: string
+          artist_name?: string
+          created_at?: string
+          featured?: boolean
+          height?: number
+          hidden?: boolean
+          id?: string
+          image?: string
+          rating?: number | null
+          rating_note?: string | null
+          seconds?: number
+          strokes?: number
+          title?: string
+          width?: number
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category: string

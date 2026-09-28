@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { canonical } from "@/lib/site";
 import { useEffect, useMemo, useState } from "react";
-import { Clock, Eye, GitBranch, Headphones, Skull, Video, BookOpen } from "lucide-react";
+import { Clock, Eye, GitBranch, Headphones, Play, Skull, Video, BookOpen } from "lucide-react";
 /* Metadata only. The library page lists sixteen stories; it does not need a
    single line of any of them. See content/horror/manifest.ts. */
 import { STORY_INDEX, TOTAL_ENDINGS, type StoryMeta } from "@/content/horror/manifest";
+import { VOICE_INDEX, VOICE_LANG_LABEL } from "@/content/horror/voice";
 import { readProgress, type Progress } from "@/lib/horror/progress";
 import { PageHero } from "@/components/kit";
 
 const TITLE = "The Dark Room — Interactive horror by Srinivas M";
 const DESCRIPTION =
-  "Sixteen branching horror stories with live-synthesised sound, timed choices and multiple endings — including found-footage tapes rendered in the browser and stories written in Tanglish. Read in the dark. Headphones recommended.";
+  "Sixteen branching horror stories and seven narrated ones — in English, Tamil and Tanglish — with live-synthesised sound, timed choices and multiple endings. Read in the dark. Headphones recommended.";
 
 export const Route = createFileRoute("/horror/")({
   head: () => ({
@@ -87,8 +88,8 @@ function HorrorLibrary() {
       <PageHero
         index="01"
         label="The dark room"
-        lines={["Sixteen stories.", "None of them", "end well."]}
-        lede="Every one branches, times you out if you hesitate, and finishes more than one way. Two of them are tapes — found footage generated in your browser, frame by frame. Two are in Tanglish. Every sound is synthesised live; there is not a single audio file on this page."
+        lines={["Twenty-three", "stories. None", "end well."]}
+        lede="Sixteen branch, time you out if you hesitate, and finish more than one way. Seven are narrated out loud — in English, Tamil and Tanglish — with the words lighting up as they are spoken. Every sound on this page is synthesised live. There is not a single audio file."
       >
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground">
           <span>
@@ -114,7 +115,10 @@ function HorrorLibrary() {
         data-act="noir"
         className="act-noir grain relative overflow-hidden border-t border-border"
       >
-        <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+        <div
+          aria-hidden
+          className="hairline-grid pointer-events-none absolute inset-0 opacity-40"
+        />
 
         <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
           {/* ---- Filters ---- */}
@@ -139,6 +143,82 @@ function HorrorLibrary() {
                 </button>
               );
             })}
+          </div>
+
+          {/* ---- Narrated ----
+
+               A separate band rather than another filter chip. These are a
+               different activity: you sit and listen rather than read and
+               choose, and burying them in a grid of sixteen branching stories
+               would mean nobody ever found out the site could talk. */}
+          <section className="mb-14">
+            <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-border pb-3">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                Read to you
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Seven stories narrated out loud, with the words lit as they are spoken. English,
+                Tamil and Tanglish.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {VOICE_INDEX.map((story, i) => (
+                <Link
+                  key={story.slug}
+                  to="/horror/listen/$slug"
+                  params={{ slug: story.slug }}
+                  className="beat-in group relative flex flex-col overflow-hidden rounded-md border border-hog-blue/35 bg-card/60 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-hog-blue hover:bg-card"
+                  style={{ animationDelay: `${i * 45}ms` }}
+                >
+                  <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em]">
+                    <span className="inline-flex items-center gap-1.5 rounded-sm bg-hog-blue/20 px-2 py-0.5 text-hog-blue">
+                      <Play className="h-2.5 w-2.5" /> voice
+                    </span>
+                    <span className="text-muted-foreground">{VOICE_LANG_LABEL[story.lang]}</span>
+                    <span
+                      className="ml-auto text-muted-foreground"
+                      title={`Fear level ${story.fear} of 5`}
+                    >
+                      {"▮".repeat(story.fear)}
+                      {"▯".repeat(5 - story.fear)}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-3 font-display text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-hog-blue">
+                    {story.title}
+                  </h3>
+
+                  <p
+                    className={`mt-2 flex-1 text-sm leading-relaxed text-muted-foreground ${
+                      story.lang === "english" ? "font-story text-[15px]" : ""
+                    }`}
+                  >
+                    {story.hook}
+                  </p>
+
+                  <div className="mt-4 flex items-center gap-4 font-mono text-[11px] text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5" />
+                      {story.minutes}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Headphones className="h-3.5 w-3.5" />
+                      narrated
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-border pb-3">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+              You decide
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Sixteen that branch. Hesitate and they choose for you.
+            </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

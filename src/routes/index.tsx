@@ -3,10 +3,12 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { site, canonical } from "@/lib/site";
 import { projectsQuery, skillGroupsQuery } from "@/lib/queries";
 import { Gate } from "@/components/home/Gate";
-import { Statements } from "@/components/home/Statements";
-import { Opener } from "@/components/home/Opener";
+import { Intro } from "@/components/home/Intro";
+import { Capabilities } from "@/components/home/Capabilities";
 import { SelectedWork } from "@/components/home/SelectedWork";
 import { SpecSheet } from "@/components/home/SpecSheet";
+import { Anatomy } from "@/components/home/Anatomy";
+import { SectionRail } from "@/components/home/SectionRail";
 import { HowIWork } from "@/components/home/HowIWork";
 import { HireCTA } from "@/components/home/HireCTA";
 
@@ -63,22 +65,14 @@ export const Route = createFileRoute("/")({
 });
 
 /**
- * The homepage is one story in two acts.
+ * The homepage is one continuous scroll on a single ground:
  *
- *   Act I  (noir)  Gate → Statements
- *   Act II (hog)   Opener → Work → Spec sheet → Principles → Close
+ *   Hero → 01 The work → 02 What I do → 03 Selected work → 04 Under the hood
+ *        → 05 Technical depth → 06 How I work → 07 Contact
  *
- * Each section carries `data-act` so the sticky header can invert itself as
- * the ground changes underneath it (see useSectionAct in __root.tsx).
- *
- * It ran to eleven sections and roughly thirteen viewports, and said the same
- * few things repeatedly: "three live, built solo" appeared five times, the
- * four-capability grid twice, the stack three times. Four sections are gone:
- *
- *   ActWipe   1.6 viewports of scroll to deliver one headline
- *   Pillars   merged into Opener, which had a weaker copy of the same grid
- *   Toolbox   merged into SpecSheet, which already listed the stack
- *   Changelog moved to the changelog.log window on the desktop
+ * Each section says one thing and gets out of the way. The macOS desktop, the
+ * pinned statement screens and the two-act colour change are gone; the
+ * portrait, the arcade, the horror room and the app playground all remain.
  */
 function Home() {
   const { data: projects } = useSuspenseQuery(projectsQuery);
@@ -89,13 +83,14 @@ function Home() {
   return (
     <>
       <Gate projects={projects} />
-      <Statements />
-
-      <Opener projects={projects} />
+      <Intro projects={projects} />
+      <Capabilities />
       <SelectedWork projects={projects} />
+      <Anatomy />
       <SpecSheet projects={projects} groups={groups} />
       <HowIWork />
       <HireCTA />
+      <SectionRail />
     </>
   );
 }

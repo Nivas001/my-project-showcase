@@ -95,7 +95,7 @@ export function ContactHero() {
             <Marked kind="circle" tone="hog-red" delay={1100} duration={950} immediate>
               talk
             </Marked>
-            <span className="text-hog-red">.</span>
+            <span className="text-accent">.</span>
           </span>
         </h1>
 

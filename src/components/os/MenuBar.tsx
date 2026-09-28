@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type ComponentType } from "react";
 import {
+  AppWindow,
   ArrowUp,
   BatteryMedium,
   BookOpen,
@@ -16,8 +17,12 @@ import {
   Mail,
   MapPin,
   Phone,
+  Monitor,
+  Moon,
   Search,
+  SlidersHorizontal,
   Sparkles,
+  Sun,
   User,
   Wifi,
 } from "lucide-react";
@@ -25,6 +30,8 @@ import { toast } from "sonner";
 import { site } from "@/lib/site";
 import { LocalClock, ScrambleText, StatusDot, useSpecular } from "@/components/kit";
 import { cn } from "@/lib/utils";
+import { useTheme, type Mode } from "@/lib/os/theme";
+import { useWindows, type AppId } from "@/components/os/WindowManager";
 
 /* ==========================================================================
  * THE MENU BAR
@@ -297,6 +304,133 @@ function MenuPanel({
 }
 
 /* --------------------------------------------------------------------------
+ * Appearance
+ *
+ * A three-way segmented control rather than a single toggle. A plain switch
+ * cannot express "follow my system", and on a site that ships two complete
+ * palettes that is the option most people actually want.
+ *
+ * It sits in the status cluster beside the clock, which is where an operating
+ * system puts the controls that change how the whole machine looks.
+ * ------------------------------------------------------------------------ */
+
+const MODE_OPTIONS: { id: Mode; label: string; Icon: typeof Sun }[] = [
+  { id: "light", label: "Light", Icon: Sun },
+  { id: "dark", label: "Dark", Icon: Moon },
+  { id: "auto", label: "Match my system", Icon: Monitor },
+];
+
+function AppearanceControl() {
+  const { mode, setMode } = useTheme();
+  const { open } = useWindows();
+
+  return (
+    <span className="flex items-center gap-0.5 rounded-lg bg-foreground/8 p-0.5">
+      {MODE_OPTIONS.map(({ id, label, Icon }) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => setMode(id)}
+          title={label}
+          aria-label={label}
+          aria-pressed={mode === id}
+          className={cn(
+            "grid h-6 w-6 place-items-center rounded-[6px] transition-colors",
+            mode === id
+              ? "bg-foreground text-background"
+              : "text-foreground/60 hover:bg-foreground/10 hover:text-foreground",
+          )}
+        >
+          <Icon className="h-3 w-3" />
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={() => open("settings")}
+        title="Appearance and desktop settings"
+        aria-label="Open settings"
+        className="ml-0.5 grid h-6 w-6 place-items-center rounded-[6px] text-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground"
+      >
+        <SlidersHorizontal className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
+/* --------------------------------------------------------------------------
+ * The apps menu
+ *
+ * Every window on the site, opened from the bar. This is the only route into
+ * the apps that does not require finding an icon first, and it is deliberately
+ * a plain list: the dock is for browsing, the menu is for knowing what you
+ * want.
+ * ------------------------------------------------------------------------ */
+
+const APP_MENU: { id: AppId; label: string; hint: string }[] = [
+  { id: "paint", label: "Paint", hint: "Draw, then hang it" },
+  { id: "notes", label: "Notes", hint: "The public board" },
+  { id: "music", label: "Boombox", hint: "Spotify, in a window" },
+  { id: "tycoon", label: "Ship It Tycoon", hint: "Run a studio" },
+  { id: "minesweeper", label: "Minesweeper", hint: "Ten mines" },
+  { id: "terminal", label: "Terminal", hint: "It drives the site" },
+  { id: "calculator", label: "Calculator", hint: "Four functions" },
+  { id: "photos", label: "Photos", hint: "Every screenshot" },
+  { id: "vibe", label: "Vibe Check", hint: "Diagnostics, of a sort" },
+  { id: "excuses", label: "Excuse Engine", hint: "Standup in four minutes" },
+  { id: "assistant", label: "NIV-9000", hint: "Unhelpful by design" },
+  { id: "installer", label: "Setup", hint: "It never finishes" },
+  { id: "settings", label: "System Settings", hint: "Skins and bad ideas" },
+];
+
+function AppsMenu({ open: isOpen, onPick }: { open: boolean; onPick: () => void }) {
+  const { open } = useWindows();
+
+  return (
+    <div
+      role="menu"
+      aria-hidden={!isOpen}
+      className={cn(
+        "vibrancy-strong absolute left-0 top-[calc(100%+0.45rem)] z-50 w-72 origin-top-left rounded-xl p-1.5 transition-[opacity,transform] duration-150",
+        isOpen
+          ? "pointer-events-auto scale-100 opacity-100"
+          : "pointer-events-none scale-[0.97] opacity-0",
+      )}
+    >
+      <p className="px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        Opens in a window
+      </p>
+      {APP_MENU.map((app) => (
+        <button
+          key={app.id}
+          type="button"
+          role="menuitem"
+          tabIndex={isOpen ? 0 : -1}
+          onClick={() => {
+            open(app.id);
+            onPick();
+          }}
+          className="flex w-full items-baseline gap-2 rounded-lg px-2.5 py-[7px] text-left transition-colors hover:bg-foreground/12"
+        >
+          <span className="text-[13px] text-foreground">{app.label}</span>
+          <span className="ml-auto truncate text-[11px] text-muted-foreground">{app.hint}</span>
+        </button>
+      ))}
+      <span aria-hidden className="my-1 block h-px bg-foreground/12" />
+      <Link
+        to="/apps"
+        role="menuitem"
+        tabIndex={isOpen ? 0 : -1}
+        onClick={onPick}
+        className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] text-foreground transition-colors hover:bg-foreground/12"
+      >
+        <AppWindow className="h-3.5 w-3.5 opacity-70" />
+        All apps as a page
+      </Link>
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------------------
  * The bar
  * ------------------------------------------------------------------------ */
 
@@ -391,6 +525,27 @@ export function MenuBar({
 
         {/* Section menus. */}
         <nav aria-label="Sections" className="flex items-center">
+          {/* Apps sits first: it is the only menu that opens things rather
+              than navigating, and it is the way into half the site. */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setOpen((v) => (v === "apps" ? null : "apps"))}
+              onPointerEnter={() => setOpen((v) => (v ? "apps" : v))}
+              aria-expanded={open === "apps"}
+              aria-haspopup="menu"
+              className={cn(
+                "rounded-lg px-2.5 py-1.5 text-[13px] transition-colors",
+                open === "apps"
+                  ? "bg-foreground/15 text-foreground"
+                  : "text-foreground/75 hover:bg-foreground/10 hover:text-foreground",
+              )}
+            >
+              Apps
+            </button>
+            <AppsMenu open={open === "apps"} onPick={close} />
+          </div>
+
           {MENUS.map((menu) => {
             const isOpen = open === menu.id;
             const active = menu.items.some(
@@ -465,6 +620,8 @@ export function MenuBar({
             <Wifi className="h-4 w-4" />
             <BatteryMedium className="h-4 w-4" />
           </span>
+
+          <AppearanceControl />
 
           <span className="flex items-center gap-2 rounded-lg px-2.5 py-1.5">
             <StatusDot />

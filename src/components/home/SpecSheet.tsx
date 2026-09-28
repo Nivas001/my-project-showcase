@@ -1,19 +1,26 @@
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/projects";
-import { site, skills, toAbsoluteUrl } from "@/lib/site";
-import { accentFor } from "@/lib/accents";
-import { Annotation, SectionLabel, SplitLines, StatusDot } from "@/components/kit";
-import { Reveal, CountUp } from "@/components/Reveal";
+import { shortTitle, skills, toAbsoluteUrl } from "@/lib/site";
+import { CountUp } from "@/components/Reveal";
+import { EASE, Eyebrow, FadeIn, RiseWords } from "./fx";
 
 type Group = { group: string; items: string[] };
 
+/* Two columns on phones, four on desktop — a rule between neighbours only. */
+const DIVIDERS = [
+  "",
+  "border-l border-border pl-6 lg:pl-8",
+  "lg:border-l lg:border-border lg:pl-8",
+  "border-l border-border pl-6 lg:pl-8",
+];
+
 /**
- * The hard numbers and the stack, as one spec sheet. A table signals "here are
- * the facts, check them" better than a row of tiles does.
- *
- * The stack slab used to be its own Toolbox section. Between the two, the stack
- * was listed three times on one page — here, in Toolbox, and again inside the
- * pillar cards — so the two sections became one and the table lost its
- * "Primary stack" / "Also fluent in" rows, which the slab below states in full.
+ * Technical depth: four figures, the research, and the whole stack — set as
+ * plain columns of text. It used to be tiles, a six-row table and a bordered
+ * grid; the same facts read faster when nothing is drawn around them.
  */
 export function SpecSheet({
   projects,
@@ -23,156 +30,179 @@ export function SpecSheet({
   groups?: Group[] | undefined;
 }) {
   const stack = groups && groups.length > 0 ? groups : skills;
-  // A research demo on Hugging Face has a live URL but isn't a product in
-  // production — counting it would contradict the copy everywhere else.
   const liveProducts = projects.filter(
     (p) => toAbsoluteUrl(p.live_url) && p.category !== "Research",
   ).length;
   const techCount = new Set(projects.flatMap((p) => p.tech)).size;
+  const research = projects.find((p) => p.category === "Research");
 
-  const headline = [
-    { value: String(liveProducts), label: "products in production", accent: "hog-red" },
-    { value: String(projects.length), label: "projects shipped", accent: "hog-blue" },
-    { value: "8.79", label: "MCA GPA / 10", accent: "hog-yellow" },
-    { value: String(techCount), label: "technologies used", accent: "hog-green" },
-  ];
-
-  const rows: [string, React.ReactNode][] = [
-    ["Based in", site.location],
-    ["Working hours", "IST (UTC+5:30) — flexible for overlap"],
-    ["Education", "MCA, Pondicherry University · 2023–2025"],
-    ["Research", "Tamil abstractive summarisation with NER"],
-    [
-      "Status",
-      <span key="status" className="inline-flex items-center gap-2">
-        <StatusDot />
-        Available for work
-      </span>,
-    ],
-    ["Typical reply", "Within a day"],
+  const figures = [
+    { value: String(liveProducts), label: "Products in production" },
+    { value: String(projects.length), label: "Projects shipped" },
+    { value: String(techCount), label: "Technologies in use" },
+    { value: "8.79", label: "MCA GPA, out of 10" },
   ];
 
   return (
-    <section data-act="hog" className="act-hog relative border-t-2 border-border/15">
-      <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <Reveal>
-          <SectionLabel index="04">By the numbers</SectionLabel>
-        </Reveal>
+    <section data-act="noir" data-rail="Stack" className="act-noir relative">
+      <div className="mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
+        <Eyebrow index="05">Technical depth</Eyebrow>
 
-        <SplitLines
-          as="h2"
-          onView
-          lines={["The spec sheet."]}
-          className="hero-md mt-6 text-foreground"
+        <RiseWords
+          text="The stack,"
+          muted="and the numbers behind it."
+          className="mt-10 max-w-[20ch] text-balance font-display text-[clamp(1.9rem,3.4vw,3rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
         />
-        <Reveal delay={100}>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Every figure here is checkable on the pages behind it, and the stack below is the whole
-            of it — deep in the first two columns, comfortable in the rest.
-          </p>
-        </Reveal>
 
-        {/* Headline figures. */}
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {headline.map((stat, i) => (
-            <Reveal key={stat.label} delay={i * 80}>
-              <div className="hog-card flex h-full flex-col justify-between overflow-hidden">
-                <span
-                  aria-hidden
-                  className="h-1.5 w-full"
-                  style={{ background: `var(--${stat.accent})` }}
-                />
-                <div className="p-5">
-                  <div
-                    className="font-display text-5xl font-bold leading-none tracking-tighter"
-                    style={{ color: `var(--${stat.accent})` }}
-                  >
-                    <CountUp value={stat.value} />
-                  </div>
-                  <p className="mt-2.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {stat.label}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
+        <dl className="mt-16 grid grid-cols-2 gap-y-10 border-y border-border py-10 sm:mt-20 lg:grid-cols-4 lg:py-12">
+          {figures.map((figure, i) => (
+            <FadeIn key={figure.label} delay={i * 0.08} className={DIVIDERS[i] ?? ""}>
+              <dt className="font-display text-[clamp(2.5rem,5vw,4rem)] font-medium leading-none tracking-[-0.045em] text-foreground tabular-nums">
+                <CountUp value={figure.value} />
+              </dt>
+              <dd className="mt-3 text-[13px] text-muted-foreground">{figure.label}</dd>
+            </FadeIn>
           ))}
-        </div>
+        </dl>
 
-        {/* The detail table. */}
-        <Reveal delay={120}>
-          <div className="relative mt-6">
-            <Annotation
-              tone="hog-purple"
-              rotate={4}
-              className="absolute -top-8 right-2 hidden lg:block"
+        {research ? (
+          <FadeIn className="mt-12">
+            <Link
+              to="/projects/$slug"
+              params={{ slug: research.slug }}
+              className="group grid gap-3 sm:grid-cols-[10rem_1fr_auto] sm:items-baseline sm:gap-8"
             >
-              all verifiable ↓
-            </Annotation>
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
+                Research
+              </span>
+              <span className="max-w-2xl text-[15px] leading-relaxed text-foreground/90">
+                Entity-preserving abstractive summarisation for Tamil — mT5 fine-tuned with PEFT,
+                NER wired in so the names survive. Public on Hugging Face.
+              </span>
+              <ArrowUpRight className="hidden h-4 w-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground sm:block" />
+            </Link>
+          </FadeIn>
+        ) : null}
 
-            <div className="hog-card overflow-hidden">
-              <table className="w-full text-left">
-                <tbody>
-                  {rows.map(([label, value], i) => (
-                    <tr
-                      key={label}
-                      className={i < rows.length - 1 ? "border-b-2 border-border/15" : undefined}
-                    >
-                      <th
-                        scope="row"
-                        className="w-[38%] whitespace-nowrap bg-secondary px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground sm:w-[30%] sm:px-6"
-                      >
-                        {label}
-                      </th>
-                      <td className="px-4 py-3 text-sm text-foreground sm:px-6">{value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ---- The stack, in full ---- */}
-        <Reveal delay={80}>
-          <p className="micro mt-14 text-muted-foreground">Everything I reach for</p>
-          <div className="hog-card mt-5 grid overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
-            {stack.map((group, gi) => {
-              const accent = accentFor(gi);
-              return (
-                <div
-                  key={group.group}
-                  className="border-border/15 p-5 [&:not(:last-child)]:border-b-2 sm:[&:not(:last-child)]:border-b-0 sm:[&:nth-child(-n+2)]:border-b-2 sm:[&:nth-child(odd)]:border-r-2 lg:[&:nth-child(-n+2)]:border-b-0 lg:[&:nth-child(n)]:border-b-0 lg:[&:not(:last-child)]:border-r-2"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      aria-hidden
-                      className="h-3 w-3 shrink-0 rounded-sm border-2 border-border"
-                      style={{ background: `var(--${accent})` }}
-                    />
-                    <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-foreground">
-                      {group.group}
-                    </h3>
-                  </div>
-
-                  <ul className="mt-4 space-y-1.5">
-                    {group.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-baseline gap-2 text-[13px] leading-relaxed text-muted-foreground"
-                      >
-                        <span aria-hidden className="text-foreground/25">
-                          ―
-                        </span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        </Reveal>
+        <StackExplorer stack={stack} projects={projects} />
       </div>
     </section>
+  );
+}
+
+/** Does a stored project tech label refer to this stack item? "React 19" is React; "C" is only C. */
+function uses(project: Project, item: string): boolean {
+  const needle = item.toLowerCase();
+  return project.tech.some((t) => {
+    const hay = t.toLowerCase();
+    if (needle.length < 3 || hay.length < 3) return hay === needle;
+    return hay.includes(needle) || needle.includes(hay);
+  });
+}
+
+/**
+ * The stack as something to interrogate rather than read. Every tool carries
+ * a count of the projects it shipped in; pointing at one lists them, so
+ * "I know Postgres" becomes "here are the four products running on it".
+ */
+function StackExplorer({ stack, projects }: { stack: Group[]; projects: Project[] }) {
+  const [active, setActive] = useState<string | null>(null);
+  const usedIn = active ? projects.filter((p) => uses(p, active)) : [];
+
+  return (
+    <div className="mt-16 sm:mt-20" onMouseLeave={() => setActive(null)}>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4 lg:gap-8">
+        {stack.map((group, gi) => (
+          <FadeIn key={group.group} delay={gi * 0.08}>
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              {group.group}
+            </h3>
+            <ul className="mt-5 space-y-1">
+              {group.items.map((item) => {
+                const count = projects.filter((p) => uses(p, item)).length;
+                const on = active === item;
+                const faded = active !== null && !on;
+                return (
+                  <li key={item}>
+                    <button
+                      type="button"
+                      onMouseEnter={() => setActive(item)}
+                      onFocus={() => setActive(item)}
+                      onClick={() => setActive((a) => (a === item ? null : item))}
+                      aria-pressed={on}
+                      className={`group -mx-2 flex items-baseline gap-1.5 rounded-md px-2 py-0.5 text-left text-[15px] transition-[color,opacity,background-color] duration-300 ${
+                        on ? "bg-secondary text-foreground" : "text-foreground/85"
+                      } ${faded ? "opacity-40" : "opacity-100"}`}
+                    >
+                      {item}
+                      {count > 0 ? (
+                        <sup
+                          className={`font-mono text-[9.5px] tabular-nums transition-colors ${
+                            on ? "text-accent" : "text-muted-foreground"
+                          }`}
+                        >
+                          {count}
+                        </sup>
+                      ) : null}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </FadeIn>
+        ))}
+      </div>
+
+      <div
+        aria-live="polite"
+        className="mt-12 flex min-h-[3.5rem] flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-5 text-[14px]"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {active ? (
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, ease: EASE }}
+              className="flex flex-wrap items-center gap-x-4 gap-y-2"
+            >
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                {active}
+              </span>
+              {usedIn.length > 0 ? (
+                <>
+                  <span className="text-muted-foreground">shipped in</span>
+                  {usedIn.map((p) => (
+                    <Link
+                      key={p.id}
+                      to="/projects/$slug"
+                      params={{ slug: p.slug }}
+                      className="link-sweep text-foreground"
+                    >
+                      {shortTitle(p.title)}
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <span className="text-muted-foreground">
+                  in my toolkit — not in a shipped project on this site yet
+                </span>
+              )}
+            </motion.div>
+          ) : (
+            <motion.p
+              key="hint"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground"
+            >
+              Point at any tool to see where it shipped — the small number is how many projects
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }

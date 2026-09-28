@@ -312,23 +312,23 @@
 
 @utility display-xl {
   font-family: var(--ui-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 0.86;
   letter-spacing: -0.045em;
-  font-size: clamp(2.75rem, 11vw, 9.5rem);
+  font-size: clamp(2.75rem, 7vw, 6rem);
 }
 
 @utility display-lg {
   font-family: var(--ui-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 0.92;
   letter-spacing: -0.038em;
-  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  font-size: clamp(2.25rem, 5.4vw, 4.5rem);
 }
 
 @utility display-md {
   font-family: var(--ui-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
   font-size: clamp(1.75rem, 4.2vw, 3.25rem);
@@ -336,7 +336,7 @@
 
 @utility display-sm {
   font-family: var(--ui-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.022em;
   font-size: clamp(1.35rem, 2.6vw, 2rem);
@@ -368,30 +368,27 @@
    Separate from display-* so the rest of the site keeps Inter Tight and only
    the two or three real headline moments switch face. */
 @utility hero-xl {
-  font-family: var(--ui-hero);
-  font-weight: 800;
-  font-variation-settings: "opsz" 96;
-  line-height: 0.84;
-  letter-spacing: -0.04em;
-  font-size: clamp(2.9rem, 11.5vw, 10rem);
+  font-family: var(--ui-display);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-size: clamp(2.75rem, 7vw, 6rem);
 }
 
 @utility hero-lg {
-  font-family: var(--ui-hero);
-  font-weight: 800;
-  font-variation-settings: "opsz" 72;
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-  font-size: clamp(2.4rem, 7.5vw, 6rem);
+  font-family: var(--ui-display);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-size: clamp(2.25rem, 5.6vw, 4.75rem);
 }
 
 @utility hero-md {
-  font-family: var(--ui-hero);
-  font-weight: 700;
-  font-variation-settings: "opsz" 48;
-  line-height: 1;
-  letter-spacing: -0.028em;
-  font-size: clamp(1.9rem, 4.6vw, 3.6rem);
+  font-family: var(--ui-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-size: clamp(1.85rem, 3.6vw, 3rem);
 }
 
 /* The name, wherever it is set large. A warm fill plus a faint outline so it
@@ -572,43 +569,37 @@
  * ========================================================================= */
 
 @utility hard-shadow {
-  box-shadow: var(--shadow-hard);
+  box-shadow: none;
 }
 
 @utility hard-shadow-lg {
-  box-shadow: var(--shadow-hard-lg);
+  box-shadow: none;
 }
 
 /* A card that lifts INTO its shadow on hover — the shadow grows as the card
    moves up-left, so the piece feels physically picked up off the page. */
 @utility hog-card {
-  border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
   background: var(--card);
-  box-shadow: var(--shadow-hard);
   transition:
-    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 300ms ease;
 }
 
 @utility hog-card-hover {
   &:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: var(--shadow-hard-lg);
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
   }
 }
 
 @utility hog-press {
   transition:
-    transform 110ms ease,
-    box-shadow 110ms ease;
-  &:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--shadow-hard-lg);
-  }
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease;
   &:active {
-    transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0 var(--ink);
+    transform: scale(0.98);
   }
 }
 
@@ -617,17 +608,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--card);
   padding: 0.2rem 0.6rem;
   font-family: var(--ui-mono);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  box-shadow: 2px 2px 0 var(--border);
-  transform: rotate(-3deg);
 }
 
 /* ===========================================================================
@@ -639,33 +628,16 @@
 @utility grain {
   position: relative;
   isolation: isolate;
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.4;
-    background-image:
-      repeating-radial-gradient(circle at 13% 27%, oklch(1 0 0 / 3.5%) 0 1px, transparent 1px 3px),
-      repeating-radial-gradient(circle at 67% 71%, oklch(1 0 0 / 2.5%) 0 1px, transparent 1px 4px);
-    background-size:
-      180px 180px,
-      240px 240px;
-  }
 }
 
+/* The grid and dot textures are retired. The utilities stay so the pages that
+   still carry the class names render cleanly — they simply paint nothing. */
 @utility hairline-grid {
-  background-image:
-    linear-gradient(var(--hairline) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
-  background-size: 72px 72px;
+  background-image: none;
 }
 
-/* Dotted ground for hog sections — PostHog's graph-paper feel. */
 @utility dot-grid {
-  background-image: radial-gradient(var(--hairline) 1.2px, transparent 1.2px);
-  background-size: 22px 22px;
+  background-image: none;
 }
 
 /* ===========================================================================
@@ -785,16 +757,18 @@
 /* Scroll-triggered reveal, driven by the IntersectionObserver in Reveal.tsx. */
 @utility reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(24px);
+  filter: blur(4px);
   transition:
-    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+    opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1000ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1000ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @utility reveal-in {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
 }
 
 /* Underline that draws in from the left on hover. */
@@ -1779,8 +1753,10 @@
   }
 }
 
+/* The drifting colour blobs behind page heroes are retired with the rest of
+   the wallpaper. Anything still carrying the class simply is not drawn. */
 @utility wallpaper-drift {
-  animation: wallpaper-drift 26s ease-in-out infinite;
+  display: none;
 }
 
 /* Selection marquee look for a focused desktop icon. */
@@ -1909,5 +1885,919 @@
 
   @page {
     margin: 16mm;
+  }
+}
+
+/* ===========================================================================
+ * MODE — light / dark
+ * ===========================================================================
+ *
+ * The site is one story in two acts (noir, then hog). Mode is a second axis
+ * crossed over that: each act is defined twice, once bright and once dark, so
+ * the register survives the switch. Noir stays the quiet cinematic room and hog
+ * stays the loud product room whichever way the toggle is thrown.
+ *
+ * `--ink` and `--cream` are the two constants that have to move with the mode.
+ * Everything drawn with a hard 2-3px rule or a solid offset shadow points at
+ * `--ink`, so redefining it here re-inks the entire graphic system at once
+ * rather than asking forty components to branch.
+ *
+ * Specificity: html[data-mode="x"] is (0,1,1), which clears both `:root` and
+ * `.act-noir` from the block near the top of this file without !important.
+ * ========================================================================= */
+
+/* ---- DARK (default) ------------------------------------------------------
+ * Act I is already black. Act II moves from cream to a midnight product
+ * register: charcoal ground, bright rules, the same loud accents. Contrast is
+ * measured against the ground, not guessed — body copy clears 12:1 and the
+ * muted tier clears 5.5:1.
+ * ------------------------------------------------------------------------ */
+
+html[data-mode="dark"] {
+  --ink: oklch(0.93 0.005 100);
+  --cream: oklch(0.2 0.008 250);
+}
+
+html[data-mode="dark"] .act-hog {
+  --background: oklch(0.195 0.008 255);
+  --foreground: oklch(0.96 0.003 100);
+  --card: oklch(0.245 0.009 255);
+  --card-foreground: oklch(0.96 0.003 100);
+  --popover: oklch(0.245 0.009 255);
+  --popover-foreground: oklch(0.96 0.003 100);
+  --primary: oklch(0.7 0.19 33);
+  --primary-foreground: oklch(0.16 0.02 30);
+  --secondary: oklch(0.275 0.01 255);
+  --secondary-foreground: oklch(0.96 0.003 100);
+  --muted: oklch(0.275 0.01 255);
+  --muted-foreground: oklch(0.72 0.006 255);
+  --accent: oklch(0.7 0.17 265);
+  --accent-foreground: oklch(0.15 0.03 265);
+  --destructive: oklch(0.68 0.2 25);
+  --destructive-foreground: oklch(0.16 0.02 25);
+  --border: oklch(0.93 0.005 100);
+  --input: oklch(0.34 0.01 255);
+  --ring: oklch(0.7 0.19 33);
+
+  --surface-raised: oklch(0.275 0.01 255);
+  --hairline: oklch(1 0 0 / 18%);
+  /* The offset shadow inverts with the ink: a bright block behind a dark card
+     is the same graphic idea as a black block behind a cream one. */
+  --shadow-hard: 3px 3px 0 oklch(0.93 0.005 100);
+  --shadow-hard-lg: 6px 6px 0 oklch(0.93 0.005 100);
+
+  --sidebar: oklch(0.245 0.009 255);
+  --sidebar-foreground: oklch(0.96 0.003 100);
+  --sidebar-accent: oklch(0.275 0.01 255);
+  --sidebar-accent-foreground: oklch(0.96 0.003 100);
+  --sidebar-border: oklch(0.93 0.005 100);
+
+  color-scheme: dark;
+}
+
+/* ---- LIGHT ---------------------------------------------------------------
+ * Act I becomes paper: a warm near-white with near-black ink, which keeps the
+ * restraint of the noir register without the black. Act II keeps its cream,
+ * lifted very slightly so the two grounds are still tellable apart when a
+ * section boundary is the only thing between them.
+ * ------------------------------------------------------------------------ */
+
+html[data-mode="light"] {
+  --ink: oklch(0.18 0 0);
+  --cream: oklch(0.945 0.006 120);
+
+  /* The brand set needs a touch more depth on a bright ground: the default red
+     and green both drop under 4.5:1 against near-white when they carry text. */
+  --hog-red: oklch(0.56 0.215 31);
+  --hog-orange: oklch(0.63 0.16 60);
+  --hog-yellow: oklch(0.7 0.14 78);
+  --hog-green: oklch(0.56 0.15 152);
+  --hog-purple: oklch(0.52 0.22 305);
+  --signature: oklch(0.58 0.17 50);
+  --glow: oklch(0.56 0.215 31);
+  --shadow-glow:
+    0 0 0 1px oklch(0.56 0.215 31 / 30%), 0 12px 40px -12px oklch(0.56 0.215 31 / 40%);
+}
+
+html[data-mode="light"],
+html[data-mode="light"] .act-noir {
+  --background: oklch(0.975 0.003 95);
+  --foreground: oklch(0.16 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0 0);
+  --primary: oklch(0.16 0 0);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.935 0.004 95);
+  --secondary-foreground: oklch(0.16 0 0);
+  --muted: oklch(0.935 0.004 95);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.56 0.215 31);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.53 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.87 0.004 95);
+  --input: oklch(0.9 0.004 95);
+  --ring: oklch(0.56 0.215 31);
+
+  --surface-raised: oklch(1 0 0);
+  --hairline: oklch(0.16 0 0 / 12%);
+  --shadow-hard: 3px 3px 0 oklch(0.16 0 0 / 22%);
+  --shadow-hard-lg: 6px 6px 0 oklch(0.16 0 0 / 22%);
+
+  --chart-1: oklch(0.56 0.215 31);
+  --chart-2: oklch(0.48 0.24 266);
+  --chart-3: oklch(0.7 0.14 78);
+  --chart-4: oklch(0.56 0.15 152);
+  --chart-5: oklch(0.52 0.22 305);
+
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.16 0 0);
+  --sidebar-primary: oklch(0.56 0.215 31);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.935 0.004 95);
+  --sidebar-accent-foreground: oklch(0.16 0 0);
+  --sidebar-border: oklch(0.87 0.004 95);
+  --sidebar-ring: oklch(0.56 0.215 31);
+
+  color-scheme: light;
+}
+
+/* Act II in light mode: the original cream, with the hard black rules intact.
+   This is the one place on the site that keeps its 1:1 look across modes. */
+html[data-mode="light"] .act-hog {
+  --background: oklch(0.945 0.006 120);
+  --foreground: oklch(0.18 0 0);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.905 0.008 120);
+  --muted-foreground: oklch(0.43 0 0);
+  --border: oklch(0.18 0 0);
+  --surface-raised: oklch(0.905 0.008 120);
+  --hairline: oklch(0.18 0 0 / 16%);
+  --shadow-hard: 3px 3px 0 var(--ink);
+  --shadow-hard-lg: 6px 6px 0 var(--ink);
+  color-scheme: light;
+}
+
+/* The grain overlay is a light dust, which disappears on paper and muddies it.
+   Drop it in light mode rather than shipping a texture nobody can see. */
+html[data-mode="light"] .grain::after {
+  opacity: 0.25;
+}
+
+/* The two wallpaper blooms behind Act I are tuned for a black ground. On paper
+   they read as printing errors unless they are pulled right down. */
+html[data-mode="light"] .wallpaper-drift {
+  opacity: 0.1 !important;
+}
+
+/* ===========================================================================
+ * SKINS
+ * ===========================================================================
+ *
+ * A skin is a set of chrome tokens, nothing more. The window manager, the dock
+ * and the menu bar are written once against these; switching skins never
+ * re-mounts a component or changes a route.
+ *
+ *   --os-radius        window corner
+ *   --os-radius-ctl    button / field corner
+ *   --os-titlebar      title-bar ground
+ *   --os-titlebar-ink  title-bar text
+ *   --os-titlebar-h    title-bar height
+ *   --os-accent        selection and focus
+ *   --os-bar           menu bar / taskbar ground
+ *   --os-edge          chrome border
+ *   --os-font          chrome typeface
+ *   --os-wall-*        wallpaper stops
+ * ========================================================================= */
+
+:root {
+  --os-radius: 12px;
+  --os-radius-ctl: 8px;
+  --os-titlebar-h: 40px;
+  --os-titlebar: color-mix(in oklab, var(--background) 55%, transparent);
+  --os-titlebar-ink: var(--foreground);
+  --os-accent: oklch(0.62 0.2 255);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-bar: color-mix(in oklab, var(--background) 52%, transparent);
+  --os-edge: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --os-font: var(--ui-sans);
+  --os-wall-a: oklch(0.63 0.225 33);
+  --os-wall-b: oklch(0.51 0.26 266);
+  --os-wall-glow: 0.18;
+  --os-shadow: 0 18px 50px -18px oklch(0 0 0 / 65%);
+}
+
+/* ---- Windows 7 — Aero --------------------------------------------------- */
+html[data-skin="win7"] {
+  --os-radius: 8px 8px 0 0;
+  --os-radius-ctl: 3px;
+  --os-titlebar-h: 30px;
+  --os-accent: oklch(0.66 0.14 235);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-titlebar: linear-gradient(
+    180deg,
+    color-mix(in oklab, oklch(0.78 0.08 235) 42%, transparent) 0%,
+    color-mix(in oklab, oklch(0.6 0.1 240) 46%, transparent) 100%
+  );
+  --os-bar: linear-gradient(
+    180deg,
+    color-mix(in oklab, oklch(0.4 0.06 245) 68%, transparent) 0%,
+    color-mix(in oklab, oklch(0.2 0.05 250) 78%, transparent) 100%
+  );
+  --os-edge: oklch(0.85 0.06 235 / 45%);
+  --os-font: "Segoe UI", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --os-wall-a: oklch(0.6 0.15 235);
+  --os-wall-b: oklch(0.55 0.13 190);
+  --os-wall-glow: 0.3;
+}
+
+/* ---- Windows 8.1 — Metro ------------------------------------------------ */
+html[data-skin="win81"] {
+  --os-radius: 0px;
+  --os-radius-ctl: 0px;
+  --os-titlebar-h: 32px;
+  --os-accent: oklch(0.55 0.2 250);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-titlebar: color-mix(in oklab, var(--background) 96%, transparent);
+  --os-bar: color-mix(in oklab, oklch(0.18 0.02 260) 94%, transparent);
+  --os-edge: var(--os-accent);
+  --os-font: "Segoe UI", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --os-wall-a: oklch(0.55 0.2 250);
+  --os-wall-b: oklch(0.6 0.19 150);
+  --os-wall-glow: 0.22;
+  --os-shadow: 0 10px 30px -14px oklch(0 0 0 / 55%);
+}
+
+/* ---- Windows 10 — Fluent, pre-rounding ---------------------------------- */
+html[data-skin="win10"] {
+  --os-radius: 0px;
+  --os-radius-ctl: 2px;
+  --os-titlebar-h: 32px;
+  --os-accent: oklch(0.52 0.21 255);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-titlebar: color-mix(in oklab, var(--background) 92%, transparent);
+  --os-bar: color-mix(in oklab, oklch(0.16 0.01 260) 92%, transparent);
+  --os-edge: color-mix(in oklab, var(--os-accent) 55%, transparent);
+  --os-font: "Segoe UI", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --os-wall-a: oklch(0.5 0.2 258);
+  --os-wall-b: oklch(0.42 0.15 280);
+  --os-wall-glow: 0.24;
+  --os-shadow: 0 14px 34px -16px oklch(0 0 0 / 60%);
+}
+
+/* ---- Windows 11 — Mica -------------------------------------------------- */
+html[data-skin="win11"] {
+  --os-radius: 8px;
+  --os-radius-ctl: 4px;
+  --os-titlebar-h: 34px;
+  --os-accent: oklch(0.6 0.15 245);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-titlebar: color-mix(in oklab, var(--background) 72%, transparent);
+  --os-bar: color-mix(in oklab, var(--background) 74%, transparent);
+  --os-edge: color-mix(in oklab, var(--foreground) 14%, transparent);
+  --os-font: "Segoe UI Variable", "Segoe UI", "Inter", ui-sans-serif, sans-serif;
+  --os-wall-a: oklch(0.58 0.15 245);
+  --os-wall-b: oklch(0.55 0.14 300);
+  --os-wall-glow: 0.2;
+}
+
+/* ---- Ubuntu — Yaru ------------------------------------------------------ */
+html[data-skin="ubuntu"] {
+  --os-radius: 10px;
+  --os-radius-ctl: 6px;
+  --os-titlebar-h: 38px;
+  --os-accent: oklch(0.64 0.19 42);
+  --os-accent-ink: oklch(0.99 0 0);
+  --os-titlebar: color-mix(in oklab, oklch(0.31 0.06 330) 82%, transparent);
+  --os-titlebar-ink: oklch(0.97 0.005 60);
+  --os-bar: color-mix(in oklab, oklch(0.22 0.05 330) 88%, transparent);
+  --os-edge: oklch(0.64 0.19 42 / 38%);
+  --os-font: "Ubuntu", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --os-wall-a: oklch(0.64 0.19 42);
+  --os-wall-b: oklch(0.35 0.09 330);
+  --os-wall-glow: 0.26;
+}
+
+/* ---- Kali — Xfce in the dark -------------------------------------------- */
+html[data-skin="kali"] {
+  --os-radius: 4px;
+  --os-radius-ctl: 2px;
+  --os-titlebar-h: 30px;
+  --os-accent: oklch(0.68 0.15 220);
+  --os-accent-ink: oklch(0.14 0.02 230);
+  --os-titlebar: color-mix(in oklab, oklch(0.16 0.015 230) 92%, transparent);
+  --os-titlebar-ink: oklch(0.82 0.08 215);
+  --os-bar: color-mix(in oklab, oklch(0.12 0.015 230) 94%, transparent);
+  --os-edge: oklch(0.68 0.15 220 / 34%);
+  --os-font: var(--ui-mono);
+  --os-wall-a: oklch(0.55 0.16 220);
+  --os-wall-b: oklch(0.3 0.1 250);
+  --os-wall-glow: 0.22;
+  --os-shadow: 0 0 0 1px oklch(0.68 0.15 220 / 22%), 0 18px 40px -20px oklch(0 0 0 / 80%);
+}
+
+/* Kali is a terminal distribution and the skin should feel like one. This is
+   the only skin that touches body type, and it stops at the OS chrome. */
+html[data-skin="kali"] .os-chrome,
+html[data-skin="kali"] .os-window {
+  font-family: var(--ui-mono);
+  letter-spacing: -0.01em;
+}
+
+/* The glass recipe belongs to macOS. Every other skin is opaque chrome, so the
+   blur is dialled back and the brightness lift removed — Aero is the only one
+   that keeps any of it, because Aero *was* the blur. */
+html:not([data-skin="macos"]) .vibrancy,
+html:not([data-skin="macos"]) .vibrancy-strong,
+html:not([data-skin="macos"]) .liquid-glass {
+  background: var(--os-bar);
+  border: 1px solid var(--os-edge);
+  border-radius: var(--os-radius-ctl);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: var(--os-shadow);
+}
+
+html[data-skin="win7"] .vibrancy,
+html[data-skin="win7"] .vibrancy-strong,
+html[data-skin="win7"] .liquid-glass {
+  backdrop-filter: blur(26px) saturate(150%) brightness(1.06);
+  -webkit-backdrop-filter: blur(26px) saturate(150%) brightness(1.06);
+  border-radius: 6px;
+}
+
+/* The specular sheen and lens rim are a Tahoe idea. Nothing else should wear
+   them, or every skin ends up looking like macOS in a different colour. */
+html:not([data-skin="macos"]) .vibrancy::before,
+html:not([data-skin="macos"]) .vibrancy-strong::before,
+html:not([data-skin="macos"]) .liquid-glass::before,
+html:not([data-skin="macos"]) .vibrancy::after,
+html:not([data-skin="macos"]) .vibrancy-strong::after,
+html:not([data-skin="macos"]) .liquid-glass::after {
+  display: none;
+}
+
+/* Metro and Fluent squared everything off, including the things this site
+   rounds by default. One rule, rather than a conditional on every component. */
+html[data-skin="win81"] .os-window,
+html[data-skin="win10"] .os-window,
+html[data-skin="win81"] .os-chrome,
+html[data-skin="win10"] .os-chrome {
+  border-radius: 0 !important;
+}
+
+/* ===========================================================================
+ * THE FUN DRAWER
+ *
+ * Every one of these is switched from Settings and every one is reversible
+ * from the same panel. They are scoped to `html.fx-*` so a flag can never be
+ * left behind by a route change.
+ * ========================================================================= */
+
+/* CRT — scanlines, a phosphor bloom, and the faintest barrel warp. */
+html.fx-crt body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      oklch(0 0 0 / 22%) 0px,
+      oklch(0 0 0 / 22%) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(ellipse at center, transparent 58%, oklch(0 0 0 / 45%) 100%);
+  mix-blend-mode: multiply;
+  animation: crt-roll 7s linear infinite;
+}
+
+html.fx-crt body {
+  filter: saturate(1.25) contrast(1.06);
+  text-shadow: 0 0 2px color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+@keyframes crt-roll {
+  0% {
+    background-position:
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      0 120px,
+      0 0;
+  }
+}
+
+/* Comic Sans. Wins over every font utility on the site, which is the joke. */
+html.fx-comic,
+html.fx-comic * {
+  font-family: "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive !important;
+  letter-spacing: 0 !important;
+}
+
+html.fx-grayscale body {
+  filter: grayscale(1);
+}
+
+html.fx-upside body {
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+/* Fixed chrome is positioned against the viewport, so a rotated body leaves it
+   upside down in the wrong corner. Rotating it back is wrong too — the joke is
+   that everything flips. This just keeps it reachable. */
+html.fx-upside {
+  overflow-x: hidden;
+}
+
+html.fx-shake button:hover,
+html.fx-shake a:hover {
+  animation: nervous 0.28s ease-in-out infinite;
+}
+
+@keyframes nervous {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2px, 1px) rotate(-1.2deg);
+  }
+  75% {
+    transform: translate(2px, -1px) rotate(1.2deg);
+  }
+}
+
+/* The cursor comet. One element, moved by a pointer listener in FunFx.tsx. */
+.cursor-comet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 14px;
+  width: 14px;
+  border-radius: 999px;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle, var(--hog-red) 0%, transparent 70%);
+  will-change: transform;
+}
+
+/* Confetti. Pure CSS motion; the elements are created and removed in JS. */
+.confetto {
+  position: fixed;
+  z-index: 9999;
+  height: 8px;
+  width: 6px;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: confetto-fall 1100ms cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+
+@keyframes confetto-fall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--dr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.fx-crt body::after,
+  html.fx-shake button:hover,
+  html.fx-shake a:hover {
+    animation: none;
+  }
+  .confetto {
+    display: none;
+  }
+}
+
+/* ===========================================================================
+ * THE VOICE THEATRE
+ *
+ * A narrated story is a different reading surface from a written one: the eye
+ * follows rather than leads. The line being spoken is lifted to full contrast
+ * and the ones around it are dimmed, so the page behaves like a lyric sheet.
+ * ========================================================================= */
+
+.voice-line {
+  transition:
+    opacity 420ms ease,
+    filter 420ms ease,
+    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  opacity: 0.22;
+  filter: blur(0.6px);
+}
+
+.voice-line[data-state="past"] {
+  opacity: 0.3;
+  filter: none;
+}
+
+.voice-line[data-state="live"] {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.012);
+}
+
+/* The spoken word. A soft sweep rather than a highlighter block — a hard
+   background on a serif at this size reads as a redaction. */
+.voice-word {
+  transition:
+    color 120ms linear,
+    text-shadow 160ms linear;
+}
+
+.voice-word[data-lit="true"] {
+  color: var(--hog-red);
+  text-shadow: 0 0 18px color-mix(in oklab, var(--hog-red) 45%, transparent);
+}
+
+/* Fear pulls the whole stage in. Driven by --fear (0-1) from the player. */
+.voice-stage {
+  --fear: 0;
+  transition: filter 900ms ease;
+  filter: saturate(calc(1 - var(--fear) * 0.45)) contrast(calc(1 + var(--fear) * 0.18));
+}
+
+.voice-stage[data-shake="true"] {
+  animation: voice-shake 340ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes voice-shake {
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(3px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(5px, 0, 0);
+  }
+}
+
+/* The breathing vignette behind the text. Opacity tracks fear. */
+.voice-vignette {
+  background: radial-gradient(ellipse at center, transparent 42%, oklch(0 0 0 / 92%) 100%);
+  animation: voice-breathe 9s ease-in-out infinite;
+}
+
+@keyframes voice-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-line,
+  .voice-stage,
+  .voice-vignette {
+    animation: none !important;
+    transition: opacity 200ms linear;
+    filter: none;
+    transform: none;
+  }
+  .voice-line {
+    opacity: 0.55;
+  }
+  .voice-line[data-state="live"] {
+    opacity: 1;
+  }
+}
+
+/* ===========================================================================
+ * MINIMAL — one quiet ground
+ * ===========================================================================
+ *
+ * The site used to be two acts: a black room and a loud cream room, with hard
+ * 2px rules and offset shadows. It is now one continuous surface per mode, so
+ * sections read as a single art-directed scroll rather than a stack of blocks.
+ * The act classes remain (forty components carry them) but both resolve to the
+ * same palette. One accent — the warm signature orange — does all the pointing.
+ *
+ * Specificity: `html:not([data-mode="light"]) .act-x` is (0,2,1), level with
+ * the mode blocks above, and later in the file, so it wins without !important.
+ * ========================================================================= */
+
+html:not([data-mode="light"]),
+html:not([data-mode="light"]) .act-noir,
+html:not([data-mode="light"]) .act-hog {
+  --background: oklch(0.145 0.004 260);
+  --foreground: oklch(0.955 0.002 90);
+  --card: oklch(0.175 0.004 260);
+  --card-foreground: oklch(0.955 0.002 90);
+  --popover: oklch(0.185 0.004 260);
+  --popover-foreground: oklch(0.955 0.002 90);
+  --primary: oklch(0.955 0.002 90);
+  --primary-foreground: oklch(0.15 0.004 260);
+  --secondary: oklch(0.2 0.004 260);
+  --secondary-foreground: oklch(0.955 0.002 90);
+  --muted: oklch(0.2 0.004 260);
+  --muted-foreground: oklch(0.67 0.002 260);
+  --accent: var(--signature);
+  --accent-foreground: oklch(0.15 0.004 260);
+  --border: oklch(0.255 0.005 260);
+  --input: oklch(0.27 0.005 260);
+  --ring: var(--signature);
+  --surface-raised: oklch(0.2 0.004 260);
+  --hairline: oklch(1 0 0 / 7%);
+  --shadow-hard: none;
+  --shadow-hard-lg: none;
+  --sidebar: oklch(0.175 0.004 260);
+  --sidebar-border: oklch(0.255 0.005 260);
+  --signature: oklch(0.74 0.16 55);
+  --signature-deep: oklch(0.74 0.16 55);
+}
+
+html[data-mode="light"],
+html[data-mode="light"] .act-noir,
+html[data-mode="light"] .act-hog {
+  --background: oklch(0.985 0.002 90);
+  --foreground: oklch(0.17 0.004 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.17 0.004 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.17 0.004 260);
+  --primary: oklch(0.17 0.004 260);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.955 0.003 90);
+  --secondary-foreground: oklch(0.17 0.004 260);
+  --muted: oklch(0.955 0.003 90);
+  --muted-foreground: oklch(0.48 0.002 260);
+  --accent: var(--signature);
+  --accent-foreground: oklch(0.99 0 0);
+  --border: oklch(0.905 0.004 90);
+  --input: oklch(0.9 0.004 90);
+  --ring: var(--signature);
+  --surface-raised: oklch(1 0 0);
+  --hairline: oklch(0.17 0 0 / 7%);
+  --shadow-hard: none;
+  --shadow-hard-lg: none;
+  --sidebar: oklch(1 0 0);
+  --sidebar-border: oklch(0.905 0.004 90);
+  --signature: oklch(0.6 0.17 48);
+  --signature-deep: oklch(0.6 0.17 48);
+}
+
+html:not([data-mode="light"]) body {
+  background-color: oklch(0.145 0.004 260);
+}
+
+html[data-mode="light"] body {
+  background-color: oklch(0.985 0.002 90);
+}
+
+html ::selection,
+html .act-hog ::selection {
+  background: color-mix(in oklab, var(--signature) 35%, transparent);
+  color: inherit;
+}
+
+/* ---- Minimal motion primitives ----------------------------------------- */
+
+/* A hairline that draws itself left to right once its section arrives. */
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Link with an underline that sweeps in on hover and out the other side. */
+@utility link-sweep {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+    background-position: 0% 100%;
+  }
+}
+
+/* Soft blur-in, used by the page heroes on interior routes. */
+@keyframes soft-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@utility soft-in {
+  animation: soft-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soft-in {
+    animation: none;
+  }
+}
+
+/* The hero's scroll nudge: a short bead of light travelling down a hairline. */
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue {
+    animation: none;
+  }
+}
+
+/* ===========================================================================
+ * ILLUSTRATION LOOPS — the one moving part in each capability drawing.
+ * ========================================================================= */
+
+.illo-travel {
+  animation: illo-travel 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes illo-travel {
+  0% {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  45%,
+  55% {
+    transform: translateX(120px);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200px);
+    opacity: 0;
+  }
+}
+
+.illo-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: illo-ping 3.2s ease-out infinite;
+}
+@keyframes illo-ping {
+  0%,
+  85% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.illo-fire {
+  animation: illo-fire 2.4s ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes illo-fire {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.illo-flow {
+  animation: illo-flow 1.2s linear infinite;
+}
+@keyframes illo-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.illo-blink {
+  animation: illo-blink 2.4s ease-in-out infinite;
+}
+@keyframes illo-blink {
+  50% {
+    stroke-opacity: 0.25;
+  }
+}
+
+.illo-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: illo-bar 3s ease-in-out infinite alternate;
+}
+@keyframes illo-bar {
+  0% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(0.9);
+  }
+  100% {
+    transform: scaleY(0.55);
+  }
+}
+
+.illo-drag {
+  animation: illo-drag 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes illo-drag {
+  0%,
+  15% {
+    transform: translate(0, 0);
+  }
+  40%,
+  60% {
+    transform: translate(-6px, -22px);
+  }
+  85%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* The system diagram's packet: travels whatever path it is given. */
+.packet {
+  offset-rotate: 0deg;
+  animation: packet-run var(--packet-dur, 2.6s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation-delay: var(--packet-delay, 0s);
+}
+@keyframes packet-run {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illo-travel,
+  .illo-ping,
+  .illo-fire,
+  .illo-flow,
+  .illo-blink,
+  .illo-bar,
+  .illo-drag,
+  .packet {
+    animation: none;
   }
 }

@@ -1,22 +1,11 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { ArrowDown, ArrowRight, MousePointer2 } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/projects";
-import { shortTitle, site, tickerItems, toAbsoluteUrl } from "@/lib/site";
-import {
-  HandNote,
-  Highlight,
-  Marked,
-  Marquee,
-  PortraitMatrix,
-  ScrambleText,
-  ScribbleArrow,
-  StatusDot,
-  type MatrixMode,
-} from "@/components/kit";
+import { shortTitle, site, toAbsoluteUrl } from "@/lib/site";
+import { PortraitMatrix, ScrambleText, StatusDot, type MatrixMode } from "@/components/kit";
 import { useMagnetic } from "@/hooks/use-magnetic";
-import { Desktop } from "@/components/os/Desktop";
-import { HomeScreen } from "@/components/os/MobileShell";
+import { EASE, RiseWords } from "./fx";
 
 const MODES: { id: MatrixMode; label: string }[] = [
   { id: "dots", label: "Dots" },
@@ -25,253 +14,134 @@ const MODES: { id: MatrixMode; label: string }[] = [
 ];
 
 /**
- * Act I opens here: a full-viewport black field with the name set enormous on
- * the left and an interactive portrait on the right.
+ * The hero. One sentence, one portrait, one way in.
  *
- * Two jobs, in order. First, say who this is — plainly enough that someone who
- * reads three lines and leaves still knows. Second, be worth staying for: the
- * portrait renders three ways, the pitch answers whichever question the visitor
- * actually arrived with, and the desktop behind it is real.
- *
- * Nothing gates the scroll — "Enter the showcase" is an anchor into Act II, so
- * the drama costs a visitor nothing if they just want to keep scrolling.
+ * It used to carry a desktop of files, a dock, a ticker, three hand-drawn
+ * notes, a proof line and a live status chip — every one of them good, and
+ * together too many things asking to be looked at first. Now the headline
+ * says who this is, the portrait is the thing to play with, and everything
+ * else waits further down the page.
  */
 export function Gate({ projects = [] }: { projects?: Project[] }) {
   const [mode, setMode] = useState<MatrixMode>("dots");
-  const magnet = useMagnetic<HTMLAnchorElement>({ strength: 0.22, radius: 70 });
   const reduced = useReducedMotion();
+  const primary = useMagnetic<HTMLAnchorElement>({ strength: 0.25, radius: 60 });
+  const secondary = useMagnetic<HTMLAnchorElement>({ strength: 0.25, radius: 60 });
 
-  // Scrolling out of the hero drifts the name and the portrait at different
-  // rates, so Act I recedes rather than simply scrolling off. Under reduced
-  // motion the ranges flatten to no-ops — hooks cannot be called conditionally.
+  // On the way out the copy lifts and fades a little faster than the portrait,
+  // so the hero recedes rather than simply scrolling off.
   const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const nameY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -40]);
-  const nameOpacity = useTransform(scrollYProgress, [0, 0.8], reduced ? [1, 1] : [1, 0]);
-  const portraitY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -104]);
-  const portraitOpacity = useTransform(scrollYProgress, [0, 0.65], reduced ? [1, 1] : [1, 0]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const copyY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -80]);
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.6], reduced ? [1, 1] : [1, 0]);
+  const portraitScale = useTransform(scrollYProgress, [0, 1], reduced ? [1, 1] : [1, 0.92]);
+  const portraitOpacity = useTransform(scrollYProgress, [0.1, 0.8], reduced ? [1, 1] : [1, 0]);
 
-  // Whatever is actually live. The stored titles carry a descriptor, and the
-  // cycling line reads better as just the product name.
   const building = projects
     .filter((p) => toAbsoluteUrl(p.live_url) && p.category !== "Research")
     .map((p) => shortTitle(p.title));
   const phrases = building.length > 0 ? building : ["Ani Bakes", "AARRKKAA", "Velocity"];
-  const liveCount = building.length > 0 ? building.length : 5;
+
+  const enter = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          initial: { opacity: 0, y: 16, filter: "blur(6px)" },
+          animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+          transition: { duration: 1.1, ease: EASE, delay },
+        };
 
   return (
     <section
       ref={heroRef}
       data-act="noir"
-      className="act-noir grain relative flex min-h-svh flex-col justify-between overflow-hidden"
+      data-rail="Top"
+      className="act-noir relative flex min-h-svh flex-col overflow-hidden"
     >
-      {/* Wallpaper: a fine grid over a slow two-tone aurora. */}
-      <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-60" />
-      <div
-        aria-hidden
-        className="wallpaper-drift pointer-events-none absolute -left-[15%] bottom-[4%] h-[42rem] w-[42rem] rounded-full blur-[130px]"
-        style={{
-          background: "radial-gradient(circle, var(--hog-red) 0%, transparent 68%)",
-          opacity: 0.18,
-        }}
-      />
-      <div
-        aria-hidden
-        className="wallpaper-drift pointer-events-none absolute -right-[10%] top-[6%] h-[34rem] w-[34rem] rounded-full blur-[130px]"
-        style={{
-          background: "radial-gradient(circle, var(--hog-blue) 0%, transparent 70%)",
-          opacity: 0.14,
-          animationDelay: "-13s",
-        }}
-      />
-      <div
-        aria-hidden
-        className="wallpaper-drift pointer-events-none absolute left-[38%] top-[-8%] h-[26rem] w-[26rem] rounded-full blur-[120px]"
-        style={{
-          background: "radial-gradient(circle, var(--signature) 0%, transparent 70%)",
-          opacity: 0.1,
-          animationDelay: "-7s",
-        }}
-      />
-
-      {/* Files on the wallpaper, and the windows they open. Desktop only. */}
-      <Desktop projects={projects} />
-
-      {/* Availability, phones only: the macOS menu bar carries this on desktop
-          and the iOS status bar already shows the clock. */}
-      <div className="relative z-10 flex items-center justify-between gap-3 px-5 pt-16 sm:px-8 sm:pt-20 lg:hidden">
-        <p
-          className="micro fade-rise whitespace-nowrap text-muted-foreground"
-          style={{ "--line-delay": "500ms" } as React.CSSProperties}
-        >
-          Portfolio <span className="opacity-40">/</span> 2026
-        </p>
-        <span
-          className="micro fade-rise flex items-center gap-2 whitespace-nowrap text-foreground"
-          style={{ "--line-delay": "560ms" } as React.CSSProperties}
-        >
-          <StatusDot />
-          Available
-        </span>
-      </div>
-
-      {/* The desktop files occupy a ~13.5rem lane down the right edge from
-          top-24. Without the reserved padding the portrait renders underneath
-          them — dark dots behind nine icons, which is how the one element on
-          this page people actually play with became invisible. */}
-      <div className="relative z-10 grid flex-1 items-end gap-3 px-5 pb-4 pt-3 sm:gap-8 sm:px-8 sm:pb-10 sm:pt-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:pr-[14.5rem] lg:pt-20 xl:gap-14 xl:pr-[15.5rem]">
-        {/* The name. Bottom-aligned, tight, stacked — the whole point of Act I. */}
-        <motion.div style={{ y: nameY, opacity: nameOpacity }} className="order-1 min-w-0">
-          <p
-            className="micro fade-rise mb-3 hidden text-muted-foreground lg:block"
-            style={{ "--line-delay": "80ms" } as React.CSSProperties}
+      <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-5 pb-10 pt-28 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-16 lg:pt-24">
+        <motion.div style={{ y: copyY, opacity: copyOpacity }} className="min-w-0">
+          <motion.p
+            {...enter(0.05)}
+            className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground"
           >
-            Portfolio <span className="opacity-40">/</span> {site.locationShort}
-          </p>
+            <StatusDot />
+            Available for work
+            <span className="text-border">/</span>
+            {site.locationShort}
+          </motion.p>
 
-          {/* Also capped against viewport height: at a fixed 6.8rem the three
-              stacked lines alone are 330px, which on a laptop-height window
-              pushes the call to action under the dock. */}
-          <h1 className="hero-lg text-foreground xl:text-[min(6.8rem,13.5vh)]">
-            <span className="line-mask">
-              <span
-                className="line-rise block"
-                style={{ "--line-delay": "120ms" } as React.CSSProperties}
-              >
-                <span className="signature-name">Srinivas</span> M
-              </span>
-            </span>
-            {/* No line-mask on this line. The mask clips its overflow, and the
-                hand-drawn circle deliberately overshoots the text box — inside
-                a mask only the bottom arc survives. */}
-            <span
-              className="fade-rise block"
-              style={{ "--line-delay": "300ms" } as React.CSSProperties}
-            >
-              <Marked kind="circle" tone="hog-red" delay={1250} duration={900} immediate>
-                Full-Stack
-              </Marked>
-            </span>
-            <span className="line-mask">
-              <span
-                className="line-rise block"
-                style={{ "--line-delay": "340ms" } as React.CSSProperties}
-              >
-                Engineer<span className="text-hog-red">.</span>
-              </span>
-            </span>
-          </h1>
+          <RiseWords
+            as="h1"
+            onView={false}
+            stacked
+            delay={0.15}
+            stagger={0.06}
+            text={site.fullName}
+            muted="Full-stack engineer."
+            className="mt-8 font-display text-[clamp(2.75rem,6.2vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em] text-foreground"
+          />
 
-          {/* ---- One sentence, then get out of the way ----
-
-              This column used to carry the sentence, a four-way "You need…"
-              tab set, a paragraph answering whichever tab was open, a proof
-              line and a stack line — roughly sixty words of body copy stacked
-              under a display headline, which is the wrong shape for a hero:
-              the eye reads a name that size and wants one claim, not a menu.
-
-              Everything that block said is said properly in Act II, by the
-              four capability cards in Opener, with the same four subjects and
-              more evidence behind each one. This is now name, claim, proof of
-              life, and a way in. */}
-          <div
-            className="fade-rise mt-4 max-w-lg sm:mt-6"
-            style={{ "--line-delay": "620ms" } as React.CSSProperties}
+          <motion.p
+            {...enter(0.55)}
+            className="mt-8 max-w-[34ch] text-[17px] leading-relaxed text-muted-foreground sm:text-lg"
           >
-            <p className="text-[15px] leading-relaxed text-foreground/90 sm:text-lg">
-              I take products from an empty repo to a live domain{" "}
-              <Highlight tone="hog-yellow" delay={900}>
-                <span className="font-semibold text-foreground">on my own</span>
-              </Highlight>{" "}
-              — web, mobile, and the research behind them.
-            </p>
-          </div>
+            I take products from an empty repo to a live domain, on my own — web, mobile, and the
+            research behind them.
+          </motion.p>
 
-          {/* Three checkable facts on one line. Replaces five lines of prose
-              with the part a hiring manager was scanning for anyway. */}
-          <div
-            className="fade-rise mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] sm:mt-6"
-            style={{ "--line-delay": "660ms" } as React.CSSProperties}
-          >
-            <span className="text-muted-foreground">
-              <span className="font-bold text-foreground">{liveCount}</span> live in production
-            </span>
-            <span className="text-muted-foreground">
-              <span className="font-bold text-foreground">100%</span> built solo
-            </span>
-            <span className="text-muted-foreground">{site.locationShort}</span>
-          </div>
-
-          {/* Live status line — the work, cycling. */}
-          <div
-            className="fade-rise mt-4 inline-flex items-center gap-3 rounded-sm border border-border/70 bg-card/40 px-3.5 py-2 sm:mt-6"
-            style={{ "--line-delay": "700ms" } as React.CSSProperties}
-          >
-            <StatusDot tone="hog-red" />
-            <span className="micro text-muted-foreground">Now shipping</span>
-            <ScrambleText
-              phrases={phrases}
-              className="font-mono text-xs font-bold text-foreground sm:text-sm"
-            />
-          </div>
-
-          {/* The flat y-n10 CTA, plus two quiet secondaries. */}
-          <div
-            className="fade-rise relative mt-5 flex flex-col items-stretch gap-2.5 sm:mt-7 sm:flex-row sm:items-center sm:gap-3"
-            style={{ "--line-delay": "740ms" } as React.CSSProperties}
+          <motion.div
+            {...enter(0.7)}
+            className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center"
           >
             <a
-              ref={magnet}
-              href="#showcase"
-              className="glare-swipe group flex items-center justify-between gap-10 rounded-sm bg-foreground px-6 py-4 text-background transition-colors hover:bg-hog-red-deep hover:text-white sm:min-w-[18rem]"
+              ref={primary}
+              href="#work"
+              className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-foreground px-6 text-[15px] font-medium text-background transition-opacity hover:opacity-85"
             >
-              <span className="text-sm font-semibold tracking-tight">Enter the showcase</span>
-              <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1.5" />
+              See the work
+              <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
             </a>
-            {/* One secondary, not two. The dock, the menu bar and the
-                Launchpad all reach /projects already. */}
             <a
+              ref={secondary}
               href={site.resumeUrl}
               download
-              className="group hidden items-center justify-center gap-2 rounded-sm border border-border px-5 py-3 text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground sm:flex"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border px-6 text-[15px] font-medium text-foreground transition-colors hover:border-foreground/40"
             >
               Résumé
-              <ArrowDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
-
-            <span className="pointer-events-none absolute -right-4 top-1/2 hidden -translate-y-1/2 translate-x-full items-center gap-1 xl:flex">
-              <ScribbleArrow kind="swoop" tone="hog-red" flipX className="h-8 w-16" delay={1600} />
-              <HandNote tone="hog-red" rotate={-6} size="sm">
-                start here
-              </HandNote>
-            </span>
-          </div>
+          </motion.div>
         </motion.div>
 
-        {/* Interactive portrait. */}
-        <motion.div style={{ y: portraitY, opacity: portraitOpacity }} className="order-2 min-w-0">
-          <div className="fade-rise" style={{ "--line-delay": "760ms" } as React.CSSProperties}>
-            {/* Render-mode toggle, above the portrait rather than below it.
+        {/* The portrait — the one thing on this screen made to be played with. */}
+        <motion.div
+          style={{ scale: portraitScale, opacity: portraitOpacity }}
+          className="mx-auto w-full max-w-sm min-w-0 lg:max-w-none"
+        >
+          <motion.div {...enter(0.45)}>
+            <PortraitMatrix
+              src="/portrait.png"
+              mode={mode}
+              alt="Illustrated portrait of Srinivas M"
+              className="h-[clamp(16rem,40vh,22rem)] w-full lg:h-[clamp(20rem,56vh,32rem)]"
+            />
 
-                It used to sit underneath, and on a laptop-height viewport the
-                hero runs past the fold — which put the only three controls on
-                this screen behind the floating dock. Above the frame they are
-                reachable at every height. */}
-            <div className="mx-auto mb-2 flex w-full max-w-md items-center justify-between gap-3 lg:max-w-none">
-              <div className="flex items-center gap-1" role="group" aria-label="Portrait render mode">
+            <div className="mt-5 flex items-center justify-between gap-4">
+              <div
+                role="group"
+                aria-label="Portrait render mode"
+                className="inline-flex items-center rounded-full border border-border p-0.5"
+              >
                 {MODES.map((option) => {
-                  const active_ = mode === option.id;
+                  const active = mode === option.id;
                   return (
                     <button
                       key={option.id}
                       type="button"
                       onClick={() => setMode(option.id)}
-                      aria-pressed={active_}
-                      className={`micro rounded-sm px-2.5 py-1.5 transition-colors ${
-                        active_
+                      aria-pressed={active}
+                      className={`rounded-full px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.14em] transition-colors duration-300 ${
+                        active
                           ? "bg-foreground text-background"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
@@ -281,80 +151,30 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
                   );
                 })}
               </div>
-              <p className="micro hidden items-center gap-2 text-muted-foreground sm:flex">
-                <MousePointer2 className="h-3 w-3" />
+              <p className="hidden font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground sm:block">
                 Move across me
               </p>
             </div>
-
-            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-              {/* Corner ticks — a viewfinder around the portrait. */}
-              {[
-                "left-0 top-0 border-l border-t",
-                "right-0 top-0 border-r border-t",
-                "left-0 bottom-0 border-l border-b",
-                "right-0 bottom-0 border-r border-b",
-              ].map((corner) => (
-                <span
-                  key={corner}
-                  aria-hidden
-                  className={`pointer-events-none absolute h-5 w-5 border-border ${corner}`}
-                />
-              ))}
-
-              {/* The note moved to the foot of the frame: the render-mode
-                  toggle now occupies the space above it. */}
-              <div className="pointer-events-none absolute -bottom-10 right-0 z-10 hidden items-start gap-1 lg:flex">
-                <ScribbleArrow
-                  kind="curve"
-                  tone="hog-blue"
-                  className="h-9 w-10 -scale-y-100"
-                  delay={1400}
-                />
-                <HandNote tone="hog-blue" rotate={-5} size="sm" className="mt-3">
-                  that&apos;s me, in dots
-                </HandNote>
-              </div>
-
-              <PortraitMatrix
-                src="/portrait.png"
-                mode={mode}
-                alt="Illustrated portrait of Srinivas M"
-                /* Sized to leave room for the render-mode buttons and the
-                   ticker above the floating dock. At 46vh the controls landed
-                   behind it and the three modes were unreachable. */
-                className="h-[clamp(12.5rem,28vh,16rem)] w-full sm:h-[clamp(14rem,32vh,20rem)] lg:h-[clamp(16rem,38vh,25rem)]"
-              />
-            </div>
-
-            <div className="mx-auto mt-3 flex w-full max-w-md flex-wrap items-center justify-between gap-3 sm:mt-4 lg:max-w-none">
-
-            </div>
-
-            <div className="mx-auto mt-7 w-full max-w-md lg:hidden">
-              <HomeScreen />
-            </div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-[8.5rem] left-1/2 z-10 hidden -translate-x-1/2 lg:block">
-        <span className="flex items-end gap-1">
-          <HandNote tone="hog-red" rotate={-4} size="sm" className="pb-1">
-            the dock is real — try it
-          </HandNote>
-          <ScribbleArrow kind="down" tone="hog-red" className="h-10 w-9" delay={1800} />
+      {/* Floor: what is live right now, and a nudge to keep going. */}
+      <motion.div
+        {...enter(1.1)}
+        className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 pb-8 sm:px-8"
+      >
+        <p className="flex min-w-0 items-center gap-3 font-mono text-[11px] text-muted-foreground">
+          <span className="uppercase tracking-[0.18em]">Now shipping</span>
+          <ScrambleText phrases={phrases} className="truncate text-foreground" />
+        </p>
+        <span className="hidden items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
+          Scroll
+          <span aria-hidden className="relative block h-8 w-px overflow-hidden bg-border">
+            <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-foreground" />
+          </span>
         </span>
-      </div>
-
-      {/* Floor ticker, with clearance for the dock that floats over it. */}
-      <div className="relative z-10 border-t border-border/70 py-2 pb-28 sm:py-3.5 sm:pb-32 lg:pb-24">
-        <Marquee
-          items={tickerItems}
-          duration={46}
-          className="text-muted-foreground [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]"
-        />
-      </div>
+      </motion.div>
     </section>
   );
 }

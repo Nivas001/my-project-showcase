@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SortableMediaList } from "@/components/admin/SortableMediaList";
+import { NotesBoardAdmin, PaintWallAdmin } from "@/components/admin/GuestbookAdmin";
 import { checkIsAdmin, saveProject, deleteProject } from "@/lib/projects.functions";
 import { saveCertificate, deleteCertificate } from "@/lib/certificates.functions";
 import { emptyCertificate, type Certificate, type CertificateInput } from "@/lib/certificates";
@@ -1445,6 +1446,12 @@ function AdminPage() {
           ) : null}
         </div>
       </section>
+
+      {/* The two guest-book queues. Anyone can write to these, so they are the
+          only parts of the admin panel that exist to moderate rather than to
+          author. Both live in their own module — this file is long enough. */}
+      <PaintWallAdmin />
+      <NotesBoardAdmin />
     </div>
   );
 }

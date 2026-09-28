@@ -60,7 +60,7 @@ export function BuildPipeline({
     <section
       id={id}
       data-act="noir"
-      className={cn("act-noir grain relative border-y-[3px] border-ink", className)}
+      className={cn("act-noir grain relative border-y border-border", className)}
     >
       {/* Intro — read normally, before the scroll takes over. */}
       <div className="relative mx-auto max-w-6xl px-5 pb-10 pt-20 sm:px-8 sm:pb-14 sm:pt-28">
@@ -238,7 +238,7 @@ function StageCard({
         />
         <span
           aria-hidden
-          className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full blur-[90px]"
+          className="hidden"
           style={{ background: `var(--${stage.accent})`, opacity: 0.16 }}
         />
 
@@ -393,7 +393,7 @@ function StaticPipeline({ className, id }: { className?: string | undefined; id:
     <section
       id={id}
       data-act="noir"
-      className={cn("act-noir grain relative border-y-[3px] border-ink", className)}
+      className={cn("act-noir grain relative border-y border-border", className)}
     >
       <div className="relative mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-24">
         <SectionLabel index="02">Before the rest of the work</SectionLabel>

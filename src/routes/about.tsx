@@ -205,7 +205,7 @@ function AboutPage() {
     <>
       <AboutHero />
 
-      <section data-act="hog" className="act-hog relative border-t-[3px] border-ink">
+      <section data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 
         {/* Stats strip --------------------------------------------------- */}
@@ -645,7 +645,7 @@ function AboutPage() {
                 <StarMark tone="hog-yellow" className="h-4 w-4" delay={200} />
               </p>
               <h2 className="hero-md text-foreground">
-                That&apos;s the whole story<span className="text-hog-red">.</span>
+                That&apos;s the whole story<span className="text-accent">.</span>
               </h2>
               <div className="mx-auto mt-3 w-48">
                 <Squiggle tone="hog-red" />

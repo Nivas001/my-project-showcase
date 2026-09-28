@@ -1,150 +1,130 @@
-import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { site } from "@/lib/site";
-import {
-  DoodleArrow,
-  HandNote,
-  HardLink,
-  HardRouteLink,
-  SplitLines,
-  Squiggle,
-  StatusDot,
-  Sticker,
-} from "@/components/kit";
-import { accentSurface } from "@/lib/accents";
-import { Reveal } from "@/components/Reveal";
+import { LocalClock, StatusDot } from "@/components/kit";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useMagnetic } from "@/hooks/use-magnetic";
+import { EASE, Eyebrow, FadeIn, RiseWords } from "./fx";
 
-const CHANNELS = [
-  {
-    icon: Mail,
-    label: "Email",
-    value: site.email,
-    href: `mailto:${site.email}`,
-    accent: "hog-red",
-  },
-  { icon: Phone, label: "Phone", value: site.phone, href: `tel:${site.phone}`, accent: "hog-blue" },
-  { icon: Github, label: "GitHub", value: "Nivas001", href: site.github, accent: "hog-yellow" },
-  {
-    icon: Linkedin,
-    label: "LinkedIn",
-    value: "srinivas-m",
-    href: site.linkedin,
-    accent: "hog-green",
-  },
+const LINKS = [
+  { label: "GitHub", href: site.github },
+  { label: "LinkedIn", href: site.linkedin },
+  { label: "Résumé", href: site.resumeUrl, download: true },
+  { label: "Phone", href: `tel:${site.phone.replace(/\s/g, "")}` },
 ] as const;
 
 /**
- * The close. Shaped like a pricing card, because the joke lands and because the
- * shape already tells a visitor "this is the part where you decide".
+ * The close. One question, one address, and the rest set small.
  */
 export function HireCTA() {
+  const email = useMagnetic<HTMLAnchorElement>({ strength: 0.12, radius: 80 });
   return (
-    <section data-act="hog" className="act-hog relative border-t-2 border-border/15">
-      <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
+    <section
+      id="contact"
+      data-act="noir"
+      data-rail="Contact"
+      className="act-noir relative scroll-mt-10"
+    >
+      <div className="mx-auto max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28">
+        <Eyebrow index="07">Contact</Eyebrow>
 
-      <div className="relative mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
-        <div className="relative">
-          <div className="absolute -top-5 left-1/2 z-10 -translate-x-1/2">
-            <Sticker tone="hog-red" rotate={-4}>
-              Open to offers
-            </Sticker>
-          </div>
+        <RiseWords
+          text="Have something worth building?"
+          className="mt-10 max-w-[24ch] text-balance font-display text-[clamp(1.9rem,3.4vw,3rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground"
+        />
+        <FadeIn delay={0.1}>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+            I&apos;m open to full-stack and Python roles, and to contract work. Tell me what
+            you&apos;re making.
+          </p>
+        </FadeIn>
 
-          <div className="hog-card hard-shadow-lg overflow-hidden">
-            <div className="border-b-2 border-border bg-secondary px-6 py-9 text-center sm:px-10 sm:py-12">
-              <p className="micro text-muted-foreground">Currently</p>
-              <SplitLines
-                as="h2"
-                onView
-                lines={["Free to talk."]}
-                className="hero-lg mt-3 text-foreground"
-              />
-              <div className="mx-auto mt-3 w-52">
-                <Squiggle tone="hog-red" />
-              </div>
-              <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
-                Looking for a full-stack or Python role where I own real surface area. Contract work
-                and interesting one-off builds welcome too.
-              </p>
+        <FadeIn delay={0.15} className="mt-14 sm:mt-20">
+          <a
+            ref={email}
+            href={`mailto:${site.email}`}
+            data-cursor="Write to me"
+            className="group inline-flex max-w-full items-center gap-3 sm:gap-5"
+          >
+            <span className="link-sweep truncate font-display text-[clamp(1.5rem,5.2vw,4.25rem)] font-medium leading-[1.2] tracking-[-0.04em] text-foreground">
+              {site.email}
+            </span>
+            <ArrowUpRight className="h-6 w-6 shrink-0 text-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1 group-hover:translate-x-1 sm:h-10 sm:w-10" />
+          </a>
+        </FadeIn>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <HardLink href={`mailto:${site.email}`} size="lg" variant="primary">
-                  <Mail className="h-4 w-4" />
-                  Start a conversation
-                </HardLink>
-                <HardLink href={site.resumeUrl} download size="lg" variant="secondary">
-                  <Download className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5" />
-                  Download résumé
-                </HardLink>
-              </div>
-
-              <p className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[11px] text-muted-foreground">
-                <span className="inline-flex items-center gap-2">
-                  <StatusDot />
-                  Available now
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {site.location}
-                </span>
-                <span>Replies within a day</span>
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2">
-              {CHANNELS.map((channel, i) => (
+        <FadeIn
+          delay={0.25}
+          className="mt-12 flex flex-col gap-8 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <ul className="flex flex-wrap gap-x-7 gap-y-3 text-[15px]">
+            {LINKS.map((link) => (
+              <li key={link.label}>
                 <a
-                  key={channel.label}
-                  href={channel.href}
-                  {...(channel.href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer" }
-                    : {})}
-                  className={`group flex items-center gap-4 p-5 transition-colors hover:bg-secondary ${
-                    i % 2 === 0 ? "sm:border-r-2" : ""
-                  } ${i < CHANNELS.length - 2 ? "border-b-2" : ""} border-border/15`}
+                  href={link.href}
+                  {...("download" in link ? { download: true } : {})}
+                  {...(link.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+                  className="link-sweep text-foreground/85 transition-colors hover:text-foreground"
                 >
-                  <span
-                    aria-hidden
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-md border-2 border-border"
-                    style={accentSurface(channel.accent)}
-                  >
-                    <channel.icon className="h-4.5 w-4.5" strokeWidth={2.2} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      {channel.label}
-                    </span>
-                    <span className="block truncate text-sm font-medium text-foreground">
-                      {channel.value}
-                    </span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1" />
+                  {link.label}
                 </a>
-              ))}
-            </div>
-          </div>
-
-          <Reveal delay={150}>
-            <div className="mt-8 flex items-start justify-center gap-2">
-              <DoodleArrow tone="hog-blue" flip className="h-12 w-14 -scale-y-100" />
-              <HandNote tone="hog-blue" rotate={-3} size="md" className="pt-4">
-                or just poke around a bit longer
-              </HandNote>
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <HardRouteLink to="/fun" variant="ghost" size="sm">
-                Play a game
-              </HardRouteLink>
-              <HardRouteLink to="/horror" variant="ghost" size="sm">
-                Read something unsettling
-              </HardRouteLink>
-              <HardRouteLink to="/about" variant="ghost" size="sm">
-                The long version
-              </HardRouteLink>
-            </div>
-          </Reveal>
-        </div>
+              </li>
+            ))}
+          </ul>
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-2">
+              <StatusDot />
+              Replies within a day
+            </span>
+            <span aria-hidden className="text-border">
+              /
+            </span>
+            <LocalClock timeZone={site.timezone} className="tabular-nums" />
+          </p>
+        </FadeIn>
       </div>
+
+      <Wordmark />
     </section>
+  );
+}
+
+const LETTERS = site.name.split("");
+
+/**
+ * The signature at the foot of the page: the first name, set as wide as the
+ * screen, letters rising one after another as it arrives and drifting up a
+ * touch as the page runs out. Decorative — the name is already in the hero.
+ */
+function Wordmark() {
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
+  const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["18%", "0%"]);
+
+  return (
+    <div ref={ref} aria-hidden className="relative overflow-hidden px-3 sm:px-6">
+      <motion.p
+        style={{ y }}
+        initial="out"
+        whileInView="in"
+        viewport={{ once: true, margin: "0px 0px -5% 0px" }}
+        className="flex select-none justify-between font-display text-[22.5vw] font-semibold leading-[0.8] tracking-[-0.06em]"
+      >
+        {LETTERS.map((letter, i) => (
+          <span key={`${letter}-${i}`} className="inline-block overflow-hidden pb-[0.04em]">
+            <motion.span
+              className="inline-block bg-gradient-to-b from-foreground/30 to-foreground/0 bg-clip-text text-transparent"
+              variants={{
+                out: { y: reduced ? "0%" : "100%" },
+                in: { y: "0%", transition: { duration: 1.1, ease: EASE, delay: i * 0.06 } },
+              }}
+            >
+              {letter}
+            </motion.span>
+          </span>
+        ))}
+      </motion.p>
+    </div>
   );
 }
