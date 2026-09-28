@@ -1,4 +1,5 @@
 import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
+import { site } from "@/lib/site";
 
 /* ==========================================================================
  * DOCK MARKS
@@ -167,12 +168,18 @@ function useNow(tickMs?: number) {
   return now;
 }
 
-/** A calendar tile showing today's actual date. */
+/** A calendar tile showing today's actual date in IST. */
 export function CalendarFace({ size }: { size: number }) {
-  // Ticks hourly: cheap insurance for a tab left open across midnight.
+  // Ticks hourly: cheap insurance for a tab left open across midnight in IST.
   const now = useNow(3_600_000);
-  const month = now ? now.toLocaleDateString(undefined, { month: "short" }).toUpperCase() : "";
-  const day = now ? now.getDate() : "";
+  const month = now
+    ? new Intl.DateTimeFormat("en-US", { timeZone: site.timezone, month: "short" })
+        .format(now)
+        .toUpperCase()
+    : "";
+  const day = now
+    ? new Intl.DateTimeFormat("en-US", { timeZone: site.timezone, day: "numeric" }).format(now)
+    : "";
 
   return (
     <span
@@ -197,12 +204,24 @@ export function CalendarFace({ size }: { size: number }) {
   );
 }
 
-/** An analog clock whose hands sit where the hands actually are. */
+/** An analog clock whose hands sit where the hands actually are in IST. */
 export function ClockFace({ size }: { size: number }) {
   // Ticks every half minute — enough for a minute hand at 46px.
   const now = useNow(30_000);
-  const minute = now ? now.getMinutes() : 0;
-  const hour = now ? now.getHours() % 12 : 0;
+  let hour = 0;
+  let minute = 0;
+
+  if (now) {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: site.timezone,
+      hour: "numeric",
+      minute: "numeric",
+      hour12: false,
+    }).formatToParts(now);
+    hour = Number(parts.find((p) => p.type === "hour")?.value ?? 0) % 12;
+    minute = Number(parts.find((p) => p.type === "minute")?.value ?? 0);
+  }
+
   const minuteAngle = minute * 6;
   const hourAngle = hour * 30 + minute * 0.5;
 
@@ -210,6 +229,17 @@ export function ClockFace({ size }: { size: number }) {
     <svg viewBox="0 0 48 48" style={{ width: size, height: size }} aria-hidden>
       <circle cx="24" cy="24" r="21" fill="oklch(0.99 0 0)" />
       <circle cx="24" cy="24" r="21" fill="none" stroke="oklch(0.8 0 0)" strokeWidth="1" />
+      <text
+        x="24"
+        y="32.5"
+        textAnchor="middle"
+        fontSize="5"
+        fontFamily="ui-monospace, monospace"
+        fontWeight="600"
+        fill="oklch(0.5 0 0)"
+      >
+        IST
+      </text>
       {Array.from({ length: 12 }, (_, i) => (
         <line
           key={i}
@@ -246,3 +276,4 @@ export function ClockFace({ size }: { size: number }) {
     </svg>
   );
 }
+

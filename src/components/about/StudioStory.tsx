@@ -9,6 +9,8 @@ import {
 } from "motion/react";
 import type { Studio } from "./studio/scene";
 import { CHAPTER_COUNT, insetsAt, shownChapter, textSide } from "./studio/timeline";
+import { site } from "@/lib/site";
+import { LocalClock } from "@/components/kit";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -188,14 +190,18 @@ export function StudioStory() {
           ) : null}
         </motion.div>
 
-        {/* Pointer read-out, like a drafting table's coordinates. */}
-        <p
+        {/* Desk coordinates & IST clock read-out */}
+        <div
           aria-hidden
           className="pointer-events-none absolute left-5 top-20 hidden font-mono text-[10px] leading-4 text-muted-foreground sm:block"
         >
-          X {coords.x.toFixed(2)}
-          <br />Y {coords.y.toFixed(2)}
-        </p>
+          <p>
+            X {coords.x.toFixed(2)} · Y {coords.y.toFixed(2)}
+          </p>
+          <p className="text-muted-foreground/80">
+            {site.locationShort} · <LocalClock timeZone={site.timezone} className="tabular-nums" />
+          </p>
+        </div>
 
         <AnimatePresence mode="wait">
           {current ? (

@@ -181,9 +181,21 @@ export function TerminalApp() {
         say(typeof window === "undefined" ? "/" : window.location.pathname);
         break;
 
-      case "date":
-        say(new Date().toString());
+      case "date": {
+        const ist = new Intl.DateTimeFormat("en-GB", {
+          timeZone: site.timezone,
+          weekday: "short",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          year: "numeric",
+          hour12: false,
+        }).format(new Date());
+        say(`${ist} IST`);
         break;
+      }
 
       case "echo":
         say(rest.join(" "));

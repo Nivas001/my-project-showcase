@@ -369,7 +369,7 @@ export const DOCK_APPS: AppSpec[] = [
   },
   {
     id: "clock",
-    label: site.locationShort,
+    label: "Pondicherry · IST",
     glyph: AboutMark,
     kind: "widget",
     from: "oklch(0.97 0 0)",

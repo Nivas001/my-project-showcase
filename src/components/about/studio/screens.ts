@@ -210,7 +210,7 @@ const TERMINAL: Line[] = [
   O(["   |o_o |     ", T.tux], ["Shell   ", T.acc], ["zsh 5.9", T.tx]),
   O(["   |:_/ |     ", T.tux], ["Editor  ", T.acc], ["VS Code · PyCharm · nvim", T.tx]),
   O(["  //   \\ \\    ", T.tux], ["Langs   ", T.acc], ["TS · Python · Dart", T.tx]),
-  O([" (|     | )   ", T.tux], ["Uptime  ", T.acc], ["too long", T.tx]),
+  O([" (|     | )   ", T.tux], ["Zone    ", T.acc], ["IST (UTC+05:30)", T.tx]),
   O(),
   L(
     ["nivas@ubuntu", T.pr],
@@ -444,7 +444,7 @@ export function vscodeScreen(): Screen {
     ctx.font = `13px ${SANS}`;
     ctx.textBaseline = "middle";
     ctx.fillText("⎇ main   ✓ 0 problems", 14, SCREEN_H - 13);
-    ctx.fillText("TypeScript React   UTF-8", SCREEN_W - 200, SCREEN_H - 13);
+    ctx.fillText("TypeScript React   UTF-8   IST", SCREEN_W - 240, SCREEN_H - 13);
   });
 }
 
