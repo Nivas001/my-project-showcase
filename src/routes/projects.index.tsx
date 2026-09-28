@@ -16,7 +16,8 @@ import {
 } from "@/components/kit";
 import { Reveal } from "@/components/Reveal";
 import { PinnedProject } from "@/components/projects/PinnedProject";
-import { BuildPipeline } from "@/components/projects/BuildPipeline";
+import { ToolMarquee } from "@/components/projects/ToolMarquee";
+import { FreightStory } from "@/components/projects/FreightStory";
 
 const TITLE = "Work — Srinivas";
 const DESCRIPTION =
@@ -39,8 +40,10 @@ export const Route = createFileRoute("/projects/")({
 /**
  * The work index, in three movements:
  *
- *   1. The pinned project, alone, with the whole screen.
- *   2. How a project gets built — seven stages, in 3D, on scroll.
+ *   1. The pinned project, alone, with the whole screen — then the belt of
+ *      tools everything here was built with.
+ *   2. How a project ships — the seven stages as one container's journey by
+ *      road, sea and air, a real-time 3D scene scrubbed by scroll.
  *   3. Everything else, filterable.
  *
  * Which project is pinned is decided in the admin (`featured`, then
@@ -130,8 +133,10 @@ function ProjectsPage() {
       {/* 1 — the pin. */}
       {pinned ? <PinnedProject project={pinned} /> : null}
 
-      {/* 2 — how any of it gets made. */}
-      <BuildPipeline />
+      <ToolMarquee />
+
+      {/* 2 — how any of it ships. */}
+      <FreightStory />
 
       {/* 3 — the rest. */}
       <section
