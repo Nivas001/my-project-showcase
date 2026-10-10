@@ -40,7 +40,7 @@ export function SpecSheet({
     { value: String(liveProducts), label: "Products in production" },
     { value: String(projects.length), label: "Projects shipped" },
     { value: String(techCount), label: "Technologies in use" },
-    { value: "8.79", label: "MCA GPA, out of 10" },
+    { value: "8.79", label: "MCA GPA, out of 10", outOf: "10" },
   ];
 
   return (
@@ -58,7 +58,15 @@ export function SpecSheet({
           {figures.map((figure, i) => (
             <FadeIn key={figure.label} delay={i * 0.08} className={DIVIDERS[i] ?? ""}>
               <dt className="font-display text-[clamp(2.5rem,5vw,4rem)] font-medium leading-none tracking-[-0.045em] text-foreground tabular-nums">
-                <CountUp value={figure.value} />
+                {/* The grade is the one figure that isn't a count, so it wears the accent. */}
+                <span className={figure.outOf ? "text-ember" : undefined}>
+                  <CountUp value={figure.value} />
+                </span>
+                {figure.outOf ? (
+                  <span className="ml-1 text-[0.38em] tracking-normal text-muted-foreground">
+                    /{figure.outOf}
+                  </span>
+                ) : null}
               </dt>
               <dd className="mt-3 text-[13px] text-muted-foreground">{figure.label}</dd>
             </FadeIn>
@@ -114,7 +122,7 @@ function StackExplorer({ stack, projects }: { stack: Group[]; projects: Project[
       <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4 lg:gap-8">
         {stack.map((group, gi) => (
           <FadeIn key={group.group} delay={gi * 0.08}>
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
               {group.group}
             </h3>
             <ul className="mt-5 space-y-1">

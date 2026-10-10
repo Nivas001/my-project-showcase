@@ -62,9 +62,12 @@ export function RiseWords({
   onView = true,
   stacked = false,
   as = "h2",
+  mutedClassName = "text-muted-foreground",
 }: {
   text: string;
   muted?: string;
+  /** Colour of the muted half: grey by default, the ember gradient in the hero. */
+  mutedClassName?: string;
   /** Put the muted half on its own line. */
   stacked?: boolean;
   className?: string;
@@ -87,7 +90,7 @@ export function RiseWords({
       <Tag className={className}>
         {text}
         {muted && stacked ? <br /> : null}
-        {muted ? <span className="text-muted-foreground"> {muted}</span> : null}
+        {muted ? <span className={mutedClassName}> {muted}</span> : null}
       </Tag>
     );
   }
@@ -108,7 +111,7 @@ export function RiseWords({
             {stacked && q && !words[i - 1]?.quiet ? <br /> : null}
             <span className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
               <motion.span
-                className={cn("inline-block", q && "text-muted-foreground")}
+                className={cn("inline-block", q && mutedClassName)}
                 variants={{
                   out: { y: "105%" },
                   in: {

@@ -2532,6 +2532,8 @@ html:not([data-mode="light"]) .act-hog {
   --sidebar-border: oklch(0.255 0.005 260);
   --signature: oklch(0.74 0.16 55);
   --signature-deep: oklch(0.74 0.16 55);
+  --ember-from: oklch(0.84 0.13 78);
+  --ember-to: oklch(0.68 0.19 35);
 }
 
 html[data-mode="light"],
@@ -2562,6 +2564,8 @@ html[data-mode="light"] .act-hog {
   --sidebar-border: oklch(0.905 0.004 90);
   --signature: oklch(0.6 0.17 48);
   --signature-deep: oklch(0.6 0.17 48);
+  --ember-from: oklch(0.66 0.15 70);
+  --ember-to: oklch(0.55 0.2 32);
 }
 
 html:not([data-mode="light"]) body {
@@ -2940,4 +2944,20 @@ html .act-hog ::selection {
   .sb-paint {
     stroke-dashoffset: 0;
   }
+}
+
+/* Text in the signature's own warm range, gold into deep orange. One hue
+   family, so it reads as the accent turned up rather than a second colour.
+   Kept to a phrase or two a page: the hero line and the GPA. */
+.text-ember {
+  background-image: linear-gradient(
+    100deg,
+    var(--ember-from),
+    var(--signature) 55%,
+    var(--ember-to)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }

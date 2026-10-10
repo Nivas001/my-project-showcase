@@ -112,9 +112,14 @@ function Wordmark() {
         className="flex select-none justify-between font-display text-[22.5vw] font-semibold leading-[0.8] tracking-[-0.06em]"
       >
         {LETTERS.map((letter, i) => (
-          <span key={`${letter}-${i}`} className="inline-block overflow-hidden pb-[0.04em]">
+          // Padded out and pulled back by the same amount, so the glyphs' side
+          // bearings fall inside the clipped, painted box instead of being cut.
+          <span
+            key={`${letter}-${i}`}
+            className="-mx-[0.08em] inline-block overflow-hidden px-[0.08em] pb-[0.04em]"
+          >
             <motion.span
-              className="inline-block bg-gradient-to-b from-foreground/30 to-foreground/0 bg-clip-text text-transparent"
+              className="-mx-[0.08em] inline-block bg-gradient-to-b from-signature/40 to-signature/0 bg-clip-text px-[0.08em] text-transparent"
               variants={{
                 out: { y: reduced ? "0%" : "100%" },
                 in: { y: "0%", transition: { duration: 1.1, ease: EASE, delay: i * 0.06 } },

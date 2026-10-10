@@ -78,6 +78,7 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
             stagger={0.06}
             text={site.fullName}
             muted="Full-stack engineer."
+            mutedClassName="text-ember"
             className="mt-8 font-display text-[clamp(2.75rem,6.2vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em] text-foreground"
           />
 
