@@ -1,6 +1,6 @@
 import type { Project } from "@/lib/projects";
 import { toAbsoluteUrl } from "@/lib/site";
-import { Eyebrow, LitParagraph } from "./fx";
+import { Eyebrow, LitParagraph, SectionGlow } from "./fx";
 import { GitHubStrip } from "./GitHubStrip";
 
 const WORDS = [
@@ -29,8 +29,9 @@ export function Intro({ projects }: { projects: Project[] }) {
   const count = WORDS[live] ?? String(live);
 
   return (
-    <section data-act="noir" data-rail="Intro" className="act-noir relative">
-      <div className="mx-auto max-w-6xl px-5 py-28 sm:px-8 sm:py-40">
+    <section data-act="noir" data-rail="Intro" className="act-noir tone-amber relative">
+      <SectionGlow side="right" />
+      <div className="relative mx-auto max-w-6xl px-5 py-28 sm:px-8 sm:py-40">
         <Eyebrow index="01">The work</Eyebrow>
 
         <LitParagraph

@@ -8,7 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { EASE, Eyebrow, FadeIn, RiseWords } from "./fx";
+import { EASE, Eyebrow, FadeIn, RiseWords, SectionGlow } from "./fx";
 
 /**
  * "Under the hood" — the anatomy of a product, as a system diagram that
@@ -94,9 +94,10 @@ export function Anatomy() {
     <section
       data-act="noir"
       data-rail="Anatomy"
-      className="act-noir relative pb-28 sm:pb-40 lg:pb-24"
+      className="act-noir tone-violet relative pb-28 sm:pb-40 lg:pb-24"
     >
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+      <SectionGlow side="right" />
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <Eyebrow index="05">Under the hood</Eyebrow>
         <RiseWords
           text="The anatomy of a product,"

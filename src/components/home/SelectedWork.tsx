@@ -6,7 +6,7 @@ import { heroProject, type Project } from "@/lib/projects";
 import { prettyUrl, shortTitle, toAbsoluteUrl } from "@/lib/site";
 import { Shot } from "@/components/Shot";
 import { ratioOf } from "@/content/project-media";
-import { Eyebrow, FadeIn, RiseWords } from "./fx";
+import { Eyebrow, FadeIn, RiseWords, SectionGlow } from "./fx";
 
 const FEATURED = 3;
 
@@ -31,8 +31,14 @@ export function SelectedWork({ projects }: { projects: Project[] }) {
   if (featured.length === 0) return null;
 
   return (
-    <section id="work" data-act="noir" data-rail="Work" className="act-noir relative scroll-mt-10">
-      <div className="mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
+    <section
+      id="work"
+      data-act="noir"
+      data-rail="Work"
+      className="act-noir tone-rose relative scroll-mt-10"
+    >
+      <SectionGlow side="right" />
+      <div className="relative mx-auto max-w-6xl px-5 pb-28 sm:px-8 sm:pb-40">
         <Eyebrow index="03">Selected work</Eyebrow>
 
         <div className="mt-10 flex flex-wrap items-end justify-between gap-6">

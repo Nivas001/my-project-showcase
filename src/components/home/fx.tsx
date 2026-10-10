@@ -62,9 +62,12 @@ export function RiseWords({
   onView = true,
   stacked = false,
   as = "h2",
+  mutedClassName = "text-muted-foreground",
 }: {
   text: string;
   muted?: string;
+  /** Colour for the muted half — grey by default, `text-spectrum` in the hero. */
+  mutedClassName?: string;
   /** Put the muted half on its own line. */
   stacked?: boolean;
   className?: string;
@@ -87,7 +90,7 @@ export function RiseWords({
       <Tag className={className}>
         {text}
         {muted && stacked ? <br /> : null}
-        {muted ? <span className="text-muted-foreground"> {muted}</span> : null}
+        {muted ? <span className={mutedClassName}> {muted}</span> : null}
       </Tag>
     );
   }
@@ -108,7 +111,7 @@ export function RiseWords({
             {stacked && q && !words[i - 1]?.quiet ? <br /> : null}
             <span className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
               <motion.span
-                className={cn("inline-block", q && "text-muted-foreground")}
+                className={cn("inline-block", q && mutedClassName)}
                 variants={{
                   out: { y: "105%" },
                   in: {
@@ -140,7 +143,7 @@ export function LitParagraph({
 }: {
   text: string;
   className?: string;
-  /** Words (exact, punctuation included) drawn in the accent once lit. */
+  /** Words (exact, punctuation included) drawn in colour once lit, each in the next spectrum hue. */
   emphasis?: string[];
 }) {
   const reduced = useReducedMotion();
@@ -166,7 +169,11 @@ export function LitParagraph({
             index={i}
             total={words.length}
             progress={scrollYProgress}
-            accent={emphasis.includes(word)}
+            tone={
+              emphasis.includes(word)
+                ? EMPHASIS_TONES[emphasis.indexOf(word) % EMPHASIS_TONES.length]
+                : undefined
+            }
           />
         ))}
       </span>
@@ -174,24 +181,26 @@ export function LitParagraph({
   );
 }
 
+const EMPHASIS_TONES = ["tone-amber", "tone-rose", "tone-violet", "tone-cyan", "tone-lime"];
+
 function LitWord({
   word,
   index,
   total,
   progress,
-  accent,
+  tone,
 }: {
   word: string;
   index: number;
   total: number;
   progress: MotionValue<number>;
-  accent: boolean;
+  tone?: string | undefined;
 }) {
   const start = index / total;
   const end = start + 1 / total;
   const opacity = useTransform(progress, [start, end], [0.16, 1]);
   return (
-    <motion.span style={{ opacity }} className={accent ? "text-accent" : undefined}>
+    <motion.span style={{ opacity }} className={tone ? cn(tone, "text-(--tone)") : undefined}>
       {word}{" "}
     </motion.span>
   );
@@ -225,16 +234,25 @@ export function Parallax({
   );
 }
 
-/** A section's opening marker: index, label, and a rule that draws in. */
+/**
+ * A section's opening marker: index, label, and a rule that draws in. The
+ * index and the head of the rule take the section's `--tone`.
+ */
 export function Eyebrow({ index, children }: { index: string; children: ReactNode }) {
   const reduced = useReducedMotion();
   return (
-    <div className="flex items-center gap-4 font-mono text-[11px] text-muted-foreground">
-      <span className="tabular-nums text-accent">{index}</span>
+    <div className="relative flex items-center gap-4 font-mono text-[11px] text-muted-foreground">
+      <span className="inline-flex items-center gap-2 tabular-nums text-(--tone)">
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-(--tone) shadow-[0_0_10px_var(--tone)]"
+        />
+        {index}
+      </span>
       <span className="uppercase tracking-[0.18em]">{children}</span>
       <motion.span
         aria-hidden
-        className="h-px flex-1 origin-left bg-border"
+        className="h-px flex-1 origin-left bg-gradient-to-r from-(--tone)/60 via-border to-border"
         initial={reduced ? false : { scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: "0px 0px -10% 0px" }}
@@ -242,4 +260,12 @@ export function Eyebrow({ index, children }: { index: string; children: ReactNod
       />
     </div>
   );
+}
+
+/**
+ * A soft wash of the section's `--tone` behind its heading. Put it first
+ * inside a `relative` section; content after it sits above.
+ */
+export function SectionGlow({ side = "left" }: { side?: "left" | "right" }) {
+  return <div aria-hidden className="section-glow" data-side={side} />;
 }
