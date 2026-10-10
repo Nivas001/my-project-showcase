@@ -56,16 +56,9 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
       ref={heroRef}
       data-act="noir"
       data-rail="Top"
-      className="act-noir tone-amber relative flex min-h-svh flex-col overflow-hidden"
+      className="act-noir relative flex min-h-svh flex-col overflow-hidden"
     >
-      {/* Colour behind the glass: three slow fields of the spectrum and a dot grid. */}
-      <div aria-hidden className="hero-aurora">
-        <span />
-        <span />
-        <span />
-      </div>
-
-      <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-5 pb-10 pt-28 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-16 lg:pt-24">
+      <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-5 pb-10 pt-28 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-16 lg:pt-24">
         <motion.div style={{ y: copyY, opacity: copyOpacity }} className="min-w-0">
           <motion.p
             {...enter(0.05)}
@@ -85,7 +78,7 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
             stagger={0.06}
             text={site.fullName}
             muted="Full-stack engineer."
-            mutedClassName="text-spectrum"
+            mutedClassName="text-ember"
             className="mt-8 font-display text-[clamp(2.75rem,6.2vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em] text-foreground"
           />
 
@@ -104,7 +97,7 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
             <a
               ref={primary}
               href="#work"
-              className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-foreground px-6 text-[15px] font-medium text-background shadow-[0_10px_40px_-12px_var(--spark-amber)] transition-[opacity,box-shadow] duration-500 hover:opacity-90 hover:shadow-[0_14px_50px_-10px_var(--spark-rose)]"
+              className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-foreground px-6 text-[15px] font-medium text-background transition-opacity hover:opacity-85"
             >
               See the work
               <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
@@ -113,10 +106,10 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
               ref={secondary}
               href={site.resumeUrl}
               download
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-background/40 px-6 text-[15px] font-medium text-foreground backdrop-blur-sm transition-colors hover:border-(--spark-violet)/60"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border px-6 text-[15px] font-medium text-foreground transition-colors hover:border-foreground/40"
             >
               Résumé
-              <ArrowUpRight className="h-4 w-4 text-(--spark-violet) transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
           </motion.div>
         </motion.div>
@@ -170,16 +163,16 @@ export function Gate({ projects = [] }: { projects?: Project[] }) {
       {/* Floor: what is live right now, and a nudge to keep going. */}
       <motion.div
         {...enter(1.1)}
-        className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 pb-8 sm:px-8"
+        className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 pb-8 sm:px-8"
       >
         <p className="flex min-w-0 items-center gap-3 font-mono text-[11px] text-muted-foreground">
           <span className="uppercase tracking-[0.18em]">Now shipping</span>
-          <ScrambleText phrases={phrases} className="truncate text-(--spark-amber)" />
+          <ScrambleText phrases={phrases} className="truncate text-foreground" />
         </p>
         <span className="hidden items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
           Scroll
           <span aria-hidden className="relative block h-8 w-px overflow-hidden bg-border">
-            <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-gradient-to-b from-(--spark-amber) to-(--spark-rose)" />
+            <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-foreground" />
           </span>
         </span>
       </motion.div>

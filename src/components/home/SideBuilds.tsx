@@ -8,7 +8,7 @@ import {
   useTransform,
 } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
-import { Eyebrow, RiseWords, SectionGlow } from "./fx";
+import { Eyebrow, RiseWords } from "./fx";
 
 type Build = {
   to: "/fun" | "/horror" | "/apps" | "/wall" | "/how-to-be-smarter-than-an-ai" | "/genz";
@@ -101,8 +101,7 @@ export function SideBuilds() {
   );
 
   return (
-    <section data-act="noir" data-rail="Side builds" className="act-noir tone-lime relative">
-      <SectionGlow side="left" />
+    <section data-act="noir" data-rail="Side builds" className="act-noir relative">
       <div
         ref={wrapRef}
         className="relative"

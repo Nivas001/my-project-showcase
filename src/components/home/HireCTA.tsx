@@ -4,7 +4,7 @@ import { LocalClock, StatusDot } from "@/components/kit";
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useMagnetic } from "@/hooks/use-magnetic";
-import { EASE, Eyebrow, FadeIn, RiseWords, SectionGlow } from "./fx";
+import { EASE, Eyebrow, FadeIn, RiseWords } from "./fx";
 
 const LINKS = [
   { label: "GitHub", href: site.github },
@@ -23,10 +23,9 @@ export function HireCTA() {
       id="contact"
       data-act="noir"
       data-rail="Contact"
-      className="act-noir tone-violet relative scroll-mt-10"
+      className="act-noir relative scroll-mt-10"
     >
-      <SectionGlow side="right" />
-      <div className="relative mx-auto max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28">
+      <div className="mx-auto max-w-6xl px-5 pb-20 sm:px-8 sm:pb-28">
         <Eyebrow index="08">Contact</Eyebrow>
 
         <RiseWords
@@ -50,7 +49,7 @@ export function HireCTA() {
             <span className="link-sweep truncate font-display text-[clamp(1.5rem,5.2vw,4.25rem)] font-medium leading-[1.2] tracking-[-0.04em] text-foreground">
               {site.email}
             </span>
-            <ArrowUpRight className="h-6 w-6 shrink-0 text-(--tone) transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1 group-hover:translate-x-1 sm:h-10 sm:w-10" />
+            <ArrowUpRight className="h-6 w-6 shrink-0 text-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1 group-hover:translate-x-1 sm:h-10 sm:w-10" />
           </a>
         </FadeIn>
 
@@ -93,23 +92,6 @@ export function HireCTA() {
 const LETTERS = site.name.split("");
 
 /**
- * One spectrum stretched across the whole word: each letter clips its own
- * slice of it, and fades out toward the floor.
- */
-const letterPaint = (i: number) => ({
-  // Padding the box out (and taking it back with margin) keeps the glyph
-  // overhang inside the painted, masked area.
-  padding: "0 0.08em",
-  margin: "0 -0.08em",
-  backgroundImage:
-    "linear-gradient(90deg, var(--spark-amber), var(--spark-rose), var(--spark-violet), var(--spark-cyan))",
-  backgroundSize: `${LETTERS.length * 100}% 100%`,
-  backgroundPosition: `${(i / Math.max(LETTERS.length - 1, 1)) * 100}% 0`,
-  maskImage: "linear-gradient(to bottom, rgb(0 0 0 / 0.55), transparent 92%)",
-  WebkitMaskImage: "linear-gradient(to bottom, rgb(0 0 0 / 0.55), transparent 92%)",
-});
-
-/**
  * The signature at the foot of the page: the first name, set as wide as the
  * screen, letters rising one after another as it arrives and drifting up a
  * touch as the page runs out. Decorative — the name is already in the hero.
@@ -130,13 +112,14 @@ function Wordmark() {
         className="flex select-none justify-between font-display text-[22.5vw] font-semibold leading-[0.8] tracking-[-0.06em]"
       >
         {LETTERS.map((letter, i) => (
+          // Padded out and pulled back by the same amount, so the glyphs' side
+          // bearings fall inside the clipped, painted box instead of being cut.
           <span
             key={`${letter}-${i}`}
             className="-mx-[0.08em] inline-block overflow-hidden px-[0.08em] pb-[0.04em]"
           >
             <motion.span
-              className="inline-block bg-clip-text text-transparent"
-              style={letterPaint(i)}
+              className="-mx-[0.08em] inline-block bg-gradient-to-b from-signature/40 to-signature/0 bg-clip-text px-[0.08em] text-transparent"
               variants={{
                 out: { y: reduced ? "0%" : "100%" },
                 in: { y: "0%", transition: { duration: 1.1, ease: EASE, delay: i * 0.06 } },
