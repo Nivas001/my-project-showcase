@@ -218,7 +218,9 @@ export function ResultCard({
         </p>
       ) : null}
 
-      {detail ? <div className="mt-3 font-mono text-[11px] text-muted-foreground">{detail}</div> : null}
+      {detail ? (
+        <div className="mt-3 font-mono text-[11px] text-muted-foreground">{detail}</div>
+      ) : null}
 
       <div className="mt-5">
         <StartButton onClick={onRetry} retry>

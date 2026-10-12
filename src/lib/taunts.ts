@@ -39,7 +39,10 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
       "{s}. The snake wanted to die rather than be controlled by you.",
     ],
     mid: ["{s} bytes. Mid. Aggressively mid.", "{s}. You survived. Barely. Congrats?"],
-    good: ["{s} bytes. Alright, snake charmer. Show-off.", "{s}?! Who hurt you, and how much free time do you have?"],
+    good: [
+      "{s} bytes. Alright, snake charmer. Show-off.",
+      "{s}?! Who hurt you, and how much free time do you have?",
+    ],
   },
   "memory-stack": {
     bad: [
@@ -47,8 +50,14 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
       "Level {s}. Your RAM has been deallocated.",
       "{s} levels. Did you blink? Did you forget the game existed?",
     ],
-    mid: ["Level {s}. Adequate memory. Like a browser tab you forgot about.", "Level {s}. Solid mediocrity."],
-    good: ["Level {s}. Okay, brain. Flexing hard, huh?", "Level {s}. Suspicious. Are you a bot? Blink twice."],
+    mid: [
+      "Level {s}. Adequate memory. Like a browser tab you forgot about.",
+      "Level {s}. Solid mediocrity.",
+    ],
+    good: [
+      "Level {s}. Okay, brain. Flexing hard, huh?",
+      "Level {s}. Suspicious. Are you a bot? Blink twice.",
+    ],
   },
   "code-sprint": {
     bad: [
@@ -56,8 +65,14 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
       "{s} WPM. Are you typing with your elbows?",
       "{s} WPM. Somewhere, a keyboard is crying.",
     ],
-    mid: ["{s} WPM. Standard-issue human fingers.", "{s} WPM. You'd survive a stand-up meeting. Barely."],
-    good: ["{s} WPM. Fine, you can type. Can you spell though?", "{s} WPM. Okay, keyboard warrior. Literally."],
+    mid: [
+      "{s} WPM. Standard-issue human fingers.",
+      "{s} WPM. You'd survive a stand-up meeting. Barely.",
+    ],
+    good: [
+      "{s} WPM. Fine, you can type. Can you spell though?",
+      "{s} WPM. Okay, keyboard warrior. Literally.",
+    ],
   },
   "reaction-time": {
     bad: [
@@ -66,7 +81,10 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
       "{s} ms average. Light travelled to the Moon and back waiting for you.",
     ],
     mid: ["{s} ms. Very human. Disappointingly human.", "{s} ms. You reacted. Eventually."],
-    good: ["{s} ms. Alright twitchy, calm down.", "{s} ms. Suspiciously fast. I'm reporting you to nobody."],
+    good: [
+      "{s} ms. Alright twitchy, calm down.",
+      "{s} ms. Suspiciously fast. I'm reporting you to nobody.",
+    ],
   },
 };
 

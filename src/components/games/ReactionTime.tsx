@@ -211,9 +211,7 @@ export function ReactionTime({ onGameOver }: { onGameOver: (score: number) => vo
       >
         <span
           className={`font-mono font-black tracking-tight ${
-            phase === "live"
-              ? "text-5xl text-game-go-foreground"
-              : "text-3xl text-foreground"
+            phase === "live" ? "text-5xl text-game-go-foreground" : "text-3xl text-foreground"
           }`}
         >
           {headline}

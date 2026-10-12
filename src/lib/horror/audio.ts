@@ -198,7 +198,12 @@ export class HorrorAudio {
       return { filt, g };
     };
 
-    const addDrone = (freq: number, gain: number, detune = 0, type: OscillatorType = "sawtooth") => {
+    const addDrone = (
+      freq: number,
+      gain: number,
+      detune = 0,
+      type: OscillatorType = "sawtooth",
+    ) => {
       const osc = ctx.createOscillator();
       osc.type = type;
       osc.frequency.value = freq;
@@ -583,7 +588,15 @@ export class HorrorAudio {
       case "glass":
         burst("highpass", 4200, 0.6, 0.26, 0.25, rand(-0.4, 0.4));
         for (let i = 0; i < 7; i++) {
-          tone(rand(2200, 5200), rand(1400, 3200), 0.06, rand(0.1, 0.3), "triangle", rand(0.02, 0.5), rand(-0.7, 0.7));
+          tone(
+            rand(2200, 5200),
+            rand(1400, 3200),
+            0.06,
+            rand(0.1, 0.3),
+            "triangle",
+            rand(0.02, 0.5),
+            rand(-0.7, 0.7),
+          );
         }
         break;
 
@@ -597,7 +610,15 @@ export class HorrorAudio {
         this.duck(300);
         const root = 116;
         for (let i = 0; i < 6; i++) {
-          tone(root * (1 + rand(-0.012, 0.012)), root * (1 + rand(-0.012, 0.012)), 0.07, 2.6, "sawtooth", rand(0, 0.25), rand(-0.7, 0.7));
+          tone(
+            root * (1 + rand(-0.012, 0.012)),
+            root * (1 + rand(-0.012, 0.012)),
+            0.07,
+            2.6,
+            "sawtooth",
+            rand(0, 0.25),
+            rand(-0.7, 0.7),
+          );
         }
         tone(root * 1.5, root * 1.5, 0.05, 2.4, "triangle", 0.2);
         break;

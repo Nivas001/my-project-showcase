@@ -226,135 +226,135 @@ export function TapeDeck({
         sctx.fillStyle = "rgba(190,206,226,0.05)";
         sctx.fillRect(moonX - 80, breakY + surf, 160, 26);
       } else {
-      /* ---- Corridor, in one-point perspective ----
-       *
-       * Built from surfaces, not lines. An earlier pass drew the rungs as
-       * wireframe rectangles with four corner lines through the middle, and the
-       * result read as a tunnel in a 1983 vector game rather than a hallway.
-       *
-       * Each pair of adjacent rungs encloses one segment of corridor: four
-       * trapezoids (left wall, right wall, ceiling, floor). They are filled
-       * back-to-front so the near ones occlude, and the fill brightness falls
-       * off with depth, which is what actually creates the sense of distance.
-       */
-      const RUNGS = 15;
-      const WALL_W = 34;
-      const WALL_H = 22;
-      const walk = (time * 0.4) % 1;
+        /* ---- Corridor, in one-point perspective ----
+         *
+         * Built from surfaces, not lines. An earlier pass drew the rungs as
+         * wireframe rectangles with four corner lines through the middle, and the
+         * result read as a tunnel in a 1983 vector game rather than a hallway.
+         *
+         * Each pair of adjacent rungs encloses one segment of corridor: four
+         * trapezoids (left wall, right wall, ceiling, floor). They are filled
+         * back-to-front so the near ones occlude, and the fill brightness falls
+         * off with depth, which is what actually creates the sense of distance.
+         */
+        const RUNGS = 15;
+        const WALL_W = 34;
+        const WALL_H = 22;
+        const walk = (time * 0.4) % 1;
 
-      // Depth of rung i, as a fraction: 0 at the camera, 1 at the far end.
-      const depthAt = (i: number) => (i - walk) / RUNGS;
-      const rect = (k: number) => ({
-        hw: (WALL_W / k) * 1,
-        hh: (WALL_H / k) * 1,
-      });
+        // Depth of rung i, as a fraction: 0 at the camera, 1 at the far end.
+        const depthAt = (i: number) => (i - walk) / RUNGS;
+        const rect = (k: number) => ({
+          hw: (WALL_W / k) * 1,
+          hh: (WALL_H / k) * 1,
+        });
 
-      for (let i = RUNGS - 1; i >= 1; i--) {
-        const kFar = depthAt(i + 1);
-        const kNear = depthAt(i);
-        if (kNear <= 0.045) continue;
+        for (let i = RUNGS - 1; i >= 1; i--) {
+          const kFar = depthAt(i + 1);
+          const kNear = depthAt(i);
+          if (kNear <= 0.045) continue;
 
-        const far = rect(kFar);
-        const near = rect(kNear);
+          const far = rect(kFar);
+          const near = rect(kNear);
 
-        // Brightness by depth, with a gentle alternation so successive segments
-        // are distinguishable and movement through them is legible.
-        const lit = Math.max(0, 1 - kNear) ** 1.6;
-        const band = i % 2 === 0 ? 1 : 0.86;
+          // Brightness by depth, with a gentle alternation so successive segments
+          // are distinguishable and movement through them is legible.
+          const lit = Math.max(0, 1 - kNear) ** 1.6;
+          const band = i % 2 === 0 ? 1 : 0.86;
 
-        const quad = (pts: [number, number][], fill: string) => {
-          sctx.beginPath();
-          sctx.moveTo(pts[0]![0], pts[0]![1]);
-          for (let p = 1; p < pts.length; p++) sctx.lineTo(pts[p]![0], pts[p]![1]);
-          sctx.closePath();
-          sctx.fillStyle = fill;
-          sctx.fill();
-        };
+          const quad = (pts: [number, number][], fill: string) => {
+            sctx.beginPath();
+            sctx.moveTo(pts[0]![0], pts[0]![1]);
+            for (let p = 1; p < pts.length; p++) sctx.lineTo(pts[p]![0], pts[p]![1]);
+            sctx.closePath();
+            sctx.fillStyle = fill;
+            sctx.fill();
+          };
 
-        // Walls catch the camera light most; ceiling is darkest, floor sits
-        // between the two. Those three values are the whole lighting model.
-        const wall = `rgba(${Math.round(96 * lit * band)},${Math.round(101 * lit * band)},${Math.round(112 * lit * band)},1)`;
-        const ceil = `rgba(${Math.round(44 * lit)},${Math.round(46 * lit)},${Math.round(54 * lit)},1)`;
-        const floor = `rgba(${Math.round(68 * lit)},${Math.round(66 * lit)},${Math.round(70 * lit)},1)`;
+          // Walls catch the camera light most; ceiling is darkest, floor sits
+          // between the two. Those three values are the whole lighting model.
+          const wall = `rgba(${Math.round(96 * lit * band)},${Math.round(101 * lit * band)},${Math.round(112 * lit * band)},1)`;
+          const ceil = `rgba(${Math.round(44 * lit)},${Math.round(46 * lit)},${Math.round(54 * lit)},1)`;
+          const floor = `rgba(${Math.round(68 * lit)},${Math.round(66 * lit)},${Math.round(70 * lit)},1)`;
 
-        // left wall
-        quad(
-          [
-            [cx - near.hw, cy - near.hh],
-            [cx - far.hw, cy - far.hh],
-            [cx - far.hw, cy + far.hh],
-            [cx - near.hw, cy + near.hh],
-          ],
-          wall,
-        );
-        // right wall
-        quad(
-          [
-            [cx + near.hw, cy - near.hh],
-            [cx + far.hw, cy - far.hh],
-            [cx + far.hw, cy + far.hh],
-            [cx + near.hw, cy + near.hh],
-          ],
-          wall,
-        );
-        // ceiling
-        quad(
-          [
-            [cx - near.hw, cy - near.hh],
-            [cx - far.hw, cy - far.hh],
-            [cx + far.hw, cy - far.hh],
-            [cx + near.hw, cy - near.hh],
-          ],
-          ceil,
-        );
-        // floor
-        quad(
-          [
-            [cx - near.hw, cy + near.hh],
-            [cx - far.hw, cy + far.hh],
-            [cx + far.hw, cy + far.hh],
-            [cx + near.hw, cy + near.hh],
-          ],
-          floor,
-        );
-
-        // Seam between segments — a skirting line that sells the scale.
-        sctx.strokeStyle = `rgba(190,196,208,${0.16 * lit})`;
-        sctx.lineWidth = 1;
-        sctx.strokeRect(cx - far.hw, cy - far.hh, far.hw * 2, far.hh * 2);
-
-        // Doorways, every third segment, alternating sides.
-        if (i % 3 === 0) {
-          const side = (i / 3) % 2 === 0 ? -1 : 1;
-          const dTop = cy - far.hh * 0.42;
-          const dBot = cy + far.hh * 0.92;
-          const nTop = cy - near.hh * 0.42;
-          const nBot = cy + near.hh * 0.92;
+          // left wall
           quad(
             [
-              [cx + side * near.hw, nTop],
-              [cx + side * far.hw, dTop],
-              [cx + side * far.hw, dBot],
-              [cx + side * near.hw, nBot],
+              [cx - near.hw, cy - near.hh],
+              [cx - far.hw, cy - far.hh],
+              [cx - far.hw, cy + far.hh],
+              [cx - near.hw, cy + near.hh],
             ],
-            `rgba(0,0,0,${0.55 + 0.4 * lit})`,
+            wall,
           );
-        }
-
-        // A strip light in the ceiling every fourth segment: the only source of
-        // light in the scene that is not the camera.
-        if (i % 4 === 0) {
+          // right wall
           quad(
             [
-              [cx - near.hw * 0.16, cy - near.hh],
-              [cx - far.hw * 0.16, cy - far.hh],
-              [cx + far.hw * 0.16, cy - far.hh],
-              [cx + near.hw * 0.16, cy - near.hh],
+              [cx + near.hw, cy - near.hh],
+              [cx + far.hw, cy - far.hh],
+              [cx + far.hw, cy + far.hh],
+              [cx + near.hw, cy + near.hh],
             ],
-            `rgba(210,218,232,${0.1 * lit})`,
+            wall,
           );
+          // ceiling
+          quad(
+            [
+              [cx - near.hw, cy - near.hh],
+              [cx - far.hw, cy - far.hh],
+              [cx + far.hw, cy - far.hh],
+              [cx + near.hw, cy - near.hh],
+            ],
+            ceil,
+          );
+          // floor
+          quad(
+            [
+              [cx - near.hw, cy + near.hh],
+              [cx - far.hw, cy + far.hh],
+              [cx + far.hw, cy + far.hh],
+              [cx + near.hw, cy + near.hh],
+            ],
+            floor,
+          );
+
+          // Seam between segments — a skirting line that sells the scale.
+          sctx.strokeStyle = `rgba(190,196,208,${0.16 * lit})`;
+          sctx.lineWidth = 1;
+          sctx.strokeRect(cx - far.hw, cy - far.hh, far.hw * 2, far.hh * 2);
+
+          // Doorways, every third segment, alternating sides.
+          if (i % 3 === 0) {
+            const side = (i / 3) % 2 === 0 ? -1 : 1;
+            const dTop = cy - far.hh * 0.42;
+            const dBot = cy + far.hh * 0.92;
+            const nTop = cy - near.hh * 0.42;
+            const nBot = cy + near.hh * 0.92;
+            quad(
+              [
+                [cx + side * near.hw, nTop],
+                [cx + side * far.hw, dTop],
+                [cx + side * far.hw, dBot],
+                [cx + side * near.hw, nBot],
+              ],
+              `rgba(0,0,0,${0.55 + 0.4 * lit})`,
+            );
+          }
+
+          // A strip light in the ceiling every fourth segment: the only source of
+          // light in the scene that is not the camera.
+          if (i % 4 === 0) {
+            quad(
+              [
+                [cx - near.hw * 0.16, cy - near.hh],
+                [cx - far.hw * 0.16, cy - far.hh],
+                [cx + far.hw * 0.16, cy - far.hh],
+                [cx + near.hw * 0.16, cy - near.hh],
+              ],
+              `rgba(210,218,232,${0.1 * lit})`,
+            );
+          }
         }
-      }
       }
 
       /* ---- The figure ---- */
@@ -393,7 +393,15 @@ export function TapeDeck({
         sctx.fill();
         // Head.
         sctx.beginPath();
-        sctx.ellipse(cx + sway, footY - height * 0.95, width * 0.3, width * 0.36, 0, 0, Math.PI * 2);
+        sctx.ellipse(
+          cx + sway,
+          footY - height * 0.95,
+          width * 0.3,
+          width * 0.36,
+          0,
+          0,
+          Math.PI * 2,
+        );
         sctx.fill();
         sctx.globalAlpha = 1;
 
@@ -588,8 +596,16 @@ export function TapeDeck({
   }, [state, label, sceneKind]);
 
   return (
-    <div className={`relative overflow-hidden rounded-md border-2 border-border bg-black ${className ?? ""}`}>
-      <canvas ref={canvasRef} width={W} height={H} className="block w-full" style={{ aspectRatio: `${W}/${H}` }} />
+    <div
+      className={`relative overflow-hidden rounded-md border-2 border-border bg-black ${className ?? ""}`}
+    >
+      <canvas
+        ref={canvasRef}
+        width={W}
+        height={H}
+        className="block w-full"
+        style={{ aspectRatio: `${W}/${H}` }}
+      />
     </div>
   );
 }

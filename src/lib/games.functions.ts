@@ -26,7 +26,8 @@ export const getLeaderboard = createServerFn({ method: "GET" })
       global: {
         fetch: (input, init) => {
           const h = new Headers(init?.headers);
-          if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+          if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`)
+            h.delete("Authorization");
           h.set("apikey", key);
           return fetch(input, { ...init, headers: h });
         },
@@ -55,7 +56,12 @@ export const submitScore = createServerFn({ method: "POST" })
     if (!nicknameCheck.valid) throw new Error(nicknameCheck.error);
 
     const scoreNum = Number(data.score);
-    if (!Number.isFinite(scoreNum) || scoreNum < 0 || scoreNum > cfg.maxScore || Math.floor(scoreNum) !== scoreNum) {
+    if (
+      !Number.isFinite(scoreNum) ||
+      scoreNum < 0 ||
+      scoreNum > cfg.maxScore ||
+      Math.floor(scoreNum) !== scoreNum
+    ) {
       throw new Error("Score looks invalid.");
     }
 

@@ -136,10 +136,7 @@ export function SnakeByte({ onGameOver }: { onGameOver: (score: number) => void 
     do {
       pos = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
       guard++;
-    } while (
-      guard < 400 &&
-      (g.snake.some((s) => eq(s, pos)) || g.walls.some((w) => eq(w, pos)))
-    );
+    } while (guard < 400 && (g.snake.some((s) => eq(s, pos)) || g.walls.some((w) => eq(w, pos))));
     return pos;
   }, []);
 
@@ -191,7 +188,13 @@ export function SnakeByte({ onGameOver }: { onGameOver: (score: number) => void 
     ctx.shadowBlur = 16;
     const r = (cell / 2 - 3) * pulse;
     ctx.beginPath();
-    ctx.arc(g.pickup.x * cell + cell / 2, g.pickup.y * cell + cell / 2, Math.max(2, r), 0, Math.PI * 2);
+    ctx.arc(
+      g.pickup.x * cell + cell / 2,
+      g.pickup.y * cell + cell / 2,
+      Math.max(2, r),
+      0,
+      Math.PI * 2,
+    );
     ctx.fill();
     ctx.shadowBlur = 0;
 

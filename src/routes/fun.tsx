@@ -148,7 +148,10 @@ function Arcade() {
         data-act="noir"
         className="act-noir grain relative overflow-hidden border-t border-border"
       >
-        <div aria-hidden className="hairline-grid pointer-events-none absolute inset-0 opacity-40" />
+        <div
+          aria-hidden
+          className="hairline-grid pointer-events-none absolute inset-0 opacity-40"
+        />
 
         <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-16">
           {/* ---- Cartridge selector ---- */}
@@ -232,7 +235,11 @@ function Arcade() {
                     title={audio.muted ? "Unmute" : "Mute"}
                     className="grid h-8 w-8 place-items-center rounded-md border-2 border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
                   >
-                    {audio.muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    {audio.muted ? (
+                      <VolumeX className="h-4 w-4" />
+                    ) : (
+                      <Volume2 className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
