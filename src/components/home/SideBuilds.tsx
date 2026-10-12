@@ -22,8 +22,8 @@ const BUILDS: Build[] = [
   {
     to: "/fun",
     title: "The Arcade",
-    body: "Six browser games with synthesised sound and a public leaderboard.",
-    meta: "6 games · Web Audio · Supabase",
+    body: "Seven browser games with synthesised sound and a public leaderboard.",
+    meta: "7 games · Web Audio · Supabase",
     preview: ArcadePreview,
   },
   {

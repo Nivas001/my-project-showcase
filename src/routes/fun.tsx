@@ -6,6 +6,7 @@ import {
   Gamepad2,
   Ghost,
   Keyboard,
+  Layers,
   Lightbulb,
   Music,
   Rocket,
@@ -19,6 +20,7 @@ import {
 import { GAMES, type GameId } from "@/lib/games";
 import { PageHero, SectionLabel, SplitLines, Sticker } from "@/components/kit";
 import { BugHunt } from "@/components/games/BugHunt";
+import { FullStack } from "@/components/games/FullStack";
 import { DeployDash } from "@/components/games/DeployDash";
 import { SnakeByte } from "@/components/games/SnakeByte";
 import { MemoryStack } from "@/components/games/MemoryStack";
@@ -34,7 +36,7 @@ import { GAME_CONFIG } from "@/lib/games";
 
 const TITLE = "The Arcade — Srinivas M";
 const DESCRIPTION =
-  "Six browser mini-games with synthesised sound and a public leaderboard: Bug Hunt, Deploy Dash, Snake Byte, Memory Stack, Code Sprint and Reaction Time.";
+  "Seven browser mini-games with synthesised sound and a public leaderboard: Full Stack, Bug Hunt, Deploy Dash, Snake Byte, Memory Stack, Code Sprint and Reaction Time.";
 
 export const Route = createFileRoute("/fun")({
   head: () => ({
@@ -58,6 +60,7 @@ const GAME_ICONS: Record<GameId, typeof Bug> = {
   "memory-stack": Zap,
   "code-sprint": Keyboard,
   "reaction-time": Timer,
+  "full-stack": Layers,
 };
 
 export function FunPage() {
@@ -82,7 +85,7 @@ export function FunPage() {
 
 function Arcade() {
   const audio = useArcadeAudio();
-  const [active, setActive] = useState<GameId>("bug-hunt");
+  const [active, setActive] = useState<GameId>("full-stack");
   const [lastScore, setLastScore] = useState<number | undefined>(undefined);
   const [roast, setRoast] = useState<{ tier: string; line: string } | null>(null);
   const [idle, setIdle] = useState<string>(IDLE_TAUNTS[0]!);
@@ -128,7 +131,7 @@ function Arcade() {
       <PageHero
         index="01"
         label="The arcade"
-        lines={["Six games.", "One leaderboard."]}
+        lines={["Seven games.", "One leaderboard."]}
         lede="A real arcade wired into a CV. Every sound on this page is synthesised in your browser — no audio files, no autoplay, nothing starts until you press Start."
       >
         <div className="flex flex-wrap items-center gap-3">
@@ -255,6 +258,7 @@ function Arcade() {
                     glitch-9000 says: “{idle}”
                   </p>
 
+                  {active === "full-stack" && <FullStack onGameOver={handleGameOver} />}
                   {active === "bug-hunt" && <BugHunt onGameOver={handleGameOver} />}
                   {active === "deploy-dash" && <DeployDash onGameOver={handleGameOver} />}
                   {active === "snake-byte" && <SnakeByte onGameOver={handleGameOver} />}

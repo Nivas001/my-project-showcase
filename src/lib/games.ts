@@ -1,5 +1,11 @@
 export const GAMES = [
   {
+    id: "full-stack",
+    label: "Full Stack",
+    description: "Drop each layer of a product onto the tower. Overhang gets cut.",
+    tip: "Three perfect drops in a row and the slab starts growing back.",
+  },
+  {
     id: "bug-hunt",
     label: "Bug Hunt",
     description: "Chain hits for a multiplier. Never swing at a prod deploy.",
@@ -53,6 +59,7 @@ export function isGameId(value: string): value is GameId {
 }
 
 export const GAME_CONFIG: Record<GameId, { unit: string; ascending: boolean; maxScore: number }> = {
+  "full-stack": { unit: "floors", ascending: false, maxScore: 9999 },
   "bug-hunt": { unit: "bugs", ascending: false, maxScore: 9999 },
   "deploy-dash": { unit: "pts", ascending: false, maxScore: 999999 },
   "snake-byte": { unit: "bytes", ascending: false, maxScore: 9999 },

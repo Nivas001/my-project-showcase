@@ -2,6 +2,21 @@ import type { GameId } from "@/lib/games";
 
 /** Tiered roasts. Lower is better only for reaction-time. */
 const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> = {
+  "full-stack": {
+    bad: [
+      "{s} floors. You shipped a database and called it a product.",
+      "{s} floors. The stack fell over before the API existed.",
+      "{s}. That's not a stack, that's a stub.",
+    ],
+    mid: [
+      "{s} floors. It runs. Nobody should look at the admin panel.",
+      "{s} floors. A perfectly respectable MVP. Emphasis on minimum.",
+    ],
+    good: [
+      "{s} floors. Shipped, monitored, and smug about it.",
+      "{s}?! Full stack, fully insufferable.",
+    ],
+  },
   "bug-hunt": {
     bad: [
       "You squashed {s} bugs. My grandmother's cat does QA better than this.",
@@ -89,6 +104,7 @@ const ROASTS: Record<GameId, { bad: string[]; mid: string[]; good: string[] }> =
 };
 
 const THRESHOLDS: Record<GameId, { good: number; mid: number; lowerIsBetter?: boolean }> = {
+  "full-stack": { good: 26, mid: 12 },
   "bug-hunt": { good: 45, mid: 20 },
   "deploy-dash": { good: 900, mid: 350 },
   "snake-byte": { good: 20, mid: 8 },
