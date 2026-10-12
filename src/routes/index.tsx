@@ -13,9 +13,9 @@ import { SectionRail } from "@/components/home/SectionRail";
 import { HowIWork } from "@/components/home/HowIWork";
 import { HireCTA } from "@/components/home/HireCTA";
 
-const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
+const TITLE = "Srinivas M — Website & Mobile App Developer, Pondicherry";
 const DESCRIPTION =
-  "Full-stack engineer in Pondicherry with five products live in production and a published Tamil NLP summarisation model. React, TanStack, Next.js, Python, Flutter, PostgreSQL.";
+  "Full-stack developer in Pondicherry building websites and mobile apps with React, Next.js, Flutter and Supabase. Five live products and a published Tamil NLP model. Open to hire.";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(projectsQuery),

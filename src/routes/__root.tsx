@@ -23,9 +23,9 @@ import { ThemeProvider, THEME_BOOT_SCRIPT } from "@/lib/os/theme";
 import { WindowManagerProvider } from "@/components/os/WindowManager";
 import { FunFx } from "@/components/os/FunFx";
 
-const TITLE = "Srinivas M — Full-stack engineer, Flutter & applied NLP";
+const TITLE = "Srinivas M — Website & Mobile App Developer, Pondicherry";
 const DESCRIPTION =
-  "Full-stack engineer in Pondicherry with five products live in production and a published Tamil NLP summarisation model. React, TanStack, Next.js, Python, Flutter, PostgreSQL.";
+  "Full-stack developer in Pondicherry building websites and mobile apps with React, Next.js, Flutter and Supabase. Five live products and a published Tamil NLP model. Open to hire.";
 /* Served from public/, not a preview-deployment screenshot on someone else's
    bucket. Every LinkedIn, WhatsApp and Slack unfurl of the site loads this, so
    it has to outlive whatever host built it. Absolute URL: crawlers do not
