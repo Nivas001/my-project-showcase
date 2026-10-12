@@ -31,10 +31,11 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { StudioStory } from "@/components/about/StudioStory";
 import { VideoScreening } from "@/components/about/VideoScreening";
+import { Showreel } from "@/components/about/Showreel";
 
 const TITLE = "About — Srinivas";
 const DESCRIPTION =
-  "Srinivas: full-stack engineer in Pondicherry. Background, stack, education and certifications, plus a video introduction.";
+  "Srinivas: full-stack engineer in Pondicherry. Background, stack, education and certifications, plus a video introduction and a 75-second showreel.";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -211,6 +212,7 @@ function AboutPage() {
           direct={Boolean(isDirectVideo)}
         />
       ) : null}
+      <Showreel />
 
       <section data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
