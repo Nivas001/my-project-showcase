@@ -10,7 +10,8 @@ export const getStoryStats = createServerFn({ method: "GET" }).handler(async () 
     global: {
       fetch: (input, init) => {
         const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`)
+          h.delete("Authorization");
         h.set("apikey", key);
         return fetch(input, { ...init, headers: h });
       },
@@ -52,10 +53,17 @@ export const recordRun = createServerFn({ method: "POST" })
     const { getStoryMeta } = await import("@/content/horror/manifest");
     if (!getStoryMeta(data.story)) throw new Error("Unknown story.");
     if (!/^[a-z0-9-]{1,40}$/.test(data.ending)) throw new Error("Unknown ending.");
-    if (!["survived", "doomed", "worst"].includes(data.outcome)) throw new Error("Unknown outcome.");
+    if (!["survived", "doomed", "worst"].includes(data.outcome))
+      throw new Error("Unknown outcome.");
 
-    const nickname = data.nickname.trim().slice(0, 20).replace(/[^\p{L}\p{N}_\- ]/gu, "") || "anonymous";
-    const choices = (Array.isArray(data.choices) ? data.choices : []).slice(0, 20).map((c) => String(c).slice(0, 60));
+    const nickname =
+      data.nickname
+        .trim()
+        .slice(0, 20)
+        .replace(/[^\p{L}\p{N}_\- ]/gu, "") || "anonymous";
+    const choices = (Array.isArray(data.choices) ? data.choices : [])
+      .slice(0, 20)
+      .map((c) => String(c).slice(0, 60));
     const duration = Math.max(0, Math.min(7200, Math.floor(Number(data.durationSeconds) || 0)));
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

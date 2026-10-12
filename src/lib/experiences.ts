@@ -43,7 +43,9 @@ export const emptyExperience: ExperienceInput = {
 };
 
 /** "Jan 2026 — Present" style label for a role. */
-export function experiencePeriod(experience: Pick<Experience, "start_date" | "end_date" | "is_current">) {
+export function experiencePeriod(
+  experience: Pick<Experience, "start_date" | "end_date" | "is_current">,
+) {
   const end = experience.is_current ? "Present" : experience.end_date;
   return [experience.start_date, end].filter(Boolean).join(" — ");
 }

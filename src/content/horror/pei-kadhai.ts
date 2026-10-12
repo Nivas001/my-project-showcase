@@ -11,12 +11,40 @@ export const peiKadhai: Story = {
   endings: 3,
   nodes: {
     start: [
-      { t: "text", s: "The shortcut to your grandmother's village saves forty minutes and costs, everyone says, more than that.", amb: "forest", fear: 6 },
-      { t: "text", s: "Your uncle gave you three rules when you were nine. You remember two of them clearly.", fear: 10 },
-      { t: "text", s: "One: don't stop for anyone after the tamarind tree. Two: if you stop, don't let them sit behind you.", slow: true, fear: 14 },
-      { t: "text", s: "The third rule you have forgotten. This has never mattered before.", sfx: "whisper", fear: 16 },
-      { t: "text", s: "Half a kilometre past the tamarind tree, your headlights find a woman standing in the middle of the road.", sfx: "sting", fear: 20 },
-      { t: "text", s: "White saree. Wet hair, though it has not rained in three weeks. She is holding her hand out, palm down.", fear: 22 },
+      {
+        t: "text",
+        s: "The shortcut to your grandmother's village saves forty minutes and costs, everyone says, more than that.",
+        amb: "forest",
+        fear: 6,
+      },
+      {
+        t: "text",
+        s: "Your uncle gave you three rules when you were nine. You remember two of them clearly.",
+        fear: 10,
+      },
+      {
+        t: "text",
+        s: "One: don't stop for anyone after the tamarind tree. Two: if you stop, don't let them sit behind you.",
+        slow: true,
+        fear: 14,
+      },
+      {
+        t: "text",
+        s: "The third rule you have forgotten. This has never mattered before.",
+        sfx: "whisper",
+        fear: 16,
+      },
+      {
+        t: "text",
+        s: "Half a kilometre past the tamarind tree, your headlights find a woman standing in the middle of the road.",
+        sfx: "sting",
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: "White saree. Wet hair, though it has not rained in three weeks. She is holding her hand out, palm down.",
+        fear: 22,
+      },
       {
         t: "choice",
         prompt: "She has not moved. She will not move.",
@@ -30,9 +58,21 @@ export const peiKadhai: Story = {
     ],
 
     around: [
-      { t: "text", s: "You swerve. Gravel. Branches on the windscreen. You get past her.", sfx: "scrape", fear: 14 },
+      {
+        t: "text",
+        s: "You swerve. Gravel. Branches on the windscreen. You get past her.",
+        sfx: "scrape",
+        fear: 14,
+      },
       { t: "text", s: "In the mirror the road is empty. You laugh, once, badly.", fear: 10 },
-      { t: "text", s: "Two kilometres later she is standing in the road again. Same posture. Same wet hair.", slow: true, sfx: "sting", shake: true, fear: 26 },
+      {
+        t: "text",
+        s: "Two kilometres later she is standing in the road again. Same posture. Same wet hair.",
+        slow: true,
+        sfx: "sting",
+        shake: true,
+        fear: 26,
+      },
       { t: "text", s: "This time her palm is up.", fear: 24 },
       {
         t: "choice",
@@ -44,9 +84,25 @@ export const peiKadhai: Story = {
     ],
 
     again: [
-      { t: "text", s: "You swerve. Third time, she is closer. Fourth time, she is at the edge of the headlights.", fear: 24 },
-      { t: "text", s: "Fifth time, she is not in the road at all.", slow: true, hold: 1100, fear: 26 },
-      { t: "text", s: "The car is heavier. The suspension has taken new weight. The mirror shows the back seat.", sfx: "breath", shake: true, fear: 32 },
+      {
+        t: "text",
+        s: "You swerve. Third time, she is closer. Fourth time, she is at the edge of the headlights.",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "Fifth time, she is not in the road at all.",
+        slow: true,
+        hold: 1100,
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "The car is heavier. The suspension has taken new weight. The mirror shows the back seat.",
+        sfx: "breath",
+        shake: true,
+        fear: 32,
+      },
       {
         t: "ending",
         id: "behind-you",
@@ -61,16 +117,47 @@ export const peiKadhai: Story = {
     ],
 
     reverse: [
-      { t: "text", s: "You throw it into reverse. The engine screams. The road behind you goes back thirty metres.", sfx: "scrape", fear: 18 },
-      { t: "text", s: "She is behind the car now. She did not walk there.", slow: true, sfx: "sting", shake: true, fear: 28 },
-      { t: "text", s: "You brake. She taps the boot twice, patiently, the way you'd tap a bus to tell the driver to go.", sfx: "knock", fear: 26 },
+      {
+        t: "text",
+        s: "You throw it into reverse. The engine screams. The road behind you goes back thirty metres.",
+        sfx: "scrape",
+        fear: 18,
+      },
+      {
+        t: "text",
+        s: "She is behind the car now. She did not walk there.",
+        slow: true,
+        sfx: "sting",
+        shake: true,
+        fear: 28,
+      },
+      {
+        t: "text",
+        s: "You brake. She taps the boot twice, patiently, the way you'd tap a bus to tell the driver to go.",
+        sfx: "knock",
+        fear: 26,
+      },
       { t: "goto", go: "stop" },
     ],
 
     stop: [
-      { t: "text", s: "You stop. She comes to the window. Up close she is entirely ordinary, and that is the horror of it.", fear: 20 },
-      { t: "text", s: "\"Kovil varaikkum,\" she says. Just as far as the temple. Her voice is dry, like paper in a drawer.", sfx: "whisper", fear: 22 },
-      { t: "text", s: "There is no temple on this road. There was one. Forty years ago, before the reservoir.", slow: true, fear: 26 },
+      {
+        t: "text",
+        s: "You stop. She comes to the window. Up close she is entirely ordinary, and that is the horror of it.",
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: '"Kovil varaikkum," she says. Just as far as the temple. Her voice is dry, like paper in a drawer.',
+        sfx: "whisper",
+        fear: 22,
+      },
+      {
+        t: "text",
+        s: "There is no temple on this road. There was one. Forty years ago, before the reservoir.",
+        slow: true,
+        fear: 26,
+      },
       {
         t: "choice",
         prompt: "She waits with the patience of water.",
@@ -84,10 +171,26 @@ export const peiKadhai: Story = {
     ],
 
     refuse: [
-      { t: "text", s: "\"Sorry,\" you say, and put the car in gear. She does not argue. That is not a good sign.", fear: 20 },
+      {
+        t: "text",
+        s: '"Sorry," you say, and put the car in gear. She does not argue. That is not a good sign.',
+        fear: 20,
+      },
       { t: "text", s: "For six kilometres nothing happens. You start to breathe.", fear: -6 },
-      { t: "text", s: "Then the smell arrives — river silt, wet cloth, old flowers — and the temperature drops.", sfx: "drop", fear: 24 },
-      { t: "text", s: "Your grandmother's voice, from the passenger seat: \"You should have taken her. She only ever asks once.\"", slow: true, sfx: "sting", shake: true, fear: 30 },
+      {
+        t: "text",
+        s: "Then the smell arrives — river silt, wet cloth, old flowers — and the temperature drops.",
+        sfx: "drop",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: 'Your grandmother\'s voice, from the passenger seat: "You should have taken her. She only ever asks once."',
+        slow: true,
+        sfx: "sting",
+        shake: true,
+        fear: 30,
+      },
       { t: "text", s: "Your grandmother has been dead for six years.", fear: 30 },
       {
         t: "choice",
@@ -100,7 +203,13 @@ export const peiKadhai: Story = {
 
     lookSeat: [
       { t: "text", s: "You look.", slow: true, sfx: "breath", fear: 28 },
-      { t: "text", s: "Empty seat. Wet upholstery. A single strand of long black hair across the belt buckle.", sfx: "sting", shake: true, fear: 30 },
+      {
+        t: "text",
+        s: "Empty seat. Wet upholstery. A single strand of long black hair across the belt buckle.",
+        sfx: "sting",
+        shake: true,
+        fear: 30,
+      },
       { t: "text", s: "When you look back at the road, the road is water.", slow: true, fear: 34 },
       {
         t: "ending",
@@ -116,10 +225,30 @@ export const peiKadhai: Story = {
     ],
 
     ruleOut: [
-      { t: "text", s: "You say the two rules aloud, over and over, like a child reciting times tables.", fear: 16 },
-      { t: "text", s: "Somewhere around the fortieth repetition you remember the third rule.", slow: true, fear: 20 },
-      { t: "text", s: "Three: if you refuse her, do not stop until sunrise. Not for anything. Not for anyone you know.", sfx: "whisper", fear: 24 },
-      { t: "text", s: "Ahead, in the headlights, your grandmother is standing in the middle of the road with her hand out.", sfx: "sting", shake: true, fear: 30 },
+      {
+        t: "text",
+        s: "You say the two rules aloud, over and over, like a child reciting times tables.",
+        fear: 16,
+      },
+      {
+        t: "text",
+        s: "Somewhere around the fortieth repetition you remember the third rule.",
+        slow: true,
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: "Three: if you refuse her, do not stop until sunrise. Not for anything. Not for anyone you know.",
+        sfx: "whisper",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "Ahead, in the headlights, your grandmother is standing in the middle of the road with her hand out.",
+        sfx: "sting",
+        shake: true,
+        fear: 30,
+      },
       {
         t: "choice",
         prompt: "It is 4:40am. Sunrise is at 6:02.",
@@ -133,14 +262,21 @@ export const peiKadhai: Story = {
 
     stopGran: [
       { t: "text", s: "You stop. Of course you stop. You would always have stopped.", fear: 26 },
-      { t: "text", s: "She gets in the back without opening the door.", slow: true, sfx: "door", shake: true, fear: 32 },
+      {
+        t: "text",
+        s: "She gets in the back without opening the door.",
+        slow: true,
+        sfx: "door",
+        shake: true,
+        fear: 32,
+      },
       {
         t: "ending",
         id: "family",
         outcome: "doomed",
         title: "Family",
         lines: [
-          "\"Kovil varaikkum,\" she says, in a voice that is dry as paper in a drawer.",
+          '"Kovil varaikkum," she says, in a voice that is dry as paper in a drawer.',
           "You drive. The sun does not come up at 6:02, or at 7, or at all.",
           "There is a temple at the end of every road now, and you are always just short of it.",
         ],
@@ -148,9 +284,24 @@ export const peiKadhai: Story = {
     ],
 
     through: [
-      { t: "text", s: "You do not slow down. Your hands do it, not you. The bonnet passes through her like fog through a fence.", fear: 24, sfx: "sting" },
-      { t: "text", s: "You keep driving. 5:10. 5:40. The sky goes the colour of old ash, then old gold.", fear: -14, amb: "rain" },
-      { t: "text", s: "At 6:02 the sun comes up over the paddy fields and everything in the car stops being cold.", sfx: "bell", fear: -25 },
+      {
+        t: "text",
+        s: "You do not slow down. Your hands do it, not you. The bonnet passes through her like fog through a fence.",
+        fear: 24,
+        sfx: "sting",
+      },
+      {
+        t: "text",
+        s: "You keep driving. 5:10. 5:40. The sky goes the colour of old ash, then old gold.",
+        fear: -14,
+        amb: "rain",
+      },
+      {
+        t: "text",
+        s: "At 6:02 the sun comes up over the paddy fields and everything in the car stops being cold.",
+        sfx: "bell",
+        fear: -25,
+      },
       {
         t: "ending",
         id: "sunrise",
@@ -165,9 +316,25 @@ export const peiKadhai: Story = {
     ],
 
     backseat: [
-      { t: "text", s: "She gets in behind you. The car sinks on its springs. The smell of river silt fills the cabin.", sfx: "door", fear: 26 },
-      { t: "text", s: "You break rule two before you finish remembering rule two.", slow: true, fear: 28 },
-      { t: "text", s: "In the mirror she is sitting with her head tilted all the way back, looking at the roof, smiling.", sfx: "sting", shake: true, fear: 32 },
+      {
+        t: "text",
+        s: "She gets in behind you. The car sinks on its springs. The smell of river silt fills the cabin.",
+        sfx: "door",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "You break rule two before you finish remembering rule two.",
+        slow: true,
+        fear: 28,
+      },
+      {
+        t: "text",
+        s: "In the mirror she is sitting with her head tilted all the way back, looking at the roof, smiling.",
+        sfx: "sting",
+        shake: true,
+        fear: 32,
+      },
       {
         t: "ending",
         id: "rule-two",
@@ -182,9 +349,22 @@ export const peiKadhai: Story = {
     ],
 
     front: [
-      { t: "text", s: "She sits beside you. You can see her the whole time. This turns out to matter enormously.", fear: 18 },
-      { t: "text", s: "She talks about the reservoir. About a wedding. About water coming into a house at night in 1983.", sfx: "whisper", fear: 22 },
-      { t: "text", s: "\"Stop here,\" she says, at a stretch of road with nothing on either side but water-weed and dark.", fear: 24 },
+      {
+        t: "text",
+        s: "She sits beside you. You can see her the whole time. This turns out to matter enormously.",
+        fear: 18,
+      },
+      {
+        t: "text",
+        s: "She talks about the reservoir. About a wedding. About water coming into a house at night in 1983.",
+        sfx: "whisper",
+        fear: 22,
+      },
+      {
+        t: "text",
+        s: '"Stop here," she says, at a stretch of road with nothing on either side but water-weed and dark.',
+        fear: 24,
+      },
       {
         t: "choice",
         prompt: "There is no temple. There is only the reservoir.",
@@ -197,8 +377,19 @@ export const peiKadhai: Story = {
     ],
 
     letOut: [
-      { t: "text", s: "She gets out. She does not thank you. At the water's edge she turns and touches her forehead — a blessing, or a receipt.", fear: -12, sfx: "bell" },
-      { t: "text", s: "Then she walks into the reservoir without a ripple, and the cold goes out of the car.", slow: true, fear: -20, amb: "rain" },
+      {
+        t: "text",
+        s: "She gets out. She does not thank you. At the water's edge she turns and touches her forehead — a blessing, or a receipt.",
+        fear: -12,
+        sfx: "bell",
+      },
+      {
+        t: "text",
+        s: "Then she walks into the reservoir without a ripple, and the cold goes out of the car.",
+        slow: true,
+        fear: -20,
+        amb: "rain",
+      },
       {
         t: "ending",
         id: "delivered",
@@ -213,9 +404,25 @@ export const peiKadhai: Story = {
     ],
 
     keepDriving: [
-      { t: "text", s: "\"There's nothing here,\" you say. \"Let me take you to the village. There are people there.\"", fear: 22 },
-      { t: "text", s: "For the first time, she looks at you directly.", slow: true, sfx: "breath", fear: 28 },
-      { t: "text", s: "\"There are people here too,\" she says. \"Under it. I was going to be polite about this.\"", sfx: "sting", shake: true, fear: 32 },
+      {
+        t: "text",
+        s: '"There\'s nothing here," you say. "Let me take you to the village. There are people there."',
+        fear: 22,
+      },
+      {
+        t: "text",
+        s: "For the first time, she looks at you directly.",
+        slow: true,
+        sfx: "breath",
+        fear: 28,
+      },
+      {
+        t: "text",
+        s: '"There are people here too," she says. "Under it. I was going to be polite about this."',
+        sfx: "sting",
+        shake: true,
+        fear: 32,
+      },
       {
         t: "ending",
         id: "under-it",

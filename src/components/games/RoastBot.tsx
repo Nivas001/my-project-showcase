@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bot, Send, Loader2, Zap, GraduationCap } from "lucide-react";
 
-
 type Msg = { role: "user" | "assistant"; content: string };
 
 const OPENERS = [
@@ -41,7 +40,9 @@ export function RoastBot({ context }: { context?: string | undefined }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setMessages([{ role: "assistant", content: OPENERS[Math.floor(Math.random() * OPENERS.length)]! }]);
+    setMessages([
+      { role: "assistant", content: OPENERS[Math.floor(Math.random() * OPENERS.length)]! },
+    ]);
   }, []);
 
   useEffect(() => {
@@ -77,7 +78,6 @@ export function RoastBot({ context }: { context?: string | undefined }) {
     setMessages(withUser);
     setStreaming(true);
 
-
     try {
       const res = await fetch("/api/roast", {
         method: "POST",
@@ -110,7 +110,10 @@ export function RoastBot({ context }: { context?: string | undefined }) {
       if (!acc.trim()) {
         setMessages((m) => {
           const copy = [...m];
-          copy[copy.length - 1] = { role: "assistant", content: "...I'm speechless. That's how bad it was. 💀" };
+          copy[copy.length - 1] = {
+            role: "assistant",
+            content: "...I'm speechless. That's how bad it was. 💀",
+          };
           return copy;
         });
       }
@@ -120,7 +123,6 @@ export function RoastBot({ context }: { context?: string | undefined }) {
       setStreaming(false);
       if (count >= LIMIT) setGraduated(true);
     }
-
   };
 
   return (
@@ -173,8 +175,8 @@ export function RoastBot({ context }: { context?: string | undefined }) {
           <div className="animate-scale-in rounded-md border border-accent/40 bg-accent/10 p-4">
             <p className="font-mono text-[13px] leading-relaxed">
               <span className="mr-1.5 text-accent">glitch&gt;</span>
-              ten questions. TEN. bestie you've been losing an argument to a toaster for 10 rounds straight. i've enrolled you
-              in a course. attendance mandatory. 💀
+              ten questions. TEN. bestie you've been losing an argument to a toaster for 10 rounds
+              straight. i've enrolled you in a course. attendance mandatory. 💀
             </p>
             <Link
               to="/how-to-be-smarter-than-an-ai"
@@ -218,7 +220,9 @@ export function RoastBot({ context }: { context?: string | undefined }) {
           onChange={(e) => setInput(e.target.value)}
           maxLength={500}
           disabled={streaming || graduated}
-          placeholder={graduated ? "class is in session. go read." : "say something you'll regret..."}
+          placeholder={
+            graduated ? "class is in session. go read." : "say something you'll regret..."
+          }
           className="flex-1 rounded-sm border border-border bg-background px-3 py-2.5 font-mono text-xs outline-none transition-colors focus:border-accent disabled:opacity-50"
         />
         <button
@@ -230,7 +234,6 @@ export function RoastBot({ context }: { context?: string | undefined }) {
           {streaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </button>
       </form>
-
     </div>
   );
 }

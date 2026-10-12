@@ -21,7 +21,9 @@ export function SectionLabel({
 }) {
   return (
     <div className={cn("flex items-center gap-3 text-muted-foreground", className)}>
-      {index ? <span className="font-mono text-[11px] tabular-nums text-accent">{index}</span> : null}
+      {index ? (
+        <span className="font-mono text-[11px] tabular-nums text-accent">{index}</span>
+      ) : null}
       <span className="font-mono text-[11px] uppercase tracking-[0.18em]">{children}</span>
       {rule ? <span aria-hidden className="h-px flex-1 bg-border" /> : null}
     </div>
@@ -504,10 +506,7 @@ export function PageHero({
         ) : null}
 
         {children ? (
-          <div
-            className="soft-in mt-9"
-            style={{ "--line-delay": "380ms" } as React.CSSProperties}
-          >
+          <div className="soft-in mt-9" style={{ "--line-delay": "380ms" } as React.CSSProperties}>
             {children}
           </div>
         ) : null}

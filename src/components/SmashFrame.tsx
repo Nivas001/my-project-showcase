@@ -303,7 +303,9 @@ export function SmashFrame() {
               }}
               aria-pressed={armed}
               className="rounded-sm border border-border px-5 py-2.5 font-mono text-sm transition-colors hover:border-primary"
-              style={armed ? { opacity: 0.35 } : { animation: "smash-idle 2.4s ease-in-out infinite" }}
+              style={
+                armed ? { opacity: 0.35 } : { animation: "smash-idle 2.4s ease-in-out infinite" }
+              }
             >
               🔨 {armed ? "hammer in hand" : "pick up the hammer"}
             </button>

@@ -276,4 +276,3 @@ export function ClockFace({ size }: { size: number }) {
     </svg>
   );
 }
-

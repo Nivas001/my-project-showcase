@@ -139,11 +139,7 @@ function ProjectsPage() {
       <FreightStory />
 
       {/* 3 — the rest. */}
-      <section
-        id="all-projects"
-        data-act="hog"
-        className="act-hog relative border-t border-border"
-      >
+      <section id="all-projects" data-act="hog" className="act-hog relative border-t border-border">
         <div aria-hidden className="dot-grid pointer-events-none absolute inset-0 opacity-70" />
 
         <div className="relative mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">

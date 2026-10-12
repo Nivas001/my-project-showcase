@@ -22,14 +22,48 @@ export const tapeCorridor3B: Story = {
   endings: 4,
   nodes: {
     start: [
-      { t: "text", s: "TAPE 07. The seventh of eleven recovered from the site.", amb: "tape", fx: "static", fear: 6 },
-      { t: "text", s: "Camera comes on inside the building. Nobody filmed going in.", fx: "glitch", fear: 10 },
+      {
+        t: "text",
+        s: "TAPE 07. The seventh of eleven recovered from the site.",
+        amb: "tape",
+        fx: "static",
+        fear: 6,
+      },
+      {
+        t: "text",
+        s: "Camera comes on inside the building. Nobody filmed going in.",
+        fx: "glitch",
+        fear: 10,
+      },
       { t: "text", s: "Corridor 3B. Old paediatric wing. Closed in 1991.", fear: 12 },
-      { t: "text", s: "Three voices on the audio. Only one of them is ever on camera.", sfx: "whisper", fear: 16 },
-      { t: "text", s: "\"Keep it on me. Keep it steady.\"", as: "voice", fear: 14 },
-      { t: "text", s: "\"There's nothing down there, Priya. It's a corridor.\"", as: "voice", fear: 12 },
-      { t: "text", s: "The camera light reaches about nine metres. After that it is only a suggestion.", fx: "figure", fear: 20 },
-      { t: "text", s: "At the edge of the light, something is standing in the middle of the corridor.", slow: true, sfx: "sting", fx: "glitch", shake: true, fear: 28 },
+      {
+        t: "text",
+        s: "Three voices on the audio. Only one of them is ever on camera.",
+        sfx: "whisper",
+        fear: 16,
+      },
+      { t: "text", s: '"Keep it on me. Keep it steady."', as: "voice", fear: 14 },
+      {
+        t: "text",
+        s: "\"There's nothing down there, Priya. It's a corridor.\"",
+        as: "voice",
+        fear: 12,
+      },
+      {
+        t: "text",
+        s: "The camera light reaches about nine metres. After that it is only a suggestion.",
+        fx: "figure",
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: "At the edge of the light, something is standing in the middle of the corridor.",
+        slow: true,
+        sfx: "sting",
+        fx: "glitch",
+        shake: true,
+        fear: 28,
+      },
       {
         t: "choice",
         prompt: "The operator has not noticed it yet.",
@@ -45,13 +79,41 @@ export const tapeCorridor3B: Story = {
     /* ---------------------------------------------------------------- */
 
     zoom: [
-      { t: "text", s: "Digital zoom. 1998 digital zoom: everything becomes squares.", fx: "glitch", fear: 20 },
-      { t: "text", s: "The shape resolves into a shape. That is the most anyone has ever got out of this frame.", fear: 24 },
-      { t: "text", s: "Too tall for the doorframe behind it. That part is measurable — the doorframe is standard, 2.03 metres.", slow: true, fear: 30 },
-      { t: "text", s: "It has not moved in eleven seconds of footage.", fx: "figure", sfx: "breath", fear: 32 },
-      { t: "text", s: "\"Are you getting this?\"", as: "voice", fear: 28 },
-      { t: "text", s: "\"Getting what?\"", as: "voice", fear: 30 },
-      { t: "text", s: "The second voice is standing next to the camera. The second voice cannot see it.", slow: true, sfx: "sting", fx: "face", shake: true, fear: 40 },
+      {
+        t: "text",
+        s: "Digital zoom. 1998 digital zoom: everything becomes squares.",
+        fx: "glitch",
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: "The shape resolves into a shape. That is the most anyone has ever got out of this frame.",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "Too tall for the doorframe behind it. That part is measurable — the doorframe is standard, 2.03 metres.",
+        slow: true,
+        fear: 30,
+      },
+      {
+        t: "text",
+        s: "It has not moved in eleven seconds of footage.",
+        fx: "figure",
+        sfx: "breath",
+        fear: 32,
+      },
+      { t: "text", s: '"Are you getting this?"', as: "voice", fear: 28 },
+      { t: "text", s: '"Getting what?"', as: "voice", fear: 30 },
+      {
+        t: "text",
+        s: "The second voice is standing next to the camera. The second voice cannot see it.",
+        slow: true,
+        sfx: "sting",
+        fx: "face",
+        shake: true,
+        fear: 40,
+      },
       {
         t: "choice",
         timer: 180,
@@ -64,13 +126,45 @@ export const tapeCorridor3B: Story = {
     ],
 
     lightoff: [
-      { t: "text", s: "The light goes off. The frame goes to grain.", fx: "dark", sfx: "drop", fear: 26 },
-      { t: "text", s: "Four seconds of nothing. The audio picks up three people breathing.", amb: "silence", sfx: "breath", fear: 30 },
-      { t: "text", s: "Correction: four.", slow: true, sfx: "sting", fx: "glitch", shake: true, amb: "tape", fear: 40 },
-      { t: "text", s: "\"Turn it back on. Turn it back on—\"", as: "voice", fear: 38 },
-      { t: "text", s: "Light comes back. The corridor is empty all the way to the fire door.", fx: "flash", fear: 26 },
+      {
+        t: "text",
+        s: "The light goes off. The frame goes to grain.",
+        fx: "dark",
+        sfx: "drop",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "Four seconds of nothing. The audio picks up three people breathing.",
+        amb: "silence",
+        sfx: "breath",
+        fear: 30,
+      },
+      {
+        t: "text",
+        s: "Correction: four.",
+        slow: true,
+        sfx: "sting",
+        fx: "glitch",
+        shake: true,
+        amb: "tape",
+        fear: 40,
+      },
+      { t: "text", s: '"Turn it back on. Turn it back on—"', as: "voice", fear: 38 },
+      {
+        t: "text",
+        s: "Light comes back. The corridor is empty all the way to the fire door.",
+        fx: "flash",
+        fear: 26,
+      },
       { t: "text", s: "Nothing at nine metres. Nothing at twenty.", fear: 22 },
-      { t: "text", s: "The audio still has four people breathing on it.", slow: true, sfx: "whisper", fear: 36 },
+      {
+        t: "text",
+        s: "The audio still has four people breathing on it.",
+        slow: true,
+        sfx: "whisper",
+        fear: 36,
+      },
       {
         t: "choice",
         prompt: "One of them is very close to the microphone.",
@@ -84,12 +178,34 @@ export const tapeCorridor3B: Story = {
     ],
 
     walk: [
-      { t: "text", s: "The operator keeps walking. The footsteps on the audio are unhurried.", sfx: "steps", fear: 18 },
-      { t: "text", s: "Nine metres of light, moving forward at walking pace.", fx: "figure", fear: 22 },
+      {
+        t: "text",
+        s: "The operator keeps walking. The footsteps on the audio are unhurried.",
+        sfx: "steps",
+        fear: 18,
+      },
+      {
+        t: "text",
+        s: "Nine metres of light, moving forward at walking pace.",
+        fx: "figure",
+        fear: 22,
+      },
       { t: "text", s: "The thing at the edge of it does not get closer.", slow: true, fear: 28 },
-      { t: "text", s: "It is keeping distance. Exactly nine metres, for forty-one seconds, which means it is walking backwards at the operator's speed.", sfx: "scrape", fear: 34 },
-      { t: "text", s: "\"Why are we still going forward?\"", as: "voice", fear: 30 },
-      { t: "text", s: "\"Because it stops when we stop.\"", as: "voice", slow: true, fx: "approach", fear: 36 },
+      {
+        t: "text",
+        s: "It is keeping distance. Exactly nine metres, for forty-one seconds, which means it is walking backwards at the operator's speed.",
+        sfx: "scrape",
+        fear: 34,
+      },
+      { t: "text", s: '"Why are we still going forward?"', as: "voice", fear: 30 },
+      {
+        t: "text",
+        s: '"Because it stops when we stop."',
+        as: "voice",
+        slow: true,
+        fx: "approach",
+        fear: 36,
+      },
       {
         t: "choice",
         prompt: "That is not something the operator could know yet.",
@@ -105,12 +221,30 @@ export const tapeCorridor3B: Story = {
     /* ---------------------------------------------------------------- */
 
     viewfinder: [
-      { t: "text", s: "The camera swings. For two frames it catches a face — Priya, twenty-six, first year of a documentary that was never finished.", fx: "glitch", fear: 22 },
+      {
+        t: "text",
+        s: "The camera swings. For two frames it catches a face — Priya, twenty-six, first year of a documentary that was never finished.",
+        fx: "glitch",
+        fear: 22,
+      },
       { t: "text", s: "She looks into the viewfinder.", fear: 26 },
       { t: "text", s: "Her expression does not change at all.", slow: true, hold: 900, fear: 32 },
-      { t: "text", s: "\"There's nothing there,\" she says.", as: "voice", fear: 30 },
-      { t: "text", s: "The camera swings back to the corridor. The corridor is empty.", fx: "static", fear: 26 },
-      { t: "text", s: "Then it swings back to Priya, and behind her, in the two metres of light that reaches past her shoulder, it is standing.", slow: true, sfx: "sting", fx: "approach", shake: true, fear: 44 },
+      { t: "text", s: '"There\'s nothing there," she says.', as: "voice", fear: 30 },
+      {
+        t: "text",
+        s: "The camera swings back to the corridor. The corridor is empty.",
+        fx: "static",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "Then it swings back to Priya, and behind her, in the two metres of light that reaches past her shoulder, it is standing.",
+        slow: true,
+        sfx: "sting",
+        fx: "approach",
+        shake: true,
+        fear: 44,
+      },
       {
         t: "choice",
         prompt: "It has closed nine metres in the time it took to look away twice.",
@@ -124,11 +258,33 @@ export const tapeCorridor3B: Story = {
     ],
 
     dontell: [
-      { t: "text", s: "The operator says nothing. The camera stays up. This is the decision the whole tape turns on.", fear: 26 },
-      { t: "text", s: "For ninety seconds, three people walk down a corridor towards something that only one of them can see.", fx: "figure", sfx: "steps", fear: 32 },
+      {
+        t: "text",
+        s: "The operator says nothing. The camera stays up. This is the decision the whole tape turns on.",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "For ninety seconds, three people walk down a corridor towards something that only one of them can see.",
+        fx: "figure",
+        sfx: "steps",
+        fear: 32,
+      },
       { t: "text", s: "At forty metres it is still the same size in frame.", fear: 34 },
-      { t: "text", s: "At twenty metres it is still the same size in frame.", slow: true, fear: 38 },
-      { t: "text", s: "It is not at the end of the corridor. It is nine metres away and it has always been nine metres away, and the corridor behind it is a picture of a corridor.", sfx: "reverse", fx: "glitch", shake: true, fear: 46 },
+      {
+        t: "text",
+        s: "At twenty metres it is still the same size in frame.",
+        slow: true,
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "It is not at the end of the corridor. It is nine metres away and it has always been nine metres away, and the corridor behind it is a picture of a corridor.",
+        sfx: "reverse",
+        fx: "glitch",
+        shake: true,
+        fear: 46,
+      },
       {
         t: "choice",
         prompt: "Whatever the light is showing, it stopped being a room some time ago.",
@@ -142,11 +298,27 @@ export const tapeCorridor3B: Story = {
     ],
 
     callto: [
-      { t: "text", s: "\"Hello?\"", as: "voice", fear: 28 },
-      { t: "text", s: "The word goes down the corridor and does not come back. There is no echo on the audio at all, which for a forty-metre tiled corridor is not possible.", slow: true, sfx: "whisper", fear: 36 },
-      { t: "text", s: "Nine metres away, the shape tilts its head — not the way a person does. The way a camera does when you rotate it.", fx: "glitch", fear: 40 },
-      { t: "text", s: "\"Hello?\" it says back.", as: "voice", sfx: "sting", shake: true, fear: 46 },
-      { t: "text", s: "The audio engineers who examined this tape in 2004 confirmed that the second \"hello\" is the first one, played back through a speaker.", slow: true, fear: 44 },
+      { t: "text", s: '"Hello?"', as: "voice", fear: 28 },
+      {
+        t: "text",
+        s: "The word goes down the corridor and does not come back. There is no echo on the audio at all, which for a forty-metre tiled corridor is not possible.",
+        slow: true,
+        sfx: "whisper",
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: "Nine metres away, the shape tilts its head — not the way a person does. The way a camera does when you rotate it.",
+        fx: "glitch",
+        fear: 40,
+      },
+      { t: "text", s: '"Hello?" it says back.', as: "voice", sfx: "sting", shake: true, fear: 46 },
+      {
+        t: "text",
+        s: 'The audio engineers who examined this tape in 2004 confirmed that the second "hello" is the first one, played back through a speaker.',
+        slow: true,
+        fear: 44,
+      },
       {
         t: "choice",
         timer: 180,
@@ -159,11 +331,34 @@ export const tapeCorridor3B: Story = {
     ],
 
     cantrecord: [
-      { t: "text", s: "The operator says nothing out loud. On the tape there are eleven seconds of corridor and three people breathing.", amb: "silence", fear: 26 },
-      { t: "text", s: "In frame, the shape waits. Then, faintly, it plays back eleven seconds of corridor and three people breathing.", slow: true, sfx: "reverse", amb: "tape", fear: 38 },
+      {
+        t: "text",
+        s: "The operator says nothing out loud. On the tape there are eleven seconds of corridor and three people breathing.",
+        amb: "silence",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "In frame, the shape waits. Then, faintly, it plays back eleven seconds of corridor and three people breathing.",
+        slow: true,
+        sfx: "reverse",
+        amb: "tape",
+        fear: 38,
+      },
       { t: "text", s: "It only has what it is given. It cannot make anything new.", fear: 32 },
-      { t: "text", s: "It is a recording. It is a recording of this corridor, standing in this corridor, playing itself back, and it has been doing it since 1991 with whatever walked past.", slow: true, fx: "static", fear: 36 },
-      { t: "text", s: "\"Don't give it anything,\" says the operator, very quietly, to two people who cannot see it.", as: "voice", fear: 34 },
+      {
+        t: "text",
+        s: "It is a recording. It is a recording of this corridor, standing in this corridor, playing itself back, and it has been doing it since 1991 with whatever walked past.",
+        slow: true,
+        fx: "static",
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: '"Don\'t give it anything," says the operator, very quietly, to two people who cannot see it.',
+        as: "voice",
+        fear: 34,
+      },
       {
         t: "choice",
         prompt: "The fire door is behind you. Nobody has spoken for nine seconds.",
@@ -176,9 +371,23 @@ export const tapeCorridor3B: Story = {
     ],
 
     backout: [
-      { t: "text", s: "The footage shows the corridor receding at walking pace. Nobody speaks. Nobody breathes loudly.", sfx: "steps", fear: 26 },
-      { t: "text", s: "The shape does not follow. It does not need to; it has nothing new to play.", fx: "figure", fear: 24 },
-      { t: "text", s: "The fire door. The stairwell. Three flights of concrete, filmed the whole way down, silently.", fear: 18 },
+      {
+        t: "text",
+        s: "The footage shows the corridor receding at walking pace. Nobody speaks. Nobody breathes loudly.",
+        sfx: "steps",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "The shape does not follow. It does not need to; it has nothing new to play.",
+        fx: "figure",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "The fire door. The stairwell. Three flights of concrete, filmed the whole way down, silently.",
+        fear: 18,
+      },
       { t: "text", s: "Daylight. The camera cuts.", fx: "flash", amb: "silence", fear: -14 },
       {
         t: "ending",
@@ -195,10 +404,34 @@ export const tapeCorridor3B: Story = {
 
     camoff: [
       { t: "text", s: "The operator reaches for the switch.", fear: 28 },
-      { t: "text", s: "The frame drops to black for four seconds. The audio continues; the microphone is on a separate circuit.", fx: "dark", amb: "tape", fear: 34 },
-      { t: "text", s: "In those four seconds: a click. Three sets of footsteps stopping. And a fourth set carrying on for two more paces.", slow: true, sfx: "steps", fear: 44 },
-      { t: "text", s: "The camera comes back on. The corridor is empty and the fire door behind them is shut.", fx: "static", shake: true, fear: 42 },
-      { t: "text", s: "The fire door was propped open with a brick. The brick is in frame. It is four metres from the door.", slow: true, sfx: "sting", fear: 48 },
+      {
+        t: "text",
+        s: "The frame drops to black for four seconds. The audio continues; the microphone is on a separate circuit.",
+        fx: "dark",
+        amb: "tape",
+        fear: 34,
+      },
+      {
+        t: "text",
+        s: "In those four seconds: a click. Three sets of footsteps stopping. And a fourth set carrying on for two more paces.",
+        slow: true,
+        sfx: "steps",
+        fear: 44,
+      },
+      {
+        t: "text",
+        s: "The camera comes back on. The corridor is empty and the fire door behind them is shut.",
+        fx: "static",
+        shake: true,
+        fear: 42,
+      },
+      {
+        t: "text",
+        s: "The fire door was propped open with a brick. The brick is in frame. It is four metres from the door.",
+        slow: true,
+        sfx: "sting",
+        fear: 48,
+      },
       {
         t: "ending",
         id: "the-brick",
@@ -216,11 +449,33 @@ export const tapeCorridor3B: Story = {
 
     behindyou: [
       { t: "text", s: "The camera swings 180 degrees.", fx: "glitch", sfx: "whoosh", fear: 32 },
-      { t: "text", s: "Corridor. Identical. Same doors, same tiles, same peeled notice board.", fear: 34 },
-      { t: "text", s: "Nine metres away, at the edge of the light, something is standing.", slow: true, sfx: "sting", fx: "figure", shake: true, fear: 44 },
-      { t: "text", s: "The fire door is not behind them any more. There is no fire door in either direction.", fear: 46 },
-      { t: "text", s: "\"Which way did we come in?\"", as: "voice", fear: 42 },
-      { t: "text", s: "Nobody answers. On the tape, nobody ever answers.", slow: true, hold: 1200, fear: 44 },
+      {
+        t: "text",
+        s: "Corridor. Identical. Same doors, same tiles, same peeled notice board.",
+        fear: 34,
+      },
+      {
+        t: "text",
+        s: "Nine metres away, at the edge of the light, something is standing.",
+        slow: true,
+        sfx: "sting",
+        fx: "figure",
+        shake: true,
+        fear: 44,
+      },
+      {
+        t: "text",
+        s: "The fire door is not behind them any more. There is no fire door in either direction.",
+        fear: 46,
+      },
+      { t: "text", s: '"Which way did we come in?"', as: "voice", fear: 42 },
+      {
+        t: "text",
+        s: "Nobody answers. On the tape, nobody ever answers.",
+        slow: true,
+        hold: 1200,
+        fear: 44,
+      },
       {
         t: "choice",
         prompt: "Two directions. One shape in each.",
@@ -234,11 +489,39 @@ export const tapeCorridor3B: Story = {
     ],
 
     sidedoor: [
-      { t: "text", s: "The camera goes to the nearest door. Ward 3B-4. The handle turns.", sfx: "door", fx: "glitch", fear: 28 },
-      { t: "text", s: "Inside: a ward. Eleven beds. Eleven small beds, because this was the paediatric wing.", slow: true, fear: 36 },
-      { t: "text", s: "All eleven are made. The corners are hospital corners. The sheets are white.", fear: 38 },
-      { t: "text", s: "The building has been empty for seven years.", slow: true, sfx: "breath", fear: 42 },
-      { t: "text", s: "In the last bed, under the sheet, something is the shape of a child, and it is not moving, and it is not a child.", fx: "approach", sfx: "sting", shake: true, fear: 50 },
+      {
+        t: "text",
+        s: "The camera goes to the nearest door. Ward 3B-4. The handle turns.",
+        sfx: "door",
+        fx: "glitch",
+        fear: 28,
+      },
+      {
+        t: "text",
+        s: "Inside: a ward. Eleven beds. Eleven small beds, because this was the paediatric wing.",
+        slow: true,
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: "All eleven are made. The corners are hospital corners. The sheets are white.",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "The building has been empty for seven years.",
+        slow: true,
+        sfx: "breath",
+        fear: 42,
+      },
+      {
+        t: "text",
+        s: "In the last bed, under the sheet, something is the shape of a child, and it is not moving, and it is not a child.",
+        fx: "approach",
+        sfx: "sting",
+        shake: true,
+        fear: 50,
+      },
       {
         t: "choice",
         prompt: "The sheet is very slightly too long at the bottom.",
@@ -251,11 +534,33 @@ export const tapeCorridor3B: Story = {
     ],
 
     sheet: [
-      { t: "text", s: "The camera goes to the bed. The operator's hand enters frame.", fx: "approach", fear: 42 },
+      {
+        t: "text",
+        s: "The camera goes to the bed. The operator's hand enters frame.",
+        fx: "approach",
+        fear: 42,
+      },
       { t: "text", s: "The sheet comes up.", slow: true, hold: 1400, sfx: "riser", fear: 50 },
-      { t: "text", s: "The tape has 1.2 seconds of signal loss here. Every recovered copy has it. It is on the master.", fx: "static", fear: 48 },
-      { t: "text", s: "When the picture returns, the camera is on the floor, filming the underside of a bed frame, and it films that for the remaining ninety-one seconds.", slow: true, fx: "dark", shake: true, fear: 52 },
-      { t: "text", s: "In the last eleven seconds, something walks past, the wrong way up.", sfx: "crawl", fear: 56 },
+      {
+        t: "text",
+        s: "The tape has 1.2 seconds of signal loss here. Every recovered copy has it. It is on the master.",
+        fx: "static",
+        fear: 48,
+      },
+      {
+        t: "text",
+        s: "When the picture returns, the camera is on the floor, filming the underside of a bed frame, and it films that for the remaining ninety-one seconds.",
+        slow: true,
+        fx: "dark",
+        shake: true,
+        fear: 52,
+      },
+      {
+        t: "text",
+        s: "In the last eleven seconds, something walks past, the wrong way up.",
+        sfx: "crawl",
+        fear: 56,
+      },
       {
         t: "ending",
         id: "one-point-two-seconds",
@@ -270,11 +575,27 @@ export const tapeCorridor3B: Story = {
     ],
 
     shutdoor: [
-      { t: "text", s: "The door shuts. The camera goes back to the corridor.", sfx: "door", fear: 28 },
-      { t: "text", s: "The corridor now has a fire door at the end of it, propped with a brick, exactly where it was at the start of the tape.", fx: "flash", fear: 22 },
+      {
+        t: "text",
+        s: "The door shuts. The camera goes back to the corridor.",
+        sfx: "door",
+        fear: 28,
+      },
+      {
+        t: "text",
+        s: "The corridor now has a fire door at the end of it, propped with a brick, exactly where it was at the start of the tape.",
+        fx: "flash",
+        fear: 22,
+      },
       { t: "text", s: "Nothing is standing in it.", fear: 16 },
-      { t: "text", s: "\"Go. Go, go—\"", as: "voice", sfx: "steps", fear: 24 },
-      { t: "text", s: "The footage runs at a jog. Three flights. Daylight. Cut.", amb: "silence", fx: "flash", fear: -12 },
+      { t: "text", s: '"Go. Go, go—"', as: "voice", sfx: "steps", fear: 24 },
+      {
+        t: "text",
+        s: "The footage runs at a jog. Three flights. Daylight. Cut.",
+        amb: "silence",
+        fx: "flash",
+        fear: -12,
+      },
       {
         t: "ending",
         id: "shut-the-door",
@@ -289,12 +610,47 @@ export const tapeCorridor3B: Story = {
     ],
 
     battery: [
-      { t: "text", s: "The camera goes down on the floor, pointing along the corridor, still running. Three people sit against a wall.", fx: "dark", fear: 30 },
-      { t: "text", s: "The frame is one corridor, one strip of light, and a battery indicator that has been on its last bar since 02:04.", fear: 32 },
-      { t: "text", s: "For fifty-one seconds nothing happens. This is the longest still shot on any of the eleven tapes.", slow: true, amb: "silence", hold: 1600, fear: 36 },
-      { t: "text", s: "At 03:40 the shape enters frame from the left, at walking pace, and passes the camera without looking at it.", sfx: "steps", fx: "approach", amb: "tape", shake: true, fear: 48 },
-      { t: "text", s: "It is the height of a doorframe. It does not turn its head. It is going somewhere.", fear: 46 },
-      { t: "text", s: "At 04:09 the battery dies. Nobody has spoken since 03:38.", slow: true, fx: "dark", hold: 1300, fear: 44 },
+      {
+        t: "text",
+        s: "The camera goes down on the floor, pointing along the corridor, still running. Three people sit against a wall.",
+        fx: "dark",
+        fear: 30,
+      },
+      {
+        t: "text",
+        s: "The frame is one corridor, one strip of light, and a battery indicator that has been on its last bar since 02:04.",
+        fear: 32,
+      },
+      {
+        t: "text",
+        s: "For fifty-one seconds nothing happens. This is the longest still shot on any of the eleven tapes.",
+        slow: true,
+        amb: "silence",
+        hold: 1600,
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: "At 03:40 the shape enters frame from the left, at walking pace, and passes the camera without looking at it.",
+        sfx: "steps",
+        fx: "approach",
+        amb: "tape",
+        shake: true,
+        fear: 48,
+      },
+      {
+        t: "text",
+        s: "It is the height of a doorframe. It does not turn its head. It is going somewhere.",
+        fear: 46,
+      },
+      {
+        t: "text",
+        s: "At 04:09 the battery dies. Nobody has spoken since 03:38.",
+        slow: true,
+        fx: "dark",
+        hold: 1300,
+        fear: 44,
+      },
       {
         t: "ending",
         id: "let-it-pass",
@@ -312,11 +668,30 @@ export const tapeCorridor3B: Story = {
 
     stopwalking: [
       { t: "text", s: "The footsteps on the audio stop.", amb: "silence", fear: 28 },
-      { t: "text", s: "In frame, at nine metres, the shape stops at the same instant. Not a half-second later. The same frame.", slow: true, fx: "figure", fear: 38 },
-      { t: "text", s: "The operator takes one step backwards. It takes one step forwards.", sfx: "steps", fx: "approach", shake: true, fear: 44 },
+      {
+        t: "text",
+        s: "In frame, at nine metres, the shape stops at the same instant. Not a half-second later. The same frame.",
+        slow: true,
+        fx: "figure",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "The operator takes one step backwards. It takes one step forwards.",
+        sfx: "steps",
+        fx: "approach",
+        shake: true,
+        fear: 44,
+      },
       { t: "text", s: "Nine metres, maintained.", fear: 42 },
-      { t: "text", s: "\"It's not following us,\" says the operator. \"It's holding position.\"", as: "voice", amb: "tape", fear: 40 },
-      { t: "text", s: "\"From what?\"", as: "voice", slow: true, hold: 1200, fear: 44 },
+      {
+        t: "text",
+        s: '"It\'s not following us," says the operator. "It\'s holding position."',
+        as: "voice",
+        amb: "tape",
+        fear: 40,
+      },
+      { t: "text", s: '"From what?"', as: "voice", slow: true, hold: 1200, fear: 44 },
       {
         t: "choice",
         prompt: "That question is the last thing said on the tape for ninety seconds.",
@@ -330,11 +705,34 @@ export const tapeCorridor3B: Story = {
     ],
 
     runat: [
-      { t: "text", s: "The frame goes to chaos. Ceiling, floor, wall, the operator's own shoe, a door number.", fx: "glitch", sfx: "whoosh", shake: true, fear: 40 },
+      {
+        t: "text",
+        s: "The frame goes to chaos. Ceiling, floor, wall, the operator's own shoe, a door number.",
+        fx: "glitch",
+        sfx: "whoosh",
+        shake: true,
+        fear: 40,
+      },
       { t: "text", s: "Someone is shouting. It is not words.", sfx: "scream", fear: 46 },
-      { t: "text", s: "The camera comes up on a corridor at eleven degrees off level. Empty.", fx: "static", fear: 38 },
-      { t: "text", s: "The operator has run about thirty metres. The fire door is now forty metres behind.", fear: 40 },
-      { t: "text", s: "There are two people back there in the dark and neither of them is making a sound.", slow: true, amb: "silence", sfx: "breath", fear: 48 },
+      {
+        t: "text",
+        s: "The camera comes up on a corridor at eleven degrees off level. Empty.",
+        fx: "static",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "The operator has run about thirty metres. The fire door is now forty metres behind.",
+        fear: 40,
+      },
+      {
+        t: "text",
+        s: "There are two people back there in the dark and neither of them is making a sound.",
+        slow: true,
+        amb: "silence",
+        sfx: "breath",
+        fear: 48,
+      },
       {
         t: "choice",
         prompt: "The camera light does not reach them.",
@@ -348,11 +746,35 @@ export const tapeCorridor3B: Story = {
     ],
 
     goback: [
-      { t: "text", s: "The camera turns. The light goes back down the corridor at a run.", sfx: "steps", fx: "approach", fear: 36 },
+      {
+        t: "text",
+        s: "The camera turns. The light goes back down the corridor at a run.",
+        sfx: "steps",
+        fx: "approach",
+        fear: 36,
+      },
       { t: "text", s: "Thirty metres. Twenty. Ten.", fear: 40 },
-      { t: "text", s: "They are both standing exactly where they were left, facing away, perfectly still, at the edge of the light.", slow: true, fx: "figure", sfx: "sting", shake: true, fear: 50 },
-      { t: "text", s: "Neither of them turns around. On the tape, neither of them ever turns around.", fear: 52 },
-      { t: "text", s: "The operator says two names. The audio is clear. They are the names of people who are alive today.", slow: true, hold: 1200, fear: 48 },
+      {
+        t: "text",
+        s: "They are both standing exactly where they were left, facing away, perfectly still, at the edge of the light.",
+        slow: true,
+        fx: "figure",
+        sfx: "sting",
+        shake: true,
+        fear: 50,
+      },
+      {
+        t: "text",
+        s: "Neither of them turns around. On the tape, neither of them ever turns around.",
+        fear: 52,
+      },
+      {
+        t: "text",
+        s: "The operator says two names. The audio is clear. They are the names of people who are alive today.",
+        slow: true,
+        hold: 1200,
+        fear: 48,
+      },
       {
         t: "ending",
         id: "facing-away",
@@ -368,9 +790,22 @@ export const tapeCorridor3B: Story = {
 
     callnames: [
       { t: "text", s: "Two names, shouted down a dark corridor.", sfx: "scream", fear: 36 },
-      { t: "text", s: "Two voices answer. Immediately. In unison. From about four metres away, which is far closer than either of them was.", slow: true, sfx: "whisper", fx: "glitch", shake: true, fear: 48 },
-      { t: "text", s: "\"We're here.\"", as: "voice", fear: 46 },
-      { t: "text", s: "The camera light reaches nine metres. There is nobody in the nine metres.", fx: "static", fear: 50 },
+      {
+        t: "text",
+        s: "Two voices answer. Immediately. In unison. From about four metres away, which is far closer than either of them was.",
+        slow: true,
+        sfx: "whisper",
+        fx: "glitch",
+        shake: true,
+        fear: 48,
+      },
+      { t: "text", s: '"We\'re here."', as: "voice", fear: 46 },
+      {
+        t: "text",
+        s: "The camera light reaches nine metres. There is nobody in the nine metres.",
+        fx: "static",
+        fear: 50,
+      },
       {
         t: "choice",
         prompt: "They answered from inside the light.",
@@ -383,10 +818,30 @@ export const tapeCorridor3B: Story = {
     ],
 
     answerthem: [
-      { t: "text", s: "\"Where?\"", as: "voice", fear: 40 },
-      { t: "text", s: "\"Here,\" say both voices, from four metres, from inside an empty stretch of lit corridor.", as: "voice", sfx: "sting", fx: "face", shake: true, fear: 52 },
-      { t: "text", s: "\"Where are you?\" they say, in unison, with real fear in it, and it is their fear and it is genuine and it is two years old.", as: "voice", slow: true, fear: 56 },
-      { t: "text", s: "The tape ends here. Not cut — ends. The remaining eighteen minutes of the cassette are blank and demagnetised.", fx: "static", hold: 1400, fear: 54 },
+      { t: "text", s: '"Where?"', as: "voice", fear: 40 },
+      {
+        t: "text",
+        s: '"Here," say both voices, from four metres, from inside an empty stretch of lit corridor.',
+        as: "voice",
+        sfx: "sting",
+        fx: "face",
+        shake: true,
+        fear: 52,
+      },
+      {
+        t: "text",
+        s: '"Where are you?" they say, in unison, with real fear in it, and it is their fear and it is genuine and it is two years old.',
+        as: "voice",
+        slow: true,
+        fear: 56,
+      },
+      {
+        t: "text",
+        s: "The tape ends here. Not cut — ends. The remaining eighteen minutes of the cassette are blank and demagnetised.",
+        fx: "static",
+        hold: 1400,
+        fear: 54,
+      },
       {
         t: "ending",
         id: "two-years-old",
@@ -401,9 +856,24 @@ export const tapeCorridor3B: Story = {
     ],
 
     otherexit: [
-      { t: "text", s: "The camera keeps going. Corridor. Corridor. Fire door — locked. Corridor.", sfx: "steps", fx: "glitch", fear: 36 },
-      { t: "text", s: "The building is a rectangle. There are only two ways out of 3B and the operator is running away from one of them.", fear: 38 },
-      { t: "text", s: "At 03:44 the corridor ends in a window. Third floor. The glass is gone; the frame is not.", fx: "flash", fear: 34 },
+      {
+        t: "text",
+        s: "The camera keeps going. Corridor. Corridor. Fire door — locked. Corridor.",
+        sfx: "steps",
+        fx: "glitch",
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: "The building is a rectangle. There are only two ways out of 3B and the operator is running away from one of them.",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "At 03:44 the corridor ends in a window. Third floor. The glass is gone; the frame is not.",
+        fx: "flash",
+        fear: 34,
+      },
       { t: "text", s: "Below it, a flat roof, one storey down. Survivable. Probably.", fear: 30 },
       {
         t: "choice",
@@ -416,11 +886,34 @@ export const tapeCorridor3B: Story = {
     ],
 
     window: [
-      { t: "text", s: "The camera goes out of the window first, filming, dropped onto the flat roof, still running.", fx: "glitch", sfx: "drop", fear: 30 },
+      {
+        t: "text",
+        s: "The camera goes out of the window first, filming, dropped onto the flat roof, still running.",
+        fx: "glitch",
+        sfx: "drop",
+        fear: 30,
+      },
       { t: "text", s: "It lands lens-up. Sky. Sodium glow. A gutter.", fx: "dark", fear: 22 },
-      { t: "text", s: "For eleven seconds the frame is sky. Then the operator's silhouette comes over the sill and down.", fear: 20 },
-      { t: "text", s: "For the last forty seconds of the tape, the camera films the window from below.", slow: true, amb: "tape", fear: 32 },
-      { t: "text", s: "Two people are standing in it, looking down, not calling out, not climbing.", sfx: "sting", fx: "figure", shake: true, fear: 46 },
+      {
+        t: "text",
+        s: "For eleven seconds the frame is sky. Then the operator's silhouette comes over the sill and down.",
+        fear: 20,
+      },
+      {
+        t: "text",
+        s: "For the last forty seconds of the tape, the camera films the window from below.",
+        slow: true,
+        amb: "tape",
+        fear: 32,
+      },
+      {
+        t: "text",
+        s: "Two people are standing in it, looking down, not calling out, not climbing.",
+        sfx: "sting",
+        fx: "figure",
+        shake: true,
+        fear: 46,
+      },
       { t: "text", s: "The tape runs out.", hold: 1400, fx: "static", fear: 44 },
       {
         t: "ending",
@@ -436,11 +929,29 @@ export const tapeCorridor3B: Story = {
     ],
 
     whosaid: [
-      { t: "text", s: "\"Who said that?\"", as: "voice", fear: 30 },
+      { t: "text", s: '"Who said that?"', as: "voice", fear: 30 },
       { t: "text", s: "Silence on the tape. Four seconds.", amb: "silence", hold: 1000, fear: 34 },
-      { t: "text", s: "\"You did,\" says the second voice.", as: "voice", amb: "tape", slow: true, sfx: "reverse", fear: 42 },
-      { t: "text", s: "The audio analysis is not ambiguous. The line at 02:11 — \"because it stops when we stop\" — is in the operator's voice, recorded at the operator's distance from the microphone.", fear: 44 },
-      { t: "text", s: "The operator's mouth is not on camera. The operator has always maintained they did not say it.", slow: true, fx: "glitch", fear: 46 },
+      {
+        t: "text",
+        s: '"You did," says the second voice.',
+        as: "voice",
+        amb: "tape",
+        slow: true,
+        sfx: "reverse",
+        fear: 42,
+      },
+      {
+        t: "text",
+        s: "The audio analysis is not ambiguous. The line at 02:11 — \"because it stops when we stop\" — is in the operator's voice, recorded at the operator's distance from the microphone.",
+        fear: 44,
+      },
+      {
+        t: "text",
+        s: "The operator's mouth is not on camera. The operator has always maintained they did not say it.",
+        slow: true,
+        fx: "glitch",
+        fear: 46,
+      },
       {
         t: "choice",
         prompt: "In frame, at nine metres, the shape has not moved.",
@@ -454,11 +965,30 @@ export const tapeCorridor3B: Story = {
     ],
 
     towards: [
-      { t: "text", s: "The camera goes forward. Nine metres of light, closing.", fx: "approach", sfx: "steps", fear: 38 },
+      {
+        t: "text",
+        s: "The camera goes forward. Nine metres of light, closing.",
+        fx: "approach",
+        sfx: "steps",
+        fear: 38,
+      },
       { t: "text", s: "Eight. Seven. Six.", fear: 42 },
-      { t: "text", s: "At six metres the autofocus finds it and, for the first and only time on any of the eleven tapes, locks.", slow: true, fx: "face", sfx: "sting", shake: true, fear: 52 },
+      {
+        t: "text",
+        s: "At six metres the autofocus finds it and, for the first and only time on any of the eleven tapes, locks.",
+        slow: true,
+        fx: "face",
+        sfx: "sting",
+        shake: true,
+        fear: 52,
+      },
       { t: "text", s: "Four frames. Four frames of something in focus.", fear: 54 },
-      { t: "text", s: "Then the tape tears — physically tears, the master is spliced here — and resumes on an empty corridor and a camera lying on its side.", fx: "rewind", fear: 50 },
+      {
+        t: "text",
+        s: "Then the tape tears — physically tears, the master is spliced here — and resumes on an empty corridor and a camera lying on its side.",
+        fx: "rewind",
+        fear: 50,
+      },
       {
         t: "ending",
         id: "four-frames",
@@ -466,7 +996,7 @@ export const tapeCorridor3B: Story = {
         title: "Four Frames in Focus",
         lines: [
           "The splice in the master is physical and was made with a razor and tape, competently, by someone who knew what they were doing.",
-          "Nobody has ever admitted to making it. Priya's original edit notes list a shot at 02:41 as \"unusable — do not print\".",
+          'Nobody has ever admitted to making it. Priya\'s original edit notes list a shot at 02:41 as "unusable — do not print".',
           "Two people left Corridor 3B that night. The third stayed in the building until morning and has never described what happened between 02:41 and sunrise, and when asked directly gives the same answer every time, which is that they got a very good shot of it and then they put the camera down.",
         ],
       },
@@ -475,7 +1005,11 @@ export const tapeCorridor3B: Story = {
     stoptape: [
       { t: "text", s: "The record light goes out.", fx: "dark", amb: "silence", fear: 22 },
       { t: "text", s: "Tape 07 ends at 02:31 with nine minutes of cassette unused.", fear: 16 },
-      { t: "text", s: "All three walked out of the building. There is no footage of it.", fear: 10 },
+      {
+        t: "text",
+        s: "All three walked out of the building. There is no footage of it.",
+        fear: 10,
+      },
       {
         t: "ending",
         id: "stopped-recording",
@@ -490,11 +1024,39 @@ export const tapeCorridor3B: Story = {
     ],
 
     pangroup: [
-      { t: "text", s: "The camera pans across the group. Priya. Faisal. The wall.", fx: "glitch", fear: 26 },
-      { t: "text", s: "Two people. Four sets of breathing on the audio, still, throughout the pan.", slow: true, sfx: "breath", fear: 38 },
-      { t: "text", s: "The camera completes the circle and comes back to the corridor.", fx: "static", fear: 34 },
-      { t: "text", s: "Priya is now nine metres down the corridor, at the edge of the light, with her back to the camera.", slow: true, sfx: "sting", fx: "figure", shake: true, fear: 48 },
-      { t: "text", s: "She is in frame in the previous shot, half a second earlier, standing next to the lens.", fear: 50 },
+      {
+        t: "text",
+        s: "The camera pans across the group. Priya. Faisal. The wall.",
+        fx: "glitch",
+        fear: 26,
+      },
+      {
+        t: "text",
+        s: "Two people. Four sets of breathing on the audio, still, throughout the pan.",
+        slow: true,
+        sfx: "breath",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "The camera completes the circle and comes back to the corridor.",
+        fx: "static",
+        fear: 34,
+      },
+      {
+        t: "text",
+        s: "Priya is now nine metres down the corridor, at the edge of the light, with her back to the camera.",
+        slow: true,
+        sfx: "sting",
+        fx: "figure",
+        shake: true,
+        fear: 48,
+      },
+      {
+        t: "text",
+        s: "She is in frame in the previous shot, half a second earlier, standing next to the lens.",
+        fear: 50,
+      },
       {
         t: "ending",
         id: "nine-metres",
@@ -509,11 +1071,32 @@ export const tapeCorridor3B: Story = {
     ],
 
     feet: [
-      { t: "text", s: "The camera goes down. The frame is a pair of shoes and forty centimetres of tiled floor.", fx: "dark", fear: 24 },
-      { t: "text", s: "It is the smartest thing anybody does on any of the eleven tapes: film only what is definitely there.", fear: 20 },
+      {
+        t: "text",
+        s: "The camera goes down. The frame is a pair of shoes and forty centimetres of tiled floor.",
+        fx: "dark",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "It is the smartest thing anybody does on any of the eleven tapes: film only what is definitely there.",
+        fear: 20,
+      },
       { t: "text", s: "Footsteps. Three people's worth, walking.", sfx: "steps", fear: 26 },
-      { t: "text", s: "At 02:50, a fourth pair of shoes enters the bottom of frame, walking alongside, in step.", slow: true, sfx: "sting", fx: "glitch", shake: true, fear: 44 },
-      { t: "text", s: "They are children's shoes. They are the right size for the beds in Ward 3B-4.", fear: 48 },
+      {
+        t: "text",
+        s: "At 02:50, a fourth pair of shoes enters the bottom of frame, walking alongside, in step.",
+        slow: true,
+        sfx: "sting",
+        fx: "glitch",
+        shake: true,
+        fear: 44,
+      },
+      {
+        t: "text",
+        s: "They are children's shoes. They are the right size for the beds in Ward 3B-4.",
+        fear: 48,
+      },
       {
         t: "choice",
         prompt: "The camera does not come up.",
@@ -526,9 +1109,25 @@ export const tapeCorridor3B: Story = {
     ],
 
     keepfloor: [
-      { t: "text", s: "The operator does not look up. The frame stays on the floor for the remaining seventy-one seconds of the tape.", fear: 32 },
-      { t: "text", s: "Four pairs of shoes walking in step. Then three. Then, for the last nine seconds, two.", slow: true, sfx: "steps", fear: 40 },
-      { t: "text", s: "The last thing on the tape is a doorstep, a brick, and daylight.", fx: "flash", amb: "silence", fear: -8 },
+      {
+        t: "text",
+        s: "The operator does not look up. The frame stays on the floor for the remaining seventy-one seconds of the tape.",
+        fear: 32,
+      },
+      {
+        t: "text",
+        s: "Four pairs of shoes walking in step. Then three. Then, for the last nine seconds, two.",
+        slow: true,
+        sfx: "steps",
+        fear: 40,
+      },
+      {
+        t: "text",
+        s: "The last thing on the tape is a doorstep, a brick, and daylight.",
+        fx: "flash",
+        amb: "silence",
+        fear: -8,
+      },
       {
         t: "ending",
         id: "never-looked-up",
@@ -537,16 +1136,43 @@ export const tapeCorridor3B: Story = {
         lines: [
           "Three people went into Corridor 3B and three people came out, which makes this the second of two good outcomes on Tape 07, and both of them involve somebody choosing not to look at something.",
           "The fourth pair of shoes is on the master from 02:50 to 03:44 and has never been explained. The angle is wrong for a reflection; the wear pattern is visible; they are real shoes with a real person's weight in them.",
-          "The operator's only public statement on the tape is one line, given to a student magazine in 2011: \"We were three. I was very careful to only ever film three.\"",
+          'The operator\'s only public statement on the tape is one line, given to a student magazine in 2011: "We were three. I was very careful to only ever film three."',
         ],
       },
     ],
 
     raise: [
-      { t: "text", s: "The camera comes up.", slow: true, sfx: "riser", fx: "approach", hold: 1200, fear: 46 },
-      { t: "text", s: "There is 0.8 seconds of a face at lens distance.", fx: "face", sfx: "sting", shake: true, fear: 56 },
-      { t: "text", s: "The remaining four minutes of Tape 07 are the ceiling of Corridor 3B, unmoving, in focus, with the camera light on.", fx: "dark", fear: 52 },
-      { t: "text", s: "At 06:11 somebody picks the camera up, and the frame swings, and it is switched off correctly, by somebody who knew which button.", slow: true, fx: "static", hold: 1400, fear: 54 },
+      {
+        t: "text",
+        s: "The camera comes up.",
+        slow: true,
+        sfx: "riser",
+        fx: "approach",
+        hold: 1200,
+        fear: 46,
+      },
+      {
+        t: "text",
+        s: "There is 0.8 seconds of a face at lens distance.",
+        fx: "face",
+        sfx: "sting",
+        shake: true,
+        fear: 56,
+      },
+      {
+        t: "text",
+        s: "The remaining four minutes of Tape 07 are the ceiling of Corridor 3B, unmoving, in focus, with the camera light on.",
+        fx: "dark",
+        fear: 52,
+      },
+      {
+        t: "text",
+        s: "At 06:11 somebody picks the camera up, and the frame swings, and it is switched off correctly, by somebody who knew which button.",
+        slow: true,
+        fx: "static",
+        hold: 1400,
+        fear: 54,
+      },
       {
         t: "ending",
         id: "someone-turned-it-off",
@@ -561,12 +1187,37 @@ export const tapeCorridor3B: Story = {
     ],
 
     walktome: [
-      { t: "text", s: "\"Priya. Walk towards me. Don't turn round. Just walk.\"", as: "voice", fear: 30 },
-      { t: "text", s: "She walks. Four steps. Behind her, it does not follow; it stands exactly where it is and gets smaller as she gets bigger.", fx: "figure", sfx: "steps", fear: 36 },
-      { t: "text", s: "She reaches the camera. She is fine. She is annoyed, which is the most reassuring thing on the whole tape.", fear: 22 },
-      { t: "text", s: "\"What,\" she says.", as: "voice", fear: 20 },
-      { t: "text", s: "\"We're going. Now. Don't look back down the corridor.\"", as: "voice", fear: 24 },
-      { t: "text", s: "She does not look back. This is why she is alive, and she has said so, in those words, once, and never again.", slow: true, fear: 26 },
+      {
+        t: "text",
+        s: '"Priya. Walk towards me. Don\'t turn round. Just walk."',
+        as: "voice",
+        fear: 30,
+      },
+      {
+        t: "text",
+        s: "She walks. Four steps. Behind her, it does not follow; it stands exactly where it is and gets smaller as she gets bigger.",
+        fx: "figure",
+        sfx: "steps",
+        fear: 36,
+      },
+      {
+        t: "text",
+        s: "She reaches the camera. She is fine. She is annoyed, which is the most reassuring thing on the whole tape.",
+        fear: 22,
+      },
+      { t: "text", s: '"What," she says.', as: "voice", fear: 20 },
+      {
+        t: "text",
+        s: "\"We're going. Now. Don't look back down the corridor.\"",
+        as: "voice",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "She does not look back. This is why she is alive, and she has said so, in those words, once, and never again.",
+        slow: true,
+        fear: 26,
+      },
       {
         t: "ending",
         id: "she-didnt-look-back",
@@ -575,17 +1226,29 @@ export const tapeCorridor3B: Story = {
         lines: [
           "All three out. 04:11 on the tape and a car park at the end of it.",
           "The footage between 02:20 and 02:44 shows a standing figure at the edge of the camera light behind a woman who is walking away from it and does not know it is there.",
-          "It is the most-reproduced image in the whole eleven-tape set, and Priya has authorised its use exactly twice, and both times on the condition that it is printed with the caption she wrote: \"Nothing happened. That is the point of it.\"",
+          'It is the most-reproduced image in the whole eleven-tape set, and Priya has authorised its use exactly twice, and both times on the condition that it is printed with the caption she wrote: "Nothing happened. That is the point of it."',
         ],
       },
     ],
 
     grabrun: [
-      { t: "text", s: "The frame goes to nothing — a hand across the lens, a shoulder, the floor at forty degrees.", fx: "glitch", sfx: "whoosh", shake: true, fear: 40 },
+      {
+        t: "text",
+        s: "The frame goes to nothing — a hand across the lens, a shoulder, the floor at forty degrees.",
+        fx: "glitch",
+        sfx: "whoosh",
+        shake: true,
+        fear: 40,
+      },
       { t: "text", s: "Running. Shouting. A door.", sfx: "scream", fear: 44 },
-      { t: "text", s: "The camera comes up in the stairwell. Two people on the landing. Both breathing hard.", fx: "static", fear: 30 },
+      {
+        t: "text",
+        s: "The camera comes up in the stairwell. Two people on the landing. Both breathing hard.",
+        fx: "static",
+        fear: 30,
+      },
       { t: "text", s: "Two.", slow: true, hold: 1200, sfx: "sting", fear: 44 },
-      { t: "text", s: "\"Where's Faisal?\"", as: "voice", fear: 46 },
+      { t: "text", s: '"Where\'s Faisal?"', as: "voice", fear: 46 },
       {
         t: "choice",
         prompt: "Nobody grabbed Faisal.",
@@ -598,10 +1261,31 @@ export const tapeCorridor3B: Story = {
     ],
 
     callitin: [
-      { t: "text", s: "The footage runs down three flights and out into a car park and stays on for another nine minutes.", fx: "flash", amb: "silence", fear: 24 },
-      { t: "text", s: "Most of it is a woman on a phone and a man being sick against a fence.", fear: 18 },
-      { t: "text", s: "At 12:40 Faisal walks out of the fire door on his own, unhurried, and asks why everyone is standing in the car park.", slow: true, sfx: "sting", amb: "tape", fear: 38 },
-      { t: "text", s: "He has no memory of the corridor. He is perfectly well. He is, by every test anyone ran that year, Faisal.", fear: 36 },
+      {
+        t: "text",
+        s: "The footage runs down three flights and out into a car park and stays on for another nine minutes.",
+        fx: "flash",
+        amb: "silence",
+        fear: 24,
+      },
+      {
+        t: "text",
+        s: "Most of it is a woman on a phone and a man being sick against a fence.",
+        fear: 18,
+      },
+      {
+        t: "text",
+        s: "At 12:40 Faisal walks out of the fire door on his own, unhurried, and asks why everyone is standing in the car park.",
+        slow: true,
+        sfx: "sting",
+        amb: "tape",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "He has no memory of the corridor. He is perfectly well. He is, by every test anyone ran that year, Faisal.",
+        fear: 36,
+      },
       {
         t: "ending",
         id: "faisal-walked-out",
@@ -616,10 +1300,33 @@ export const tapeCorridor3B: Story = {
     ],
 
     dontlookaway: [
-      { t: "text", s: "The camera stays on it. It does not move. The operator does not move.", fx: "figure", fear: 38 },
-      { t: "text", s: "Forty-one seconds of a standing figure at two metres, in the light, in focus, in frame.", slow: true, hold: 1600, sfx: "breath", fear: 46 },
-      { t: "text", s: "It does not approach while it is being watched. That is the whole rule and it is in the footage and nobody has ever needed to say it out loud.", fear: 40 },
-      { t: "text", s: "At 03:22 Priya, off camera, says: \"The battery.\"", as: "voice", slow: true, sfx: "sting", fear: 50 },
+      {
+        t: "text",
+        s: "The camera stays on it. It does not move. The operator does not move.",
+        fx: "figure",
+        fear: 38,
+      },
+      {
+        t: "text",
+        s: "Forty-one seconds of a standing figure at two metres, in the light, in focus, in frame.",
+        slow: true,
+        hold: 1600,
+        sfx: "breath",
+        fear: 46,
+      },
+      {
+        t: "text",
+        s: "It does not approach while it is being watched. That is the whole rule and it is in the footage and nobody has ever needed to say it out loud.",
+        fear: 40,
+      },
+      {
+        t: "text",
+        s: 'At 03:22 Priya, off camera, says: "The battery."',
+        as: "voice",
+        slow: true,
+        sfx: "sting",
+        fear: 50,
+      },
       {
         t: "choice",
         prompt: "One bar. It has been one bar since 02:04.",
@@ -632,10 +1339,29 @@ export const tapeCorridor3B: Story = {
     ],
 
     untildead: [
-      { t: "text", s: "The camera holds. Two metres. Forty seconds. Sixty.", fx: "figure", fear: 44 },
+      {
+        t: "text",
+        s: "The camera holds. Two metres. Forty seconds. Sixty.",
+        fx: "figure",
+        fear: 44,
+      },
       { t: "text", s: "The battery indicator flashes at 03:58.", fear: 48 },
-      { t: "text", s: "At 04:09 the picture goes.", slow: true, fx: "dark", hold: 1400, sfx: "drop", fear: 52 },
-      { t: "text", s: "The audio runs for two more seconds on residual charge. In those two seconds there are three sets of footsteps, and one of them is very fast.", sfx: "steps", shake: true, fear: 56 },
+      {
+        t: "text",
+        s: "At 04:09 the picture goes.",
+        slow: true,
+        fx: "dark",
+        hold: 1400,
+        sfx: "drop",
+        fear: 52,
+      },
+      {
+        t: "text",
+        s: "The audio runs for two more seconds on residual charge. In those two seconds there are three sets of footsteps, and one of them is very fast.",
+        sfx: "steps",
+        shake: true,
+        fear: 56,
+      },
       {
         t: "ending",
         id: "until-the-battery",
@@ -650,12 +1376,37 @@ export const tapeCorridor3B: Story = {
     ],
 
     tellnow: [
-      { t: "text", s: "\"There's something in the corridor. It's nine metres in front of us. It's been there since we came in.\"", as: "voice", fear: 32 },
-      { t: "text", s: "Both of them stop walking. The audio catches it: two people stopping at once.", sfx: "steps", amb: "silence", fear: 36 },
-      { t: "text", s: "\"Where,\" says Priya.", as: "voice", amb: "tape", fear: 34 },
-      { t: "text", s: "\"Straight ahead. At the light.\"", as: "voice", fear: 36 },
-      { t: "text", s: "\"There's nothing at the light,\" she says, and the camera can see her hand come into frame and point directly at it.", slow: true, sfx: "sting", fx: "glitch", shake: true, fear: 48 },
-      { t: "text", s: "Her finger goes into it up to the second knuckle.", slow: true, hold: 1300, fear: 54 },
+      {
+        t: "text",
+        s: "\"There's something in the corridor. It's nine metres in front of us. It's been there since we came in.\"",
+        as: "voice",
+        fear: 32,
+      },
+      {
+        t: "text",
+        s: "Both of them stop walking. The audio catches it: two people stopping at once.",
+        sfx: "steps",
+        amb: "silence",
+        fear: 36,
+      },
+      { t: "text", s: '"Where," says Priya.', as: "voice", amb: "tape", fear: 34 },
+      { t: "text", s: '"Straight ahead. At the light."', as: "voice", fear: 36 },
+      {
+        t: "text",
+        s: '"There\'s nothing at the light," she says, and the camera can see her hand come into frame and point directly at it.',
+        slow: true,
+        sfx: "sting",
+        fx: "glitch",
+        shake: true,
+        fear: 48,
+      },
+      {
+        t: "text",
+        s: "Her finger goes into it up to the second knuckle.",
+        slow: true,
+        hold: 1300,
+        fear: 54,
+      },
       {
         t: "ending",
         id: "up-to-the-knuckle",
@@ -670,10 +1421,21 @@ export const tapeCorridor3B: Story = {
     ],
 
     getout: [
-      { t: "text", s: "\"Out. Now. Nobody talks.\"", as: "voice", fear: 24 },
-      { t: "text", s: "The footage is a stairwell, filmed badly, at speed.", sfx: "steps", fx: "glitch", fear: 22 },
+      { t: "text", s: '"Out. Now. Nobody talks."', as: "voice", fear: 24 },
+      {
+        t: "text",
+        s: "The footage is a stairwell, filmed badly, at speed.",
+        sfx: "steps",
+        fx: "glitch",
+        fear: 22,
+      },
       { t: "text", s: "Three flights. The fire door. The brick. Daylight.", fx: "flash", fear: 14 },
-      { t: "text", s: "The tape runs for another forty seconds in a car park and then cuts.", amb: "silence", fear: -10 },
+      {
+        t: "text",
+        s: "The tape runs for another forty seconds in a car park and then cuts.",
+        amb: "silence",
+        fear: -10,
+      },
       {
         t: "ending",
         id: "got-out",

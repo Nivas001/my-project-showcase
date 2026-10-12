@@ -59,7 +59,6 @@ function MarkdownDoc({ src }: { src: string }) {
   );
 }
 
-
 /** Work out how a documentation link should be embedded (PDF reader vs slide deck). */
 export function toResource(url: string): Resource {
   const trimmed = url.trim();
@@ -74,15 +73,27 @@ export function toResource(url: string): Resource {
 
   const drive = trimmed.match(/drive\.google\.com\/file\/d\/([^/]+)/);
   if (drive)
-    return { kind: "pdf", src: `https://drive.google.com/file/d/${drive[1]}/preview`, needsAbsolute: false };
+    return {
+      kind: "pdf",
+      src: `https://drive.google.com/file/d/${drive[1]}/preview`,
+      needsAbsolute: false,
+    };
 
   const driveOpen = trimmed.match(/drive\.google\.com\/open\?id=([^&]+)/);
   if (driveOpen)
-    return { kind: "pdf", src: `https://drive.google.com/file/d/${driveOpen[1]}/preview`, needsAbsolute: false };
+    return {
+      kind: "pdf",
+      src: `https://drive.google.com/file/d/${driveOpen[1]}/preview`,
+      needsAbsolute: false,
+    };
 
   const docs = trimmed.match(/docs\.google\.com\/document\/d\/([^/]+)/);
   if (docs)
-    return { kind: "pdf", src: `https://docs.google.com/document/d/${docs[1]}/preview`, needsAbsolute: false };
+    return {
+      kind: "pdf",
+      src: `https://docs.google.com/document/d/${docs[1]}/preview`,
+      needsAbsolute: false,
+    };
 
   if (SLIDE_EXT.test(trimmed))
     return {

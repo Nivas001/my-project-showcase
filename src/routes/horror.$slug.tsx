@@ -188,16 +188,16 @@ function EntryGate({
           <p className="mt-2 font-tape text-xs tracking-[0.25em] opacity-50">{story.tapeLabel}</p>
         ) : null}
 
-        <p className={`mt-5 text-sm leading-relaxed opacity-70 ${tanglish ? "" : "font-story text-base"}`}>
+        <p
+          className={`mt-5 text-sm leading-relaxed opacity-70 ${tanglish ? "" : "font-story text-base"}`}
+        >
           {story.hook}
         </p>
 
         <ul className="mx-auto mt-8 max-w-sm space-y-2 text-left font-mono text-[11px] opacity-55">
           <li>— choices are timed. hesitate and the story decides for you.</li>
           <li>— sound is generated live. headphones are strongly recommended.</li>
-          {tape ? (
-            <li>— the picture is drawn frame by frame. there is no video file.</li>
-          ) : null}
+          {tape ? <li>— the picture is drawn frame by frame. there is no video file.</li> : null}
           <li>
             — {story.endings} endings. this one takes {story.minutes}.
           </li>
@@ -489,11 +489,17 @@ function Player({ story, nodes }: { story: StoryMeta; nodes: Record<string, Beat
                 style={{
                   width: `${fear}%`,
                   background:
-                    fear > 70 ? "var(--hog-red)" : fear > 40 ? "var(--hog-orange)" : "var(--hog-red-deep)",
+                    fear > 70
+                      ? "var(--hog-red)"
+                      : fear > 40
+                        ? "var(--hog-orange)"
+                        : "var(--hog-red-deep)",
                 }}
               />
             </div>
-            <span className="w-8 font-mono text-[10px] tabular-nums opacity-40">{Math.round(fear)}</span>
+            <span className="w-8 font-mono text-[10px] tabular-nums opacity-40">
+              {Math.round(fear)}
+            </span>
           </div>
 
           <div className="flex items-center gap-3">

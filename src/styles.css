@@ -926,8 +926,7 @@
 @utility arcade-cabinet {
   border-radius: 1rem;
   border: 2px solid var(--border);
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, white 8%), var(--card));
+  background: linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, white 8%), var(--card));
   box-shadow:
     0 1px 0 0 color-mix(in oklab, white 12%, transparent) inset,
     0 24px 60px -30px rgb(0 0 0 / 0.9);
@@ -942,11 +941,7 @@
   padding: 0.75rem 1rem;
   border-bottom: 2px solid var(--border);
   background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--hog-red) 14%, transparent),
-      transparent 85%
-    ),
+    linear-gradient(180deg, color-mix(in oklab, var(--hog-red) 14%, transparent), transparent 85%),
     color-mix(in oklab, var(--card) 70%, black 30%);
 }
 
@@ -1975,8 +1970,7 @@ html[data-mode="light"] {
   --hog-purple: oklch(0.52 0.22 305);
   --signature: oklch(0.58 0.17 50);
   --glow: oklch(0.56 0.215 31);
-  --shadow-glow:
-    0 0 0 1px oklch(0.56 0.215 31 / 30%), 0 12px 40px -12px oklch(0.56 0.215 31 / 40%);
+  --shadow-glow: 0 0 0 1px oklch(0.56 0.215 31 / 30%), 0 12px 40px -12px oklch(0.56 0.215 31 / 40%);
 }
 
 html[data-mode="light"],

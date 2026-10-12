@@ -52,10 +52,7 @@ export function isGameId(value: string): value is GameId {
   return GAMES.some((game) => game.id === value);
 }
 
-export const GAME_CONFIG: Record<
-  GameId,
-  { unit: string; ascending: boolean; maxScore: number }
-> = {
+export const GAME_CONFIG: Record<GameId, { unit: string; ascending: boolean; maxScore: number }> = {
   "bug-hunt": { unit: "bugs", ascending: false, maxScore: 9999 },
   "deploy-dash": { unit: "pts", ascending: false, maxScore: 999999 },
   "snake-byte": { unit: "bytes", ascending: false, maxScore: 9999 },

@@ -47,7 +47,10 @@ const PLAYS_KEY = "arcade.plays.v1";
 export function bumpPlays(game: GameId): number {
   if (typeof window === "undefined") return 0;
   try {
-    const all = JSON.parse(window.localStorage.getItem(PLAYS_KEY) ?? "{}") as Record<string, number>;
+    const all = JSON.parse(window.localStorage.getItem(PLAYS_KEY) ?? "{}") as Record<
+      string,
+      number
+    >;
     const next = (all[game] ?? 0) + 1;
     all[game] = next;
     window.localStorage.setItem(PLAYS_KEY, JSON.stringify(all));
