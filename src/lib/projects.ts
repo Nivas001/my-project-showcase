@@ -99,7 +99,14 @@ export type SignedProject = Project & {
 
 export type ProjectInput = Omit<Project, "id"> & { id?: string };
 
-export const PROJECT_CATEGORIES = ["Live", "Web", "Mobile", "Research", "Other"] as const;
+export const PROJECT_CATEGORIES = [
+  "Live",
+  "Web",
+  "Mobile",
+  "Desktop",
+  "Research",
+  "Other",
+] as const;
 
 export const SCREENSHOT_BUCKET = "project-screenshots";
 

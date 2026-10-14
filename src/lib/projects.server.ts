@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { PROJECT_MEDIA } from "@/content/project-media";
+import { STATIC_PROJECTS } from "@/content/static-projects";
 import {
   normaliseDecisions,
   normaliseDownloads,
@@ -47,12 +48,25 @@ export async function selectAllProjects(
     supabase.from("projects").select(columns).order("sort_order", { ascending: true });
 
   const { data, error } = await query(PROJECT_COLUMNS);
-  if (!error) return (data ?? []) as unknown as Project[];
+  if (!error) return withStaticProjects((data ?? []) as unknown as Project[]);
   if (error.code !== "42703") throw new Error(error.message);
 
   const legacy = await query(PROJECT_COLUMNS_LEGACY);
   if (legacy.error) throw new Error(legacy.error.message);
-  return (legacy.data ?? []) as unknown as Project[];
+  return withStaticProjects((legacy.data ?? []) as unknown as Project[]);
+}
+
+/**
+ * Add the code-defined projects (content/static-projects.ts) that have no row
+ * yet. A row with the same slug always wins, so saving one of them from the
+ * admin hands it over to the database. The sort is stable: on equal
+ * sort_order, database rows keep their place ahead of the code-defined ones.
+ */
+function withStaticProjects(rows: Project[]): Project[] {
+  const taken = new Set(rows.map((row) => row.slug));
+  const extra = STATIC_PROJECTS.filter((project) => !taken.has(project.slug));
+  if (extra.length === 0) return rows;
+  return [...rows, ...extra].sort((a, b) => a.sort_order - b.sort_order);
 }
 
 /**

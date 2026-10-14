@@ -20,6 +20,12 @@ import { DocViewer } from "@/components/DocViewer";
 import { DesignBoard } from "@/components/DesignBoard";
 import { ScreenshotCarousel } from "@/components/ScreenshotCarousel";
 import { DecisionLog } from "@/components/projects/DecisionLog";
+import { HowItWorks } from "@/components/projects/HowItWorks";
+import { MissMinutesEntrance } from "@/components/projects/miss-minutes/Entrance";
+import { MissMinutesCompanion } from "@/components/projects/miss-minutes/Companion";
+import { MissMinutesDemo } from "@/components/projects/miss-minutes/Demo";
+import { AssistantDetails, HowSheWorks } from "@/components/projects/miss-minutes/Sections";
+import { PROJECT_FLOWS } from "@/content/static-projects";
 import { Shot } from "@/components/Shot";
 import {
   BrowserFrame,
@@ -236,6 +242,9 @@ function Block({
  * Page
  * ======================================================================== */
 
+/** The one project whose page carries its own character. */
+const MISS_MINUTES = "miss-minutes";
+
 function ProjectDetail() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(projectQuery(slug));
@@ -260,8 +269,15 @@ function ProjectDetail() {
     const add = (id: string, label: string) =>
       list.push({ id, index: String(list.length + 1).padStart(2, "0"), label });
 
+    // Miss Minutes leads with her: talk to her first, then how she works.
+    if (project.slug === MISS_MINUTES) {
+      add("meet", "Talk to her");
+      add("how", "How she works");
+      add("assistant", "The assistant");
+    }
     if (project.video_url) add("demo", "Demo");
     if (project.description) add("overview", "Overview");
+    if (PROJECT_FLOWS[project.slug]) add("how", "How it works");
     if (project.highlights.length > 0) add("features", "What it does");
     if (project.decisions.length > 0) add("decisions", "Calls I made");
     if (project.screenshots.length > 0) add("screens", "Screens");
@@ -290,6 +306,7 @@ function ProjectDetail() {
   return (
     <article>
       <ReadingBar />
+      {project.slug === MISS_MINUTES ? <MissMinutesCompanion /> : null}
 
       {/* ---------------------------------------------------------------- */}
       {/* Act I — the title card                                            */}
@@ -458,15 +475,24 @@ function ProjectDetail() {
               ) : null}
             </motion.div>
 
-            <motion.div style={{ y: coverY, opacity: coverOpacity }} className="fade-rise min-w-0">
-              <TiltCard max={5} lift={14}>
-                <BrowserFrame url={liveUrl ? prettyUrl(liveUrl) : project.title}>
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
-                    <Shot src={cover} alt={`${project.title} screenshot`} loading="eager" />
-                  </div>
-                </BrowserFrame>
-              </TiltCard>
-            </motion.div>
+            {project.slug === MISS_MINUTES ? (
+              <div className="min-w-0">
+                <MissMinutesEntrance />
+              </div>
+            ) : (
+              <motion.div
+                style={{ y: coverY, opacity: coverOpacity }}
+                className="fade-rise min-w-0"
+              >
+                <TiltCard max={5} lift={14}>
+                  <BrowserFrame url={liveUrl ? prettyUrl(liveUrl) : project.title}>
+                    <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
+                      <Shot src={cover} alt={`${project.title} screenshot`} loading="eager" />
+                    </div>
+                  </BrowserFrame>
+                </TiltCard>
+              </motion.div>
+            )}
           </div>
 
           {chapters.length > 0 ? (
@@ -492,6 +518,40 @@ function ProjectDetail() {
             </div>
 
             <div className="min-w-0">
+              {project.slug === MISS_MINUTES ? (
+                <>
+                  <Block
+                    id="meet"
+                    index={chapterFor("meet")!.index}
+                    label="Talk to her"
+                    note="go on, she won't bite"
+                  >
+                    <p className="mb-6 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+                      Pick a request and watch it take the same path it takes on the desktop: wake
+                      word, transcription, one of three brains, the skill, the spoken answer. The
+                      replies here are scripted from her real routes and skills. The character is a
+                      straight port of her QML, so this is her, not a lookalike.
+                    </p>
+                    <MissMinutesDemo />
+                  </Block>
+                  <Block
+                    id="how"
+                    index={chapterFor("how")!.index}
+                    label="How she works"
+                    note="three brains, one voice"
+                  >
+                    <HowSheWorks />
+                  </Block>
+                  <Block
+                    id="assistant"
+                    index={chapterFor("assistant")!.index}
+                    label="The assistant"
+                  >
+                    <AssistantDetails />
+                  </Block>
+                </>
+              ) : null}
+
               {project.video_url && chapterFor("demo") ? (
                 <Block
                   id="demo"
@@ -514,6 +574,17 @@ function ProjectDetail() {
                         <p key={index}>{paragraph}</p>
                       ))}
                   </div>
+                </Block>
+              ) : null}
+
+              {PROJECT_FLOWS[project.slug] && chapterFor("how") ? (
+                <Block
+                  id="how"
+                  index={chapterFor("how")!.index}
+                  label="How it works"
+                  note="follow one request through"
+                >
+                  <HowItWorks steps={PROJECT_FLOWS[project.slug]!} />
                 </Block>
               ) : null}
 

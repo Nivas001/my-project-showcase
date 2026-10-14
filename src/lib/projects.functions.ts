@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Project } from "@/lib/projects";
+import { STATIC_ID_PREFIX } from "@/content/static-projects";
 
 export const listProjects = createServerFn({ method: "GET" }).handler(async () => {
   const { createPublicServerClient, selectAllProjects, signScreenshots } =
@@ -70,7 +71,9 @@ export const saveProject = createServerFn({ method: "POST" })
         })),
     };
 
-    if (id) {
+    // A code-defined project has no row yet: saving it inserts one, and from
+    // then on the row replaces the entry in content/static-projects.ts.
+    if (id && !id.startsWith(STATIC_ID_PREFIX)) {
       const { error } = await context.supabase.from("projects").update(payload).eq("id", id);
       if (error) throw new Error(error.message);
       return { id };
@@ -89,6 +92,11 @@ export const deleteProject = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { id: string }) => data)
   .handler(async ({ data, context }) => {
+    if (data.id.startsWith(STATIC_ID_PREFIX)) {
+      throw new Error(
+        "This project is defined in code (src/content/static-projects.ts). Remove it there instead.",
+      );
+    }
     const { error } = await context.supabase.from("projects").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
