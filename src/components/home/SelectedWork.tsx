@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { heroProject, type Project } from "@/lib/projects";
 import { prettyUrl, shortTitle, toAbsoluteUrl } from "@/lib/site";
 import { Shot } from "@/components/Shot";
+import { ProjectPoster } from "@/components/ProjectPoster";
 import { ratioOf } from "@/content/project-media";
 import { Eyebrow, FadeIn, RiseWords } from "./fx";
 
@@ -226,6 +227,7 @@ function Card({
           <Shot
             src={project.screenshots[0]}
             alt=""
+            fallback={<ProjectPoster project={project} />}
             className="transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
           />
         </span>

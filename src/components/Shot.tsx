@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
  * This renders the same placeholder the no-screenshot case already uses, so a
  * missing file is indistinguishable from "nothing uploaded yet" — which, from
  * the visitor's side, is exactly what it is.
+ *
+ * Pass `fallback` (a ProjectPoster) to show a designed cover instead.
  */
 export function Shot({
   src,
@@ -21,6 +23,7 @@ export function Shot({
   accent = "hog-red",
   label = "no preview yet",
   loading = "lazy",
+  fallback,
 }: {
   src: string | undefined;
   alt: string;
@@ -29,6 +32,7 @@ export function Shot({
   accent?: string;
   label?: string;
   loading?: "lazy" | "eager";
+  fallback?: ReactNode;
 }) {
   const [failed, setFailed] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -42,6 +46,7 @@ export function Shot({
   }, [src]);
 
   if (!src || failed) {
+    if (fallback) return <>{fallback}</>;
     return (
       <div
         className={cn(

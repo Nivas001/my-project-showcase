@@ -27,6 +27,7 @@ import { MissMinutesDemo } from "@/components/projects/miss-minutes/Demo";
 import { AssistantDetails, HowSheWorks } from "@/components/projects/miss-minutes/Sections";
 import { PROJECT_FLOWS } from "@/content/static-projects";
 import { Shot } from "@/components/Shot";
+import { ProjectPoster } from "@/components/ProjectPoster";
 import {
   BrowserFrame,
   CharReveal,
@@ -487,7 +488,12 @@ function ProjectDetail() {
                 <TiltCard max={5} lift={14}>
                   <BrowserFrame url={liveUrl ? prettyUrl(liveUrl) : project.title}>
                     <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
-                      <Shot src={cover} alt={`${project.title} screenshot`} loading="eager" />
+                      <Shot
+                        src={cover}
+                        alt={`${project.title} screenshot`}
+                        loading="eager"
+                        fallback={<ProjectPoster project={project} />}
+                      />
                     </div>
                   </BrowserFrame>
                 </TiltCard>

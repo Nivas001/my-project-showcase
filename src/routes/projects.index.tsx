@@ -104,9 +104,9 @@ function ProjectsPage() {
         lines={["Everything", "I've built."]}
         lede={
           <>
-            A property platform, a weekly magazine, commerce and business sites, an AI job tracker,
-            a desktop voice assistant, reverse-engineered headphone controls, mobile apps and one
-            research model — each one{" "}
+            A property platform, a weekly magazine, commerce, business and travel sites, an AI job
+            tracker, a desktop voice assistant, reverse-engineered headphone controls, my own KDE
+            widgets, mobile apps and one research model — each one{" "}
             <Marked kind="underline" tone="hog-red" delay={600}>
               designed, built and deployed by me
             </Marked>

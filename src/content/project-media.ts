@@ -650,6 +650,77 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
     ],
     designs: [],
   },
+  "through-vacations": {
+    screens: [
+      {
+        src: "/media/through-vacations/screen-01-home.webp",
+        w: 1440,
+        h: 900,
+        label: "Home — a stack of postcards you can throw aside",
+      },
+      {
+        src: "/media/through-vacations/screen-02-destinations.webp",
+        w: 1440,
+        h: 900,
+        label: "Destinations as a departure board",
+      },
+      {
+        src: "/media/through-vacations/screen-03-trip.webp",
+        w: 1440,
+        h: 900,
+        label: "Trip page — Andaman Islands",
+      },
+      {
+        src: "/media/through-vacations/screen-04-trip-shaper.webp",
+        w: 1440,
+        h: 900,
+        label: "Trip shaper — how much effort a plan asks of you",
+      },
+      {
+        src: "/media/through-vacations/screen-05-couples.webp",
+        w: 1440,
+        h: 900,
+        label: "Couples and honeymoons",
+      },
+      { src: "/media/through-vacations/screen-06-journal.webp", w: 1440, h: 900, label: "Journal" },
+      {
+        src: "/media/through-vacations/screen-07-admin.webp",
+        w: 1440,
+        h: 900,
+        label: "Travel desk — bookings and quote requests",
+      },
+      {
+        src: "/media/through-vacations/screen-08-mobile.webp",
+        w: 390,
+        h: 844,
+        label: "On a phone",
+      },
+    ],
+    designs: [],
+  },
+  "tamil-ner-summarizer": {
+    screens: [
+      {
+        src: "/media/tamil-ner-summarizer/screen-01-input.webp",
+        w: 1440,
+        h: 900,
+        label: "The Space — paste an article or pick a sample",
+      },
+      {
+        src: "/media/tamil-ner-summarizer/screen-02-summary.webp",
+        w: 1440,
+        h: 800,
+        label: "NER-guided summary, with the entities it kept",
+      },
+      {
+        src: "/media/tamil-ner-summarizer/screen-03-entities.webp",
+        w: 1440,
+        h: 380,
+        label: "The article with every entity tagged",
+      },
+    ],
+    designs: [],
+  },
 };
 
 /** Width ÷ height for a known image, or undefined for one this file has not seen. */

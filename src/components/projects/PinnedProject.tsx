@@ -17,6 +17,7 @@ import {
 } from "@/components/kit";
 import { Reveal } from "@/components/Reveal";
 import { Shot } from "@/components/Shot";
+import { ProjectPoster } from "@/components/ProjectPoster";
 
 /**
  * The pinned project — whatever is marked featured and sorted first in the
@@ -180,6 +181,7 @@ export function PinnedProject({ project }: { project: Project }) {
                       alt={`${project.title} screenshot`}
                       loading="eager"
                       label="no preview uploaded yet"
+                      fallback={<ProjectPoster project={project} />}
                     />
                   </div>
                 </BrowserFrame>

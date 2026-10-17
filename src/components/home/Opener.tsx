@@ -16,6 +16,7 @@ import {
   TiltCard,
 } from "@/components/kit";
 import { Shot } from "@/components/Shot";
+import { ProjectPoster } from "@/components/ProjectPoster";
 import { Reveal } from "@/components/Reveal";
 
 /**
@@ -112,7 +113,11 @@ export function Opener({ projects }: { projects: Project[] }) {
                 <TiltCard max={5} lift={12}>
                   <BrowserFrame url={heroUrl ? prettyUrl(heroUrl) : hero.title}>
                     <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
-                      <Shot src={hero.screenshots[0]} alt={`${hero.title} screenshot`} />
+                      <Shot
+                        src={hero.screenshots[0]}
+                        alt={`${hero.title} screenshot`}
+                        fallback={<ProjectPoster project={hero} />}
+                      />
                     </div>
                   </BrowserFrame>
                 </TiltCard>

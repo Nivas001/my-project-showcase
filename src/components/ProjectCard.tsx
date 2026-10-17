@@ -4,6 +4,7 @@ import type { Project } from "@/lib/projects";
 import { shortTitle, toAbsoluteUrl } from "@/lib/site";
 import { StatusDot, TiltCard } from "@/components/kit";
 import { Shot } from "@/components/Shot";
+import { ProjectPoster } from "@/components/ProjectPoster";
 import { accentFor } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +49,7 @@ export function ProjectCard({
             src={cover}
             alt={`${project.title} screenshot`}
             accent={accent}
+            fallback={<ProjectPoster project={project} accent={accent} />}
             imgClassName="transition-transform duration-700 group-hover:scale-[1.07]"
           />
 

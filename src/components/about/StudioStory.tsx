@@ -39,13 +39,13 @@ const CHAPTERS: Chapter[] = [
   },
   {
     tag: "④ home is a Linux shell",
-    title: "Ubuntu, Git, a terminal.",
-    body: "Everything ends in a terminal — commits, builds, deploys. I live on Linux, and yes, the penguin stays on the desk.",
+    title: "Fedora, KDE, a terminal.",
+    body: "Everything ends in a terminal — commits, builds, deploys. I live on Linux, write my own desktop widgets, and yes, the penguin stays on the desk.",
   },
   {
     tag: "⑤ then it leaves the screen",
     title: "…and becomes a product.",
-    body: "Five products are live right now — the site, the app, the database, the admin panel someone uses every day — each one built and deployed alone.",
+    body: "Six products are live right now — the site, the app, the database, the admin panel someone uses every day — each one built and deployed alone.",
   },
   {
     tag: "⑥ in person",

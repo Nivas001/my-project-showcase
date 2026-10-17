@@ -205,15 +205,15 @@ const T = {
 };
 
 const TERMINAL: Line[] = [
-  L(["nivas@ubuntu", T.pr], [":", T.tx], ["~", T.path], ["$ ", T.tx], ["neofetch", T.tx]),
-  O(["    .--.      ", T.tux], ["OS      ", T.acc], ["Ubuntu 24.04 LTS", T.tx]),
+  L(["nivas@fedora", T.pr], [":", T.tx], ["~", T.path], ["$ ", T.tx], ["neofetch", T.tx]),
+  O(["    .--.      ", T.tux], ["OS      ", T.acc], ["Fedora 44 · KDE Plasma 6", T.tx]),
   O(["   |o_o |     ", T.tux], ["Shell   ", T.acc], ["zsh 5.9", T.tx]),
   O(["   |:_/ |     ", T.tux], ["Editor  ", T.acc], ["VS Code · PyCharm · nvim", T.tx]),
   O(["  //   \\ \\    ", T.tux], ["Langs   ", T.acc], ["TS · Python · Dart", T.tx]),
   O([" (|     | )   ", T.tux], ["Zone    ", T.acc], ["IST (UTC+05:30)", T.tx]),
   O(),
   L(
-    ["nivas@ubuntu", T.pr],
+    ["nivas@fedora", T.pr],
     [":", T.tx],
     ["~/nivas.tech", T.path],
     ["$ ", T.tx],
@@ -222,7 +222,7 @@ const TERMINAL: Line[] = [
   O(["To github.com:Nivas001/nivas.tech.git", T.dim]),
   O(["   4f1c2e9..a8d31b7  main -> main", T.dim]),
   L(
-    ["nivas@ubuntu", T.pr],
+    ["nivas@fedora", T.pr],
     [":", T.tx],
     ["~/nivas.tech", T.path],
     ["$ ", T.tx],

@@ -26,12 +26,13 @@ export const site = {
 
   /** Two or three sentences. Used on the homepage and /about. */
   summary:
-    "I ship production software. Five products are live right now — a cross-border property platform reviewing listings across 18 markets, a weekly magazine publishing in Canada, an artisanal commerce platform with slot scheduling and payments, an industrial supply storefront, and a streaming client — all built and deployed solo. Alongside that I wrote a research-grade Tamil summarisation model that preserves named entities, and put it on Hugging Face where anyone can run it.",
+    "I ship production software. Six products are live right now — a cross-border property platform reviewing listings across 18 markets, a weekly magazine publishing in Canada, an artisanal commerce platform with slot scheduling and payments, an industrial supply storefront, a builder's website with a scroll-driven 3D story, and a streaming client — all built and deployed solo. Alongside that I wrote a research-grade Tamil summarisation model that preserves named entities, and put it on Hugging Face where anyone can run it.",
 
   /** The longer version, for /about. */
   bio: [
     "I'm a full-stack engineer based in Pondicherry. I like the whole arc of a product: the schema, the server, the interface, the deploy, and the unglamorous admin panel someone has to use every day.",
     "Most of what I've built, I've built alone — which means I've had to be decisive about architecture and honest about trade-offs. Ani Bakes runs React 19 on TanStack Start with Appwrite and Razorpay. AARRKKAA runs Prisma and Postgres behind the same stack. Velocity is a Node service with a Flutter client on top.",
+    "On my own machine I build the tools I want to use: a voice assistant with a local three-tier brain, a Linux app for headphones whose protocol I reverse-engineered from the Android app, and my own KDE Plasma widgets, from a Material You control center to a Quick Look for Dolphin.",
     "The other half of my work is applied NLP. My postgraduate research tackled abstractive summarisation in Tamil, a low-resource language where off-the-shelf models lose the names that make a news story mean anything. I fine-tuned mT5 with PEFT and wired NER in to hold those entities in place.",
   ],
 } as const;
@@ -268,6 +269,62 @@ export const principles = [
 
 /** Milestones, newest first. `slug` links to a project; null links to /about. */
 export const changelog = [
+  {
+    date: "Oct 2026",
+    tag: "Building",
+    accent: "hog-blue",
+    title: "Through Vacations gets a website",
+    body: "A Pondicherry travel agency moves off Instagram: 17 trips, a draggable postcard hero, a departure-board destinations page, a trip shaper and a travel desk for quote requests. Next.js 16.",
+    slug: "through-vacations",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Updated",
+    accent: "hog-green",
+    title: "The Tamil summariser Space gets a new interface",
+    body: "Samples, entity highlighting in the article, a check mark on every entity the summary kept, a baseline comparison and JSON export of each run.",
+    slug: "tamil-ner-summarizer",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Building",
+    accent: "hog-purple",
+    title: "My own KDE Plasma widgets and apps",
+    body: "A Material You control center, Quick Look for Dolphin, a Linux app for a Windows-only mouse, and top-bar widgets for AI limits, deploys and dev servers.",
+    slug: "plasma-desktop-toolkit",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Building",
+    accent: "hog-yellow",
+    title: "Miss Minutes, a desktop voice assistant",
+    body: "Local wake word, speech and voice, a three-tier brain from regex rules to a local GPU model to the cloud, about fifty skills and 281 tests.",
+    slug: "miss-minutes",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Shipped",
+    accent: "hog-red",
+    title: "Jobtrail, an AI job application tracker",
+    body: "Resume matching, cover letters, interview prep and form auto-fill that stops before Submit, through a local helper instead of a paid API key. Open source.",
+    slug: "jobtrail",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Shipped",
+    accent: "hog-blue",
+    title: "JLab headphones, controlled from Linux",
+    body: "Decompiled the Android app, emulated its native auth library to recover the handshake, and built a KDE app, CLI and shortcuts for noise cancelling and EQ.",
+    slug: "jlab-buds-linux",
+  },
+  {
+    date: "Oct 2026",
+    tag: "Shipped",
+    accent: "hog-yellow",
+    title: "Suganniya Construction goes live",
+    body: "Fourteen static pages for a Trichy builder, a cost estimator, a scroll-driven Three.js story of a building going up and an About video generated from code.",
+    slug: "suganniya-construction",
+  },
   {
     date: "Sep 2026",
     tag: "Shipped",
