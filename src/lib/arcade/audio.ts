@@ -35,7 +35,12 @@ export type ArcadeSfx =
   | "type" //  keystroke
   | "error" //  wrong keystroke
   | "tick" //  countdown
-  | "whoosh"; //  movement
+  | "whoosh" //  movement
+  | "pop" //  an item lands in a tray or your arms, pitched by n
+  | "cash" //  a bill collected, pitched by n
+  | "drain" //  money ticking into an upgrade pad
+  | "unlock" //  something bought
+  | "launch"; //  a rocket leaves the pad
 
 /** A pentatonic minor scale in semitones. Nothing in it can clash. */
 const PENTA = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
@@ -264,6 +269,39 @@ export class ArcadeAudio {
 
       case "whoosh":
         this.noise("bandpass", 400, 0.8, 0.07, 0.22, 0, 2600);
+        break;
+
+      case "pop": {
+        const f = step(4 + (n % 6));
+        this.tone(f, f * 1.6, 0.11, 0.06, "triangle");
+        this.noise("highpass", 2600, 0.6, 0.025, 0.03);
+        break;
+      }
+
+      case "cash": {
+        const f = step(6 + (n % 5));
+        this.tone(f * 2, f * 2, 0.07, 0.05, "square");
+        this.tone(f * 3, f * 3, 0.05, 0.08, "triangle", 0.03);
+        break;
+      }
+
+      case "drain":
+        this.tone(1500 + (n % 8) * 60, 1500 + (n % 8) * 60, 0.035, 0.03, "square");
+        break;
+
+      case "unlock":
+        [0, 4, 7, 12].forEach((s, i) =>
+          this.tone(step(s + 2), step(s + 2), 0.15, 0.16, "triangle", i * 0.07),
+        );
+        [7, 12].forEach((s, i) =>
+          this.tone(step(s + 2) * 2, step(s + 2) * 2, 0.06, 0.3, "square", 0.28 + i * 0.05),
+        );
+        this.noise("highpass", 5000, 0.4, 0.05, 0.6, 0.1);
+        break;
+
+      case "launch":
+        this.noise("lowpass", 500, 0.7, 0.16, 0.9, 0, 2400);
+        this.tone(90, 260, 0.1, 0.8, "sawtooth");
         break;
     }
   }

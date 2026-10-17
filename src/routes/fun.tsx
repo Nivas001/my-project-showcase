@@ -27,6 +27,7 @@ import { MemoryStack } from "@/components/games/MemoryStack";
 import { CodeSprint } from "@/components/games/CodeSprint";
 import { ReactionTime } from "@/components/games/ReactionTime";
 import { LeaderboardPanel } from "@/components/games/LeaderboardPanel";
+import { FeaturedSim } from "@/components/games/FeaturedSim";
 import { RoastBot } from "@/components/games/RoastBot";
 import { roastScore, IDLE_TAUNTS, pick } from "@/lib/taunts";
 import { Reveal } from "@/components/Reveal";
@@ -157,9 +158,14 @@ function Arcade() {
         />
 
         <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-16">
+          {/* ---- The big one, on its own page ---- */}
+          <Reveal>
+            <FeaturedSim />
+          </Reveal>
+
           {/* ---- Cartridge selector ---- */}
           <Reveal>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="mt-12 flex flex-wrap justify-center gap-2">
               {GAMES.map((g) => {
                 const Icon = GAME_ICONS[g.id];
                 const on = active === g.id;

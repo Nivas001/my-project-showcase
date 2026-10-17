@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ApiRoastRouteImport } from './routes/api/roast'
 import { Route as HorrorIndexRouteImport } from './routes/horror.index'
 import { Route as HorrorSlugRouteImport } from './routes/horror.$slug'
+import { Route as PlayShipItRouteImport } from './routes/play.ship-it'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as ApiPublicProjectDocRouteImport } from './routes/api/public/project-doc'
@@ -110,6 +111,11 @@ const HorrorSlugRoute = HorrorSlugRouteImport.update({
   path: '/horror/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayShipItRoute = PlayShipItRouteImport.update({
+  id: '/play/ship-it',
+  path: '/play/ship-it',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
+  '/play/ship-it': typeof PlayShipItRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
+  '/play/ship-it': typeof PlayShipItRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror': typeof HorrorIndexRoute
   '/projects': typeof ProjectsIndexRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/roast': typeof ApiRoastRoute
   '/horror/$slug': typeof HorrorSlugRoute
+  '/play/ship-it': typeof PlayShipItRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/horror/': typeof HorrorIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/roast'
     | '/horror/$slug'
+    | '/play/ship-it'
     | '/projects/$slug'
     | '/horror/'
     | '/projects/'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/roast'
     | '/horror/$slug'
+    | '/play/ship-it'
     | '/projects/$slug'
     | '/horror'
     | '/projects'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/api/roast'
     | '/horror/$slug'
+    | '/play/ship-it'
     | '/projects/$slug'
     | '/horror/'
     | '/projects/'
@@ -290,6 +302,7 @@ export interface RootRouteChildren {
   WallRoute: typeof WallRoute
   ApiRoastRoute: typeof ApiRoastRoute
   HorrorSlugRoute: typeof HorrorSlugRoute
+  PlayShipItRoute: typeof PlayShipItRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   HorrorIndexRoute: typeof HorrorIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HorrorSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/play/ship-it': {
+      id: '/play/ship-it'
+      path: '/play/ship-it'
+      fullPath: '/play/ship-it'
+      preLoaderRoute: typeof PlayShipItRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/': {
       id: '/projects/'
       path: '/projects'
@@ -476,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   WallRoute: WallRoute,
   ApiRoastRoute: ApiRoastRoute,
   HorrorSlugRoute: HorrorSlugRoute,
+  PlayShipItRoute: PlayShipItRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   HorrorIndexRoute: HorrorIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,

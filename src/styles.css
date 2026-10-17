@@ -2955,3 +2955,23 @@ html .act-hog ::selection {
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
+
+/* Ship It Inc. HUD chrome. The labels pinned to the 3D scene are styled in
+   components/sim/shipit/shipit.css, which loads with the game chunk; these two
+   are here because the title card is server-rendered before that chunk loads. */
+.si-glass {
+  background: rgb(255 250 241 / 0.86);
+  color: #2c2f3d;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 3px 0 rgb(44 47 61 / 0.14),
+    0 12px 28px -12px rgb(44 47 61 / 0.5);
+}
+.si-cta {
+  box-shadow:
+    0 6px 0 #a83a26,
+    0 18px 30px -10px rgb(229 83 60 / 0.6);
+}
+.si-cta:active {
+  box-shadow: 0 2px 0 #a83a26;
+}
