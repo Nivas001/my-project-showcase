@@ -34,3 +34,18 @@ $FF -y -i out/reel-master.mp4 -c:v libx264 -preset slow -crf 21 -pix_fmt yuv420p
 $FF -y -i out/reel-master.mp4 -vf scale=1280:720:flags=lanczos -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 160k $D/showreel-720p.mp4
 $FF -y -ss 9.2 -i out/reel-master.mp4 -frames:v 1 -vf scale=1600:-1 -q:v 3 $D/showreel-poster.jpg
 ```
+
+## The "Desk OS" cut (`DeskReel`)
+
+A second, 2:12 reel in a light paper theme: a beige retro Mac boots and ships, a blue stripe
+wipe opens the title, the six live products slide in as paper sheets under a macOS menu bar,
+the side builds sit on a desk canvas the camera pans across, then research, the stack, and a
+sign-off back on the Mac.
+
+- Source: `src/desk/` (timing in `src/desk/timeline.json`, copy in `src/desk/data.ts`)
+- Score and sound: `audio/build_desk.py` (reuses the DSP in `audio/build.py`)
+
+```sh
+.venv/bin/python audio/build_desk.py                 # -> public/audio/score-desk.wav
+npx remotion render DeskReel out/reel-desk.mp4 --audio-codec=aac --audio-bitrate=256k
+```

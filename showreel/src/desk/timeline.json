@@ -1,0 +1,110 @@
+{
+  "fps": 60,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 120,
+  "duration": 7920,
+  "scenes": {
+    "boot": [0, 600],
+    "title": [600, 1200],
+    "statement": [1200, 1560],
+    "index": [1560, 1920],
+    "projects": [1920, 4800],
+    "desk": [4800, 5880],
+    "research": [5880, 6600],
+    "orbit": [6600, 7200],
+    "outro": [7200, 7920]
+  },
+  "projectLen": 480,
+  "projectOverlap": 44,
+  "boot": {
+    "power": 46,
+    "crtOn": 54,
+    "bars": 84,
+    "chime": 124,
+    "logo": 124,
+    "terminal": 196,
+    "plunge": 470,
+    "blue": 548
+  },
+  "typing": {
+    "lines": [
+      {
+        "text": "git init new-idea",
+        "frames": [210, 215, 222, 227, 237, 244, 249, 254, 259, 269, 274, 278, 282, 289, 294, 299, 305],
+        "enter": 318
+      },
+      {
+        "text": "npm run ship",
+        "frames": [346, 353, 357, 360, 368, 372, 376, 379, 387, 394, 400, 406],
+        "enter": 418
+      }
+    ],
+    "out": [428, 438, 448],
+    "prompt": 458
+  },
+  "title": {
+    "wipe": 0,
+    "lines": 18,
+    "name": 30,
+    "portrait": 52,
+    "stickers": [104, 116, 128],
+    "tagline": 160,
+    "marker": 196,
+    "exit": 556
+  },
+  "statement": {
+    "beats": [0, 30, 60],
+    "note": 104,
+    "exit": 318
+  },
+  "index": {
+    "list": 12,
+    "listStep": 8,
+    "lift": 168,
+    "dive": 300
+  },
+  "project": {
+    "name": 34,
+    "chips": 70,
+    "chipStep": 6,
+    "media": 20,
+    "float": 108,
+    "note": 150,
+    "sticker": 186
+  },
+  "desk": {
+    "pop": 14,
+    "popStep": 7,
+    "stops": [180, 320, 460, 600, 740, 880],
+    "out": 1020
+  },
+  "research": {
+    "words": 92,
+    "wordStep": 6,
+    "ents": [170, 192],
+    "model": 230,
+    "summary": 280,
+    "summaryStep": 7,
+    "space": 452,
+    "exit": 690
+  },
+  "orbit": {
+    "sliders": 40,
+    "collapse": 300,
+    "stamp": 360,
+    "stats": 420,
+    "statStep": 12,
+    "exit": 572
+  },
+  "outro": {
+    "pull": 0,
+    "type": 40,
+    "links": 150,
+    "linkStep": 14,
+    "notes": [210, 232],
+    "off": 452,
+    "card": 500,
+    "black": 690
+  }
+}
